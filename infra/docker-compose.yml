@@ -1,0 +1,368 @@
+version: "3.8"
+
+services:
+  # ========================================
+  # PostgreSQL - Base de données principale
+  # ========================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: docqa_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - backend-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ========================================
+  # RabbitMQ - Message Broker
+  # ========================================
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: docqa_rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_DEFAULT_VHOST: /
+    ports:
+      - "5672:5672" # AMQP protocol
+      - "15672:15672" # Management UI
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - backend-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ========================================
+  # MinIO - Object Storage (S3-compatible)
+  # ========================================
+  minio:
+    image: minio/minio:latest
+    container_name: docqa_minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    ports:
+      - "9000:9000" # API
+      - "9001:9001" # Console
+    volumes:
+      - minio_data:/data
+    networks:
+      - backend-network
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ========================================
+  # Backend Base - Service de base FastAPI
+  # ========================================
+  backend_base:
+    build:
+      context: ../backend/backend_base
+      dockerfile: Dockerfile
+    container_name: docqa_backend_base
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_PASS=${RABBITMQ_DEFAULT_PASS}
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
+      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD}
+      - SERVICE_NAME=backend_base
+      - LOG_LEVEL=INFO
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../backend/backend_base:/app
+    networks:
+      - backend-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ========================================
+  # DocIngestor - Service d'ingestion de documents
+  # ========================================
+  doc_ingestor:
+    build:
+      context: ../backend/doc_ingestor
+      dockerfile: Dockerfile
+    container_name: docqa_doc_ingestor
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_PASSWORD=${RABBITMQ_DEFAULT_PASS}
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
+      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD}
+      - SERVICE_NAME=doc_ingestor
+      - API_PORT=8001
+      - API_TOKEN=${DOC_INGESTOR_TOKEN}
+      - MAX_FILE_SIZE_MB=50
+      - TEMP_FOLDER=/app/tmp
+      - LOG_LEVEL=INFO
+    ports:
+      - "8001:8001"
+    volumes:
+      - ../backend/doc_ingestor:/app
+      - doc_ingestor_tmp:/app/tmp
+    networks:
+      - backend-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ========================================
+  # DeID - Service de désidentification (v2.0 - spaCy + Presidio)
+  # ========================================
+  deid:
+    build:
+      context: ../backend/deid
+      dockerfile: Dockerfile
+    container_name: docqa_deid
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_PASSWORD=${RABBITMQ_DEFAULT_PASS}
+      - SERVICE_NAME=${DEID_SERVICE_NAME}
+      - API_PORT=${DEID_API_PORT}
+      - LOG_LEVEL=${DEID_LOG_LEVEL}
+      - SPACY_MODEL=${SPACY_MODEL}
+      - PRESIDIO_DEFAULT_LANGUAGE=${PRESIDIO_DEFAULT_LANGUAGE}
+      - MIN_CONFIDENCE_SCORE=${MIN_CONFIDENCE_SCORE}
+      - ANONYMIZATION_STRATEGY=${ANONYMIZATION_STRATEGY}
+      - MAX_TEXT_LENGTH=${MAX_TEXT_LENGTH}
+    ports:
+      - "8002:8002"
+    volumes:
+      - ../backend/deid/app:/app/app
+      - ../backend/deid/data:/app/data
+    networks:
+      - backend-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 90s
+      retries: 3
+
+  # ========================================
+  # Indexeur Sémantique - Embeddings + FAISS
+  # ========================================
+  indexeur:
+    build:
+      context: ../backend/indexeur
+      dockerfile: Dockerfile
+    container_name: docqa_indexeur
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_PASS=${RABBITMQ_DEFAULT_PASS}
+      - SERVICE_NAME=indexeur
+      - LOG_LEVEL=INFO
+    ports:
+      - "8003:8000"
+    volumes:
+      - ../backend/indexeur:/app
+      - faiss_indexes:/app/indexes
+    networks:
+      - backend-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  # ========================================
+  # LLMQA Module - RAG + LLM
+  # ========================================
+  llmqa:
+    build:
+      context: ../backend/llmqa
+      dockerfile: Dockerfile
+    container_name: docqa_llmqa
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_PASS=${RABBITMQ_DEFAULT_PASS}
+      - SERVICE_NAME=llmqa
+      - LOG_LEVEL=INFO
+    ports:
+      - "8004:8000"
+    volumes:
+      - ../backend/llmqa:/app
+    networks:
+      - backend-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  # ========================================
+  # Synthèse Comparative - Résumés et comparaisons
+  # ========================================
+  synthese:
+    build:
+      context: ../backend/synthese
+      dockerfile: Dockerfile
+    container_name: docqa_synthese
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_PASS=${RABBITMQ_DEFAULT_PASS}
+      - SERVICE_NAME=synthese
+      - LOG_LEVEL=INFO
+    ports:
+      - "8005:8000"
+    volumes:
+      - ../backend/synthese:/app
+    networks:
+      - backend-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  # ========================================
+  # Audit Logger - Traçabilité et logs
+  # ========================================
+  auditlogger:
+    build:
+      context: ../backend/auditlogger
+      dockerfile: Dockerfile
+    container_name: docqa_auditlogger
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_PASS=${RABBITMQ_DEFAULT_PASS}
+      - SERVICE_NAME=auditlogger
+      - LOG_LEVEL=INFO
+    ports:
+      - "8006:8000"
+    volumes:
+      - ../backend/auditlogger:/app
+    networks:
+      - backend-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+# ========================================
+# Réseaux
+# ========================================
+networks:
+  backend-network:
+    driver: bridge
+    name: docqa_network
+
+# ========================================
+# Volumes persistants
+# ========================================
+volumes:
+  postgres_data:
+    name: docqa_postgres_data
+  rabbitmq_data:
+    name: docqa_rabbitmq_data
+  minio_data:
+    name: docqa_minio_data
+  faiss_indexes:
+    name: docqa_faiss_indexes
+  doc_ingestor_tmp:
+    name: docqa_doc_ingestor_tmp
