@@ -135,8 +135,8 @@ graph TB
 1. **Cloner le repository**
 
 ```bash
-git clone https://github.com/votre-username/docqa-ms.git
-cd docqa-ms
+git clone https://github.com/yassir2222/DocQA.git
+cd DocQA
 ```
 
 2. **Configurer les variables d'environnement**
@@ -400,6 +400,13 @@ docker-compose restart rabbitmq
 
 ## 👥 Auteurs
 
+**Équipe de développement:**
+
+- **ACHRAF EL HOUFI**
+- **YASSIR LAMBRASS**
+- **SAAD KARZOUZ**
+- **ANAS EL MALYARI**
+
 **Projet académique** - DocQA-MS Team
 
 ---
@@ -408,54 +415,12 @@ docker-compose restart rabbitmq
 
 Ce projet est développé dans un cadre académique.
 
----
-
-## 🚧 Roadmap
-
-### ✅ Sprint 1 - Infrastructure de base (Semaine 1)
-
-- [x] Setup environnement de développement
-- [x] Configuration Docker Compose
-- [x] Template microservice FastAPI
-- [x] Base de données PostgreSQL
-- [x] RabbitMQ & MinIO
-- [x] Documentation
-
-### 🔄 Sprint 2 - Ingestion & Désidentification (Semaine 2)
-
-- [ ] Service DocIngestor complet
-- [ ] Parsing PDF, DOCX, HL7
-- [ ] Service DeID avec NER
-- [ ] Tests unitaires
-
-### 🔄 Sprint 3 - Indexation & Recherche (Semaine 3)
-
-- [ ] Service Indexeur avec embeddings
-- [ ] Intégration FAISS
-- [ ] Recherche sémantique
-- [ ] Tests de performance
-
-### 🔄 Sprint 4 - LLM & RAG (Semaine 4)
-
-- [ ] Service LLMQA avec LangChain
-- [ ] Implémentation RAG
-- [ ] Service Synthèse
-- [ ] Optimisation prompts
-
-### 🔄 Sprint 5 - Interface & Finalisation (Semaine 5)
-
-- [ ] Interface React complète
-- [ ] Dashboard clinique
-- [ ] Tests end-to-end
-- [ ] Déploiement
-
----
-
 ## 💡 Support
 
 Pour toute question ou problème :
 
-- 💬 Issues : [GitHub Issues](https://github.com/votre-username/docqa-ms/issues)
+- 💬 Issues : [GitHub Issues](https://github.com/yassir2222/DocQA/issues)
+- 📧 Contact : [DocQA-MS Team](https://github.com/yassir2222/DocQA)
 
 ---
 
