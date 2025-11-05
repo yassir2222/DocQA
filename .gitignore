@@ -164,7 +164,7 @@ temp/
 # ========================================
 # ML / AI Models
 # ========================================
-models/
+# Ignorer les modèles ML téléchargés, mais pas le code source
 *.pkl
 *.h5
 *.pt
@@ -173,6 +173,12 @@ models/
 *.pb
 checkpoints/
 wandb/
+# Ignorer spécifiquement les modèles spaCy et transformers téléchargés
+backend/deid/models/*.bin
+backend/deid/models/fr_core_news_*
+backend/indexeur/models/
+.cache/huggingface/
+.cache/torch/
 
 # ========================================
 # FAISS Indexes
