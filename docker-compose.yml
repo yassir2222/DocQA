@@ -1,0 +1,109 @@
+version: "3.8"
+
+services:
+  # PostgreSQL Database - Infrastructure partagée
+  postgres:
+    image: postgres:16
+    container_name: docqa-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: docqa_user
+      POSTGRES_PASSWORD: docqa_password
+      POSTGRES_MULTIPLE_DATABASES: docqa_ingestor,docqa_deid,docqa_indexeur,docqa_llmqa,docqa_synthese,docqa_audit
+    ports:
+      - "5433:5432" # Port 5433 pour éviter conflit avec PostgreSQL local
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init-scripts:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U docqa_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - docqa-network
+
+  # RabbitMQ Message Broker - Infrastructure partagée
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: docqa-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: docqa_user
+      RABBITMQ_DEFAULT_PASS: docqa_password
+      RABBITMQ_DEFAULT_VHOST: /
+    ports:
+      - "5672:5672" # AMQP protocol
+      - "15672:15672" # Management UI
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - rabbitmq_log:/var/log/rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - docqa-network
+
+  # pgAdmin - Interface Web PostgreSQL (optionnel)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: docqa-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@docqa.local
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - docqa-network
+    profiles:
+      - tools
+
+volumes:
+  postgres_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+  rabbitmq_log:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+networks:
+  docqa-network:
+    driver: bridge
+# 🚀 INSTRUCTIONS D'UTILISATION
+#
+# Démarrer l'infrastructure:
+#   docker-compose up -d
+#
+# Vérifier le statut:
+#   docker-compose ps
+#
+# Voir les logs:
+#   docker-compose logs -f postgres
+#   docker-compose logs -f rabbitmq
+#
+# Arrêter l'infrastructure:
+#   docker-compose down
+#
+# Tout supprimer (ATTENTION: données perdues):
+#   docker-compose down -v
+#
+# Démarrer avec pgAdmin:
+#   docker-compose --profile tools up -d
+#
+# ACCÈS:
+# - PostgreSQL: localhost:5432
+# - RabbitMQ AMQP: localhost:5672
+# - RabbitMQ Management: http://localhost:15672 (docqa_user / docqa_password)
+# - pgAdmin: http://localhost:5050 (admin@docqa.local / admin)
+#
+# Les microservices se lancent localement et se connectent à cette infrastructure

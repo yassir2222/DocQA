@@ -1,0 +1,3 @@
+"""
+Package src pour DocIngestor
+"""

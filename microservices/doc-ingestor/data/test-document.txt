@@ -1,0 +1,27 @@
+Compte-Rendu Médical
+
+Patient: Test Patient
+Date: 08/11/2025
+
+Motif de consultation:
+Le patient consulte pour des douleurs abdominales récurrentes.
+
+Antécédents:
+- Diabète de type 2 diagnostiqué en 2020
+- Hypertension artérielle
+
+Examen clinique:
+- Tension artérielle: 130/85 mmHg
+- Fréquence cardiaque: 72 bpm
+- Température: 37.2°C
+
+Diagnostic:
+Gastrite chronique
+
+Traitement prescrit:
+- Oméprazole 20mg, 1 comprimé matin
+- Régime alimentaire adapté
+- Contrôle dans 1 mois
+
+Dr. Martin Dubois
+Médecin généraliste
