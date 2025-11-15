@@ -1,0 +1,46 @@
+
+services:
+  deid-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: docqa-deid-service
+    ports:
+      - "8002:8002"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/docqa_deid
+      SPRING_DATASOURCE_USERNAME: docqa_user
+      SPRING_DATASOURCE_PASSWORD: docqa_secure_password
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - docqa-network
+    restart: unless-stopped
+
+  db:
+    image: postgres:15-alpine
+    container_name: docqa-deid-db
+    restart: always
+    environment:
+      POSTGRES_DB: docqa_deid
+      POSTGRES_USER: docqa_user
+      POSTGRES_PASSWORD: docqa_secure_password
+    volumes:
+      - deid_db_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - docqa-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U docqa_user -d docqa_deid"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  deid_db_data:
+
+networks:
+  docqa-network:
+    driver: bridge
