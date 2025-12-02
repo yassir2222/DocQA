@@ -38,7 +38,7 @@ async def upload_document(
     Returns:
         Document créé avec son ID
     """
-    logger.info(f"📥 Upload de fichier: {file.filename}")
+    logger.info(f" Upload de fichier: {file.filename}")
     
     # Vérifier l'extension du fichier
     file_extension = f".{file.filename.split('.')[-1].lower()}"
@@ -60,7 +60,7 @@ async def upload_document(
                 detail=f"Fichier trop volumineux. Taille max: {settings.MAX_FILE_SIZE} bytes"
             )
         
-        logger.info(f"📄 Extraction du texte de {file.filename} ({file_size} bytes)...")
+        logger.info(f" Extraction du texte de {file.filename} ({file_size} bytes)...")
         
         # Extraire le texte
         text_content = extract_text_from_file(file_content, file.filename)
@@ -71,7 +71,7 @@ async def upload_document(
                 detail="Impossible d'extraire du texte du document"
             )
         
-        logger.info(f"✅ Texte extrait: {len(text_content)} caractères")
+        logger.info(f" Texte extrait: {len(text_content)} caractères")
         
         # Extraire les métadonnées
         metadata = extract_metadata(file_content, file.filename)
@@ -90,7 +90,7 @@ async def upload_document(
             document_type=document_type
         )
         
-        logger.info(f"💾 Document sauvegardé avec ID: {document_id}")
+        logger.info(f" Document sauvegardé avec ID: {document_id}")
         
         # Publier vers RabbitMQ pour le service suivant (DeID)
         message = {
@@ -103,10 +103,10 @@ async def upload_document(
         publish_success = publish_document(message)
         
         if publish_success:
-            logger.info(f"📨 Document {document_id} publié vers RabbitMQ")
+            logger.info(f" Document {document_id} publié vers RabbitMQ")
             update_document_status(document_id, True)
         else:
-            logger.warning(f"⚠️ Échec publication RabbitMQ pour document {document_id}")
+            logger.warning(f" Échec publication RabbitMQ pour document {document_id}")
         
         return {
             "success": True,
@@ -122,7 +122,7 @@ async def upload_document(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"❌ Erreur lors du traitement: {str(e)}", exc_info=True)
+        logger.error(f" Erreur lors du traitement: {str(e)}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erreur lors du traitement du document: {str(e)}"
@@ -148,7 +148,7 @@ async def list_documents(
     Returns:
         Liste des documents
     """
-    logger.info(f"📋 Récupération de la liste des documents (limit={limit}, offset={offset})")
+    logger.info(f" Récupération de la liste des documents (limit={limit}, offset={offset})")
     
     try:
         documents = get_all_documents(limit, offset, patient_id, document_type)
@@ -159,7 +159,7 @@ async def list_documents(
             "documents": documents
         }
     except Exception as e:
-        logger.error(f"❌ Erreur lors de la récupération: {str(e)}")
+        logger.error(f" Erreur lors de la récupération: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erreur lors de la récupération des documents: {str(e)}"
@@ -177,7 +177,7 @@ async def get_document(document_id: int):
     Returns:
         Détails du document
     """
-    logger.info(f"📄 Récupération du document {document_id}")
+    logger.info(f" Récupération du document {document_id}")
     
     try:
         document = get_document_by_id(document_id)
@@ -195,7 +195,7 @@ async def get_document(document_id: int):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"❌ Erreur lors de la récupération: {str(e)}")
+        logger.error(f" Erreur lors de la récupération: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erreur lors de la récupération du document: {str(e)}"
@@ -210,7 +210,7 @@ async def get_statistics():
     Returns:
         Statistiques diverses
     """
-    logger.info("📊 Récupération des statistiques")
+    logger.info("Récupération des statistiques")
     
     try:
         all_docs = get_all_documents(limit=10000)
@@ -233,7 +233,7 @@ async def get_statistics():
             }
         }
     except Exception as e:
-        logger.error(f"❌ Erreur lors de la récupération des statistiques: {str(e)}")
+        logger.error(f" Erreur lors de la récupération des statistiques: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erreur lors de la récupération des statistiques: {str(e)}"
