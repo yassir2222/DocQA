@@ -91,6 +91,7 @@ def save_document(
     Returns:
         ID du document créé
     """
+    conn = None
     try:
         conn = get_connection()
         cursor = conn.cursor()
@@ -242,6 +243,7 @@ def update_document_status(document_id: int, processed: bool):
         document_id: ID du document
         processed: Nouveau statut
     """
+    conn = None
     try:
         conn = get_connection()
         cursor = conn.cursor()
