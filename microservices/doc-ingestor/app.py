@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     """Gestion du cycle de vie de l'application"""
     # Startup
-    logger.info(f"🚀 Démarrage de {settings.SERVICE_NAME}...")
+    logger.info(f"[START] Demarrage de {settings.SERVICE_NAME}...")
     
     # Créer les répertoires nécessaires
     Path(settings.UPLOAD_DIR).mkdir(parents=True, exist_ok=True)
@@ -43,25 +43,25 @@ async def lifespan(app: FastAPI):
     # Initialiser la base de données
     try:
         init_database()
-        logger.info("✅ Base de données initialisée")
+        logger.info("[OK] Base de donnees initialisee")
     except Exception as e:
-        logger.error(f"❌ Erreur initialisation base de données: {e}")
+        logger.error(f"[ERREUR] Erreur initialisation base de donnees: {e}")
     
     # Initialiser RabbitMQ
     try:
         init_rabbitmq()
-        logger.info("✅ RabbitMQ initialisé")
+        logger.info("[OK] RabbitMQ initialise")
     except Exception as e:
-        logger.error(f"❌ Erreur initialisation RabbitMQ: {e}")
+        logger.error(f"[ERREUR] Erreur initialisation RabbitMQ: {e}")
     
-    logger.info(f"✅ {settings.SERVICE_NAME} démarré sur http://{settings.SERVICE_HOST}:{settings.SERVICE_PORT}")
+    logger.info(f"[OK] {settings.SERVICE_NAME} demarre sur http://{settings.SERVICE_HOST}:{settings.SERVICE_PORT}")
     
     yield
     
     # Shutdown
-    logger.info(f"🛑 Arrêt de {settings.SERVICE_NAME}...")
+    logger.info(f"[STOP] Arret de {settings.SERVICE_NAME}...")
     close_rabbitmq()
-    logger.info("✅ Arrêt terminé")
+    logger.info("[OK] Arret termine")
 
 
 # Créer l'application FastAPI
@@ -82,7 +82,7 @@ app.add_middleware(
 )
 
 # Inclure les routes
-app.include_router(router, prefix="/api/v1")
+app.include_router(router, prefix="/api")
 
 
 @app.get("/")

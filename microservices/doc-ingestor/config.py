@@ -3,6 +3,7 @@ Configuration pour le microservice DocIngestor
 """
 from pydantic_settings import BaseSettings
 from typing import Optional
+import os
 
 
 class Settings(BaseSettings):
@@ -14,15 +15,16 @@ class Settings(BaseSettings):
     SERVICE_HOST: str = "0.0.0.0"
     DEBUG: bool = True
     
-    # Database
-    DB_HOST: str = "localhost"
+    # Database - Support both DATABASE_URL and individual settings
+    DATABASE_URL: Optional[str] = None  # Full URL: postgresql://user:pass@host:port/db
+    DB_HOST: str = "postgres"
     DB_PORT: int = 5432
     DB_NAME: str = "docqa_ingestor"
     DB_USER: str = "docqa_user"
     DB_PASSWORD: str = "docqa_password"
     
     # RabbitMQ
-    RABBITMQ_HOST: str = "localhost"
+    RABBITMQ_HOST: str = "rabbitmq"
     RABBITMQ_PORT: int = 5672
     RABBITMQ_USER: str = "docqa_user"
     RABBITMQ_PASSWORD: str = "docqa_password"
@@ -42,6 +44,27 @@ class Settings(BaseSettings):
     
     # Tika Server (optional, uses local if not specified)
     TIKA_SERVER_URL: Optional[str] = None
+    
+    def get_db_config(self) -> dict:
+        """Parse DATABASE_URL or return individual settings"""
+        if self.DATABASE_URL:
+            # Parse postgresql://user:pass@host:port/db
+            from urllib.parse import urlparse
+            result = urlparse(self.DATABASE_URL)
+            return {
+                "host": result.hostname,
+                "port": result.port or 5432,
+                "database": result.path.lstrip('/'),
+                "user": result.username,
+                "password": result.password
+            }
+        return {
+            "host": self.DB_HOST,
+            "port": self.DB_PORT,
+            "database": self.DB_NAME,
+            "user": self.DB_USER,
+            "password": self.DB_PASSWORD
+        }
     
     class Config:
         env_file = ".env"

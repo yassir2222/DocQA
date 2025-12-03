@@ -22,16 +22,17 @@ def get_connection():
     
     if _connection is None or _connection.closed:
         try:
+            db_config = settings.get_db_config()
             _connection = psycopg2.connect(
-                host=settings.DB_HOST,
-                port=settings.DB_PORT,
-                database=settings.DB_NAME,
-                user=settings.DB_USER,
-                password=settings.DB_PASSWORD
+                host=db_config["host"],
+                port=db_config["port"],
+                database=db_config["database"],
+                user=db_config["user"],
+                password=db_config["password"]
             )
-            logger.info("✅ Connexion PostgreSQL établie")
+            logger.info(f"[OK] Connexion PostgreSQL etablie ({db_config['host']}:{db_config['port']})")
         except Exception as e:
-            logger.error(f"❌ Erreur connexion PostgreSQL: {str(e)}")
+            logger.error(f"[ERREUR] Erreur connexion PostgreSQL: {str(e)}")
             raise
     
     return _connection
@@ -54,16 +55,16 @@ def init_database():
         table_exists = cursor.fetchone()[0]
         
         if table_exists:
-            logger.info("✅ Table 'documents' existe déjà")
+            logger.info("[OK] Table 'documents' existe deja")
         else:
-            logger.info("⚠️ Table 'documents' n'existe pas, création...")
+            logger.info("[WARN] Table 'documents' n'existe pas, creation...")
             # Note: La table devrait être créée par le script SQL init
             logger.warning("Exécutez le script database/init-scripts/create-databases.sql")
         
         cursor.close()
         
     except Exception as e:
-        logger.error(f"❌ Erreur initialisation base de données: {str(e)}")
+        logger.error(f"[ERREUR] Erreur initialisation base de donnees: {str(e)}")
         raise
 
 
@@ -121,11 +122,11 @@ def save_document(
         conn.commit()
         cursor.close()
         
-        logger.info(f"✅ Document {document_id} sauvegardé")
+        logger.info(f"[OK] Document {document_id} sauvegarde")
         return document_id
         
     except Exception as e:
-        logger.error(f"❌ Erreur sauvegarde document: {str(e)}")
+        logger.error(f"[ERREUR] Erreur sauvegarde document: {str(e)}")
         if conn:
             conn.rollback()
         raise
@@ -168,7 +169,7 @@ def get_document_by_id(document_id: int) -> Optional[Dict[str, Any]]:
         return None
         
     except Exception as e:
-        logger.error(f"❌ Erreur récupération document {document_id}: {str(e)}")
+        logger.error(f"[ERREUR] Erreur recuperation document {document_id}: {str(e)}")
         raise
 
 
@@ -231,7 +232,7 @@ def get_all_documents(
         return documents
         
     except Exception as e:
-        logger.error(f"❌ Erreur récupération documents: {str(e)}")
+        logger.error(f"[ERREUR] Erreur recuperation documents: {str(e)}")
         raise
 
 
@@ -257,10 +258,10 @@ def update_document_status(document_id: int, processed: bool):
         conn.commit()
         cursor.close()
         
-        logger.info(f"✅ Document {document_id} mis à jour (processed={processed})")
+        logger.info(f"[OK] Document {document_id} mis a jour (processed={processed})")
         
     except Exception as e:
-        logger.error(f"❌ Erreur mise à jour document {document_id}: {str(e)}")
+        logger.error(f"[ERREUR] Erreur mise a jour document {document_id}: {str(e)}")
         if conn:
             conn.rollback()
         raise
@@ -271,4 +272,4 @@ def close_connection():
     global _connection
     if _connection and not _connection.closed:
         _connection.close()
-        logger.info("🔌 Connexion PostgreSQL fermée")
+        logger.info("[OK] Connexion PostgreSQL fermee")

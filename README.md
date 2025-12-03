@@ -1,53 +1,291 @@
 # DocQA-MS — Assistant Médical sur Documents Cliniques
 
+![Architecture](https://img.shields.io/badge/Architecture-Microservices-blue)
+![Java](https://img.shields.io/badge/Java-17+-orange)
+![Python](https://img.shields.io/badge/Python-3.11+-green)
+![React](https://img.shields.io/badge/React-18-61DAFB)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED)
+
 ## 🏥 Contexte
 
 Système intelligent de traitement et analyse de documents médicaux non structurés utilisant des LLM (Large Language Models) pour transformer les textes cliniques en réponses précises et contextualisées.
 
 ## 🎯 Objectifs
 
-- Répondre à des questions en langage naturel à partir des documents internes
-- Extraire des informations précises : maladies, traitements, antécédents
-- Fournir des résumés ou comparaisons entre patients
-- Garantir confidentialité, anonymisation et traçabilité des données
+- ✅ Répondre à des questions en langage naturel à partir des documents internes
+- ✅ Extraire des informations précises : maladies, traitements, antécédents
+- ✅ Fournir des résumés ou comparaisons entre patients
+- ✅ Garantir confidentialité, anonymisation et traçabilité des données
 
-## 🏗️ Architecture Microservices
+## Architecture Microservices
 
-### 1. DocIngestor (Python)
+```
++---------------------------------------------------------------------------+
+|                        INTERFACE CLINIQUE (React)                         |
+|                              Port: 3000                                   |
++---------------------------------------------------------------------------+
+                                     |
+                                     v
++---------------------------------------------------------------------------+
+|                          API GATEWAY (Python)                              |
+|                              Port: 8000                                    |
+|              Point d'entree unique pour tous les microservices             |
++---------------------------------------------------------------------------+
+                                     |
+        +----------------------------+----------------------------+
+        |              |             |              |             |
+        v              v             v              v             v
++-------------+ +-------------+ +-------------+ +-------------+ +-------------+
+|Doc Ingestor | |DeID Service | |  Indexeur   | | LLM QA      | |  Synthese   |
+|  (Python)   | |   (Java)    | | Semantique  | |   Module    | | Comparative |
+| Port: 8001  | | Port: 8002  | | Port: 8003  | | Port: 8004  | | Port: 8005  |
++-------------+ +-------------+ +-------------+ +-------------+ +-------------+
+        |              |             |              |             |
+        +-------+------+------+------+------+------+------+------+
+                |             |             |             |
+                v             v             v             v
+        +-------------+ +-------------+ +-------------+
+        |   RabbitMQ  | | PostgreSQL  | |Audit Logger |
+        |  Port: 5672 | |  Port: 5433 | | Port: 8006  |
+        +-------------+ +-------------+ +-------------+
 
-**Port:** 8001  
-**Rôle:** Ingestion et extraction de documents médicaux  
-**Technologies:** Python, Apache Tika, OCR, RabbitMQ, PostgreSQL
+FLUX DE MESSAGES (RabbitMQ):
+  Doc Ingestor --> [documents.raw] --> DeID Service
+  DeID Service --> [documents.deid] --> Indexeur Semantique
+  Indexeur Semantique --> [documents.indexed]
+  All Services --> [audit.events] --> Audit Logger
+```
 
-### 2. DeID (Java)
+### Microservices
 
-**Port:** 8002  
-**Rôle:** Désidentification et anonymisation des données personnelles  
-**Technologies:** Java 17+, Spring Boot, Presidio, PostgreSQL
+| Service                  | Port | Langage          | Description                            |
+| ------------------------ | ---- | ---------------- | -------------------------------------- |
+| **API Gateway**          | 8000 | Python/FastAPI   | Point d'entree unique, proxy           |
+| **Doc Ingestor**         | 8001 | Python/FastAPI   | Ingestion OCR, extraction de texte     |
+| **DeID Service**         | 8002 | Java/Spring Boot | Anonymisation des donnees personnelles |
+| **Indexeur Semantique**  | 8003 | Java/Spring Boot | Vectorisation et recherche semantique  |
+| **LLM QA Module**        | 8004 | Python/FastAPI   | Questions/Reponses avec LLM            |
+| **Synthese Comparative** | 8005 | Java/Spring Boot | Generation de resumes                  |
+| **Audit Logger**         | 8006 | Java/Spring Boot | Tracabilite et audit                   |
+| **Interface Clinique**   | 3000 | React            | Interface utilisateur                  |
 
-### 3. IndexeurSémantique (Java)
+## 🚀 Démarrage Rapide
 
-**Port:** 8003  
-**Rôle:** Vectorisation et indexation sémantique  
-**Technologies:** Java 17+, Spring Boot, FAISS, SentenceTransformers
+### Prérequis
 
-### 4. LLMQAModule (Python)
+- Docker & Docker Compose
+- (Optionnel) Ollama pour LLM local
 
-**Port:** 8004  
-**Rôle:** Questions/Réponses avec LLM  
-**Technologies:** Python, LangChain, LlamaIndex, FastAPI
+### 1. Cloner le projet
 
-### 5. SyntheseComparative (Java)
+```bash
+git clone <repository-url>
+cd DocQA-MS
+```
 
-**Port:** 8005  
-**Rôle:** Génération de résumés et comparaisons  
-**Technologies:** Java 17+, Spring Boot, Transformers
+### 2. Démarrer l'infrastructure
 
-### 6. AuditLogger (Java)
+```bash
+# Infrastructure seule (PostgreSQL + RabbitMQ)
+docker-compose up -d postgres rabbitmq
 
-**Port:** 8006  
-**Rôle:** Traçabilité et audit des interactions  
-**Technologies:** Java 17+, Spring Boot, PostgreSQL
+# Vérifier le statut
+docker-compose ps
+```
+
+### 3. Démarrer tous les services
+
+```bash
+# Tous les microservices
+docker-compose up -d
+
+# Suivre les logs
+docker-compose logs -f
+```
+
+### 4. Accéder aux interfaces
+
+| Interface               | URL                    |
+| ----------------------- | ---------------------- |
+| **Application**         | http://localhost:3000  |
+| **RabbitMQ Management** | http://localhost:15672 |
+| **pgAdmin** (optionnel) | http://localhost:5050  |
+
+## 📁 Structure du Projet
+
+```
+DocQA-MS/
+├── docker-compose.yml              # Orchestration Docker
+├── README.md                       # Documentation
+├── config/
+│   └── application.properties      # Configuration partagée
+├── database/
+│   └── init-scripts/              # Scripts d'initialisation DB
+└── microservices/
+    ├── doc-ingestor/              # Python/FastAPI
+    ├── deid-service/              # Java/Spring Boot
+    ├── indexeur-semantique/       # Java/Spring Boot
+    ├── llm-qa-module/             # Python/FastAPI
+    ├── synthese-comparative/      # Java/Spring Boot
+    ├── audit-logger/              # Java/Spring Boot
+    └── interface-clinique/        # React/Tailwind
+```
+
+## 🔧 Configuration
+
+### Variables d'environnement principales
+
+| Variable          | Description     | Défaut                                                         |
+| ----------------- | --------------- | -------------------------------------------------------------- |
+| `DATABASE_URL`    | URL PostgreSQL  | `postgresql://docqa_user:docqa_password@postgres:5432/docqa_*` |
+| `RABBITMQ_HOST`   | Hôte RabbitMQ   | `rabbitmq`                                                     |
+| `LLM_PROVIDER`    | Fournisseur LLM | `ollama`                                                       |
+| `OLLAMA_BASE_URL` | URL Ollama      | `http://host.docker.internal:11434`                            |
+
+### Configuration LLM - Mistral Nemo 12B avec RAG
+
+Le système utilise **Mistral Nemo 12B Instruct** via Ollama avec une architecture RAG (Retrieval-Augmented Generation) pour des réponses précises basées sur les documents médicaux.
+
+#### Prérequis: Installer Ollama et Mistral Nemo
+
+**Windows:**
+
+```powershell
+# Télécharger et installer Ollama depuis https://ollama.com/download
+# Ou via winget:
+winget install Ollama.Ollama
+
+# Télécharger le modèle Mistral Nemo 12B (environ 7 Go)
+ollama pull mistral-nemo
+
+# Démarrer le serveur Ollama
+ollama serve
+```
+
+**Linux/Mac:**
+
+```bash
+# Installer Ollama
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Télécharger Mistral Nemo 12B
+ollama pull mistral-nemo
+
+# Démarrer le serveur
+ollama serve
+```
+
+#### Vérifier l'installation
+
+```bash
+# Vérifier que Ollama fonctionne
+curl http://localhost:11434/api/tags
+
+# Tester Mistral Nemo
+ollama run mistral-nemo "Bonjour, es-tu prêt?"
+```
+
+#### Configuration RAG
+
+Le module LLM QA utilise RAG avec les paramètres suivants (modifiables via `.env`):
+
+| Paramètre           | Valeur         | Description                             |
+| ------------------- | -------------- | --------------------------------------- |
+| `OLLAMA_MODEL`      | `mistral-nemo` | Modèle Mistral Nemo 12B Instruct        |
+| `LLM_TEMPERATURE`   | `0.1`          | Réponses factuelles (basse température) |
+| `LLM_NUM_CTX`       | `8192`         | Fenêtre de contexte                     |
+| `RAG_TOP_K_RESULTS` | `5`            | Documents récupérés                     |
+| `USE_RERANKING`     | `true`         | Reranking pour meilleure précision      |
+| `RERANK_TOP_K`      | `3`            | Documents finaux après reranking        |
+
+#### Alternative: OpenAI (Optionnel)
+
+```env
+USE_LOCAL_LLM=false
+OPENAI_API_KEY=sk-...
+OPENAI_MODEL=gpt-3.5-turbo
+```
+
+## 🧪 Tests
+
+### Exécuter les tests unitaires
+
+```bash
+# Java services
+cd microservices/deid-service
+./mvnw test
+
+# Python services
+cd microservices/llm-qa-module
+pytest
+```
+
+### Health Checks
+
+```bash
+# Vérifier tous les services
+curl http://localhost:8001/health
+curl http://localhost:8002/actuator/health
+curl http://localhost:8003/actuator/health
+curl http://localhost:8004/health
+curl http://localhost:8005/actuator/health
+curl http://localhost:8006/actuator/health
+```
+
+## 📊 Fonctionnalités
+
+### 1. Ingestion de Documents
+
+- Upload PDF, DOC, DOCX, TXT
+- OCR pour documents scannés
+- Extraction de métadonnées
+
+### 2. Anonymisation (DeID)
+
+- Détection des noms, prénoms
+- Anonymisation des dates
+- Masquage des numéros de sécurité sociale
+- Correspondance bidirectionnelle sécurisée
+
+### 3. Recherche Sémantique
+
+- Embeddings vectoriels
+- Recherche par similarité
+- Filtrage par patient/date
+
+### 4. Questions/Réponses
+
+- Interface conversationnelle
+- Contexte patient
+- Sources citées
+- Score de confiance
+
+### 5. Synthèses
+
+- Résumé de dossier patient
+- Comparaison entre patients
+- Export PDF/Markdown
+
+### 6. Audit
+
+- Traçabilité complète
+- Filtrage avancé
+- Export CSV
+
+## 🔒 Sécurité
+
+- Anonymisation conforme RGPD
+- Audit trail complet
+- Authentification (à implémenter)
+- Chiffrement des données sensibles
+
+## 📝 Licence
+
+Projet de fin d'études - 2024
+
+## 👥 Contributeurs
+
+- Développeur Principal: [ACHRAF]
 
 ### 7. InterfaceClinique (React)
 

@@ -91,7 +91,7 @@ def extract_pdf_metadata(file_content: bytes) -> Dict[str, Any]:
                 metadata["pdf_modification_date"] = parse_pdf_date(mod_date)
         
     except Exception as e:
-        logger.warning(f"⚠️ Impossible d'extraire métadonnées PDF: {str(e)}")
+        logger.warning(f"[WARN] Impossible d'extraire metadonnees PDF: {str(e)}")
     
     return metadata
 
@@ -120,7 +120,7 @@ def parse_pdf_date(pdf_date_string: str) -> Optional[str]:
             
             return f"{year}-{month}-{day}T{hour}:{minute}:{second}"
     except Exception as e:
-        logger.warning(f"⚠️ Erreur parsing date PDF: {str(e)}")
+        logger.warning(f"[WARN] Erreur parsing date PDF: {str(e)}")
     
     return None
 

@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: deid-service
   datasource:
     url: jdbc:postgresql://localhost:5433/docqa_deid
     username: docqa_user
@@ -12,11 +14,17 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: docqa_user
+    password: docqa_password
 
-opennlp:
-  model:
-    ner:
-      path: classpath:models/en-ner-person.bin
+# Queues Configuration
+app:
+  queue:
+    input: documents.raw
+    output: documents.deid
 
 server:
   port: 8002
@@ -32,10 +40,10 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,metrics
   endpoint:
     health:
-      show-details: when-authorized
+      show-details: always
 
 logging:
   level:

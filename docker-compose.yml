@@ -1,7 +1,11 @@
 version: "3.8"
 
 services:
-  # PostgreSQL Database - Infrastructure partagée
+  # ============================================
+  # INFRASTRUCTURE
+  # ============================================
+
+  # PostgreSQL Database
   postgres:
     image: postgres:16
     container_name: docqa-postgres
@@ -11,7 +15,7 @@ services:
       POSTGRES_PASSWORD: docqa_password
       POSTGRES_MULTIPLE_DATABASES: docqa_ingestor,docqa_deid,docqa_indexeur,docqa_llmqa,docqa_synthese,docqa_audit
     ports:
-      - "5433:5432" # Port 5433 pour éviter conflit avec PostgreSQL local
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/init-scripts:/docker-entrypoint-initdb.d
@@ -23,7 +27,7 @@ services:
     networks:
       - docqa-network
 
-  # RabbitMQ Message Broker - Infrastructure partagée
+  # RabbitMQ Message Broker
   rabbitmq:
     image: rabbitmq:3.12-management
     container_name: docqa-rabbitmq
@@ -33,8 +37,8 @@ services:
       RABBITMQ_DEFAULT_PASS: docqa_password
       RABBITMQ_DEFAULT_VHOST: /
     ports:
-      - "5672:5672" # AMQP protocol
-      - "15672:15672" # Management UI
+      - "5672:5672"
+      - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
       - rabbitmq_log:/var/log/rabbitmq
@@ -46,7 +50,223 @@ services:
     networks:
       - docqa-network
 
-  # pgAdmin - Interface Web PostgreSQL (optionnel)
+  # ============================================
+  # API GATEWAY
+  # ============================================
+
+  # API Gateway - Point d'entree unique pour tous les microservices
+  api-gateway:
+    build:
+      context: ./microservices/api-gateway
+      dockerfile: Dockerfile
+    container_name: docqa-api-gateway
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - DOC_INGESTOR_URL=http://doc-ingestor:8001
+      - DEID_SERVICE_URL=http://deid-service:8002
+      - INDEXEUR_SERVICE_URL=http://indexeur-semantique:8003
+      - LLM_QA_MODULE_URL=http://llm-qa-module:8004
+      - SYNTHESE_SERVICE_URL=http://synthese-comparative:8005
+      - AUDIT_SERVICE_URL=http://audit-logger:8006
+    depends_on:
+      - doc-ingestor
+      - deid-service
+      - indexeur-semantique
+      - llm-qa-module
+      - synthese-comparative
+      - audit-logger
+    networks:
+      - docqa-network
+
+  # ============================================
+  # MICROSERVICES
+  # ============================================
+
+  # 1. Doc Ingestor - Ingestion de documents (Python/FastAPI)
+  doc-ingestor:
+    build:
+      context: ./microservices/doc-ingestor
+      dockerfile: Dockerfile
+    container_name: docqa-doc-ingestor
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    environment:
+      - DATABASE_URL=postgresql://docqa_user:docqa_password@postgres:5432/docqa_ingestor
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=docqa_user
+      - RABBITMQ_PASSWORD=docqa_password
+    volumes:
+      - doc_uploads:/app/data/documents
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - docqa-network
+
+  # 2. DeID Service - Anonymisation (Java/Spring Boot)
+  deid-service:
+    build:
+      context: ./microservices/deid-service
+      dockerfile: Dockerfile
+    container_name: docqa-deid-service
+    restart: unless-stopped
+    ports:
+      - "8002:8002"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/docqa_deid
+      - SPRING_DATASOURCE_USERNAME=docqa_user
+      - SPRING_DATASOURCE_PASSWORD=docqa_password
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=docqa_user
+      - SPRING_RABBITMQ_PASSWORD=docqa_password
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - docqa-network
+
+  # 3. Indexeur Sémantique - Indexation vectorielle (Java/Spring Boot)
+  indexeur-semantique:
+    build:
+      context: ./microservices/indexeur-semantique
+      dockerfile: Dockerfile
+    container_name: docqa-indexeur-semantique
+    restart: unless-stopped
+    ports:
+      - "8003:8003"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/docqa_indexeur
+      - SPRING_DATASOURCE_USERNAME=docqa_user
+      - SPRING_DATASOURCE_PASSWORD=docqa_password
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=docqa_user
+      - SPRING_RABBITMQ_PASSWORD=docqa_password
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - docqa-network
+
+  # 4. LLM QA Module - Questions/Reponses avec RAG (Python/FastAPI)
+  # Utilise Mistral Nemo 12B Instruct via Ollama
+  llm-qa-module:
+    build:
+      context: ./microservices/llm-qa-module
+      dockerfile: Dockerfile
+    container_name: docqa-llm-qa-module
+    restart: unless-stopped
+    ports:
+      - "8004:8004"
+    environment:
+      # Database
+      - DATABASE_URL=postgresql://docqa_user:docqa_password@postgres:5432/docqa_llmqa
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=docqa_llmqa
+      - DB_USER=docqa_user
+      - DB_PASSWORD=docqa_password
+      # Services
+      - INDEXEUR_SERVICE_URL=http://indexeur-semantique:8003
+      - AUDIT_SERVICE_URL=http://audit-logger:8006
+      # Ollama - Mistral Nemo 12B
+      - USE_LOCAL_LLM=true
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - OLLAMA_MODEL=mistral-nemo
+      # LLM Parameters
+      - LLM_TEMPERATURE=0.1
+      - LLM_TOP_P=0.9
+      - LLM_TOP_K=40
+      - LLM_NUM_CTX=8192
+      # RAG Configuration
+      - RAG_TOP_K_RESULTS=5
+      - RAG_SIMILARITY_THRESHOLD=0.3
+      - USE_RERANKING=true
+      - RERANK_TOP_K=3
+      - MAX_CONTEXT_LENGTH=6000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      indexeur-semantique:
+        condition: service_started
+    networks:
+      - docqa-network
+
+  # 5. Synthese Comparative - Syntheses (Java/Spring Boot)
+  synthese-comparative:
+    build:
+      context: ./microservices/synthese-comparative
+      dockerfile: Dockerfile
+    container_name: docqa-synthese-comparative
+    restart: unless-stopped
+    ports:
+      - "8005:8005"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/docqa_synthese
+      - SPRING_DATASOURCE_USERNAME=docqa_user
+      - SPRING_DATASOURCE_PASSWORD=docqa_password
+      - LLM_SERVICE_URL=http://llm-qa-module:8004
+      - INDEXEUR_SERVICE_URL=http://indexeur-semantique:8003
+      - AUDIT_SERVICE_URL=http://audit-logger:8006
+    depends_on:
+      postgres:
+        condition: service_healthy
+      llm-qa-module:
+        condition: service_started
+    networks:
+      - docqa-network
+
+  # 6. Audit Logger - Journalisation (Java/Spring Boot)
+  audit-logger:
+    build:
+      context: ./microservices/audit-logger
+      dockerfile: Dockerfile
+    container_name: docqa-audit-logger
+    restart: unless-stopped
+    ports:
+      - "8006:8006"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/docqa_audit
+      - SPRING_DATASOURCE_USERNAME=docqa_user
+      - SPRING_DATASOURCE_PASSWORD=docqa_password
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - docqa-network
+
+  # 7. Interface Clinique - Frontend (React)
+  interface-clinique:
+    build:
+      context: ./microservices/interface-clinique
+      dockerfile: Dockerfile
+    container_name: docqa-interface-clinique
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    environment:
+      - REACT_APP_API_GATEWAY_URL=http://api-gateway:8000
+    depends_on:
+      - api-gateway
+    networks:
+      - docqa-network
+
+  # ============================================
+  # OUTILS (Optionnel)
+  # ============================================
+
+  # pgAdmin - Interface Web PostgreSQL
   pgadmin:
     image: dpage/pgadmin4:latest
     container_name: docqa-pgadmin
@@ -75,35 +295,40 @@ volumes:
     driver: local
   pgadmin_data:
     driver: local
+  doc_uploads:
+    driver: local
 
 networks:
   docqa-network:
     driver: bridge
-# 🚀 INSTRUCTIONS D'UTILISATION
+# INSTRUCTIONS D'UTILISATION
 #
-# Démarrer l'infrastructure:
+# Demarrer l'infrastructure:
 #   docker-compose up -d
 #
-# Vérifier le statut:
+# Verifier le statut:
 #   docker-compose ps
 #
 # Voir les logs:
 #   docker-compose logs -f postgres
 #   docker-compose logs -f rabbitmq
+#   docker-compose logs -f api-gateway
 #
-# Arrêter l'infrastructure:
+# Arreter l'infrastructure:
 #   docker-compose down
 #
-# Tout supprimer (ATTENTION: données perdues):
+# Tout supprimer (ATTENTION: donnees perdues):
 #   docker-compose down -v
 #
-# Démarrer avec pgAdmin:
+# Demarrer avec pgAdmin:
 #   docker-compose --profile tools up -d
 #
-# ACCÈS:
-# - PostgreSQL: localhost:5432
+# ACCES:
+# - API Gateway: http://localhost:8000
+# - PostgreSQL: localhost:5433
 # - RabbitMQ AMQP: localhost:5672
 # - RabbitMQ Management: http://localhost:15672 (docqa_user / docqa_password)
 # - pgAdmin: http://localhost:5050 (admin@docqa.local / admin)
+# - Frontend: http://localhost:3000
 #
-# Les microservices se lancent localement et se connectent à cette infrastructure
+# Les microservices communiquent via l'API Gateway (port 8000)

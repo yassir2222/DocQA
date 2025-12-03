@@ -4,10 +4,12 @@ import com.docqa.indexeur.service.IndexingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @Component
@@ -24,16 +26,26 @@ public class DocumentConsumer {
     }
 
     @RabbitListener(queues = "${app.queue.input}")
-    public void receiveMessage(String message) {
+    public void receiveMessage(Message message) {
         try {
-            logger.info("Received message: {}", message);
-            Map<String, Object> payload = objectMapper.readValue(message, Map.class);
+            String rawMessage = new String(message.getBody(), StandardCharsets.UTF_8);
+            logger.info("Received raw message: {}", rawMessage);
+            
+            // Handle double-encoded JSON (if the message is a JSON string wrapped in quotes)
+            String jsonContent = rawMessage;
+            if (rawMessage.startsWith("\"") && rawMessage.endsWith("\"")) {
+                jsonContent = objectMapper.readValue(rawMessage, String.class);
+            }
+            
+            Map<String, Object> payload = objectMapper.readValue(jsonContent, Map.class);
 
             String docId = String.valueOf(payload.get("document_id"));
             String filename = (String) payload.get("filename");
             String content = (String) payload.get("text_content");
-
+            
+            logger.info("Processing document: id={}, filename={}", docId, filename);
             indexingService.indexDocument(docId, filename, content);
+            logger.info("Document indexed successfully: {}", docId);
 
         } catch (Exception e) {
             logger.error("Error processing message", e);

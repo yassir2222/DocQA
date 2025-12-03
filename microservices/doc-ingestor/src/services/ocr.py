@@ -29,7 +29,7 @@ def perform_ocr(file_content: bytes, language: str = 'fra') -> Optional[str]:
         if settings.TESSERACT_CMD:
             pytesseract.pytesseract.tesseract_cmd = settings.TESSERACT_CMD
         
-        logger.info(f"🔍 Démarrage OCR (langue: {language})...")
+        logger.info(f"[OCR] Demarrage OCR (langue: {language})...")
         
         # Essayer de convertir en images
         try:
@@ -39,16 +39,16 @@ def perform_ocr(file_content: bytes, language: str = 'fra') -> Optional[str]:
                 dpi=300,  # Haute résolution pour meilleure qualité OCR
                 fmt='jpeg'
             )
-            logger.info(f"📄 PDF converti en {len(images)} images")
+            logger.info(f"[PDF] PDF converti en {len(images)} images")
         except:
             # Si c'est déjà une image
             images = [Image.open(BytesIO(file_content))]
-            logger.info("🖼️ Image chargée directement")
+            logger.info("[IMAGE] Image chargee directement")
         
         # Extraire le texte de chaque image
         text_parts = []
         for i, image in enumerate(images):
-            logger.info(f"🔍 OCR page/image {i+1}/{len(images)}...")
+            logger.info(f"[OCR] OCR page/image {i+1}/{len(images)}...")
             
             # Configuration OCR pour documents médicaux
             custom_config = r'--oem 3 --psm 6'  # LSTM OCR, assume uniform text block
@@ -61,20 +61,20 @@ def perform_ocr(file_content: bytes, language: str = 'fra') -> Optional[str]:
             
             if text.strip():
                 text_parts.append(text.strip())
-                logger.info(f"✅ Page {i+1}: {len(text)} caractères extraits")
+                logger.info(f"[OK] Page {i+1}: {len(text)} caracteres extraits")
         
         result = "\n\n".join(text_parts)
-        logger.info(f"✅ OCR terminé: {len(result)} caractères au total")
+        logger.info(f"[OK] OCR termine: {len(result)} caracteres au total")
         
         return result if result.strip() else None
         
     except ImportError as e:
-        logger.error(f"❌ Dépendances OCR manquantes: {str(e)}")
+        logger.error(f"[ERREUR] Dependances OCR manquantes: {str(e)}")
         logger.error("Installez: pip install pytesseract pdf2image pillow")
         logger.error("Et téléchargez Tesseract: https://github.com/UB-Mannheim/tesseract/wiki")
         return None
     except Exception as e:
-        logger.error(f"❌ Erreur OCR: {str(e)}", exc_info=True)
+        logger.error(f"[ERREUR] Erreur OCR: {str(e)}", exc_info=True)
         return None
 
 
@@ -93,10 +93,10 @@ def check_ocr_availability() -> bool:
         # Tester Tesseract
         pytesseract.get_tesseract_version()
         
-        logger.info("✅ OCR disponible (Tesseract)")
+        logger.info("[OK] OCR disponible (Tesseract)")
         return True
     except:
-        logger.warning("⚠️ OCR non disponible")
+        logger.warning("[WARN] OCR non disponible")
         return False
 
 
@@ -125,5 +125,5 @@ def enhance_image_for_ocr(image):
         
         return image
     except Exception as e:
-        logger.warning(f"⚠️ Impossible d'améliorer l'image: {str(e)}")
+        logger.warning(f"[WARN] Impossible d'ameliorer l'image: {str(e)}")
         return image

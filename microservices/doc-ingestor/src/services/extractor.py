@@ -36,7 +36,7 @@ def extract_text_from_pdf(file_content: bytes) -> str:
         
         # Si le PDF est scanné (peu de texte), utiliser OCR
         if len(extracted_text.strip()) < 100 and settings.OCR_ENABLED:
-            logger.info("🔍 PDF semble scanné, activation de l'OCR...")
+            logger.info("[OCR] PDF semble scanne, activation de l'OCR...")
             extracted_text = extract_text_with_ocr(file_content)
         
         return extracted_text
@@ -45,7 +45,7 @@ def extract_text_from_pdf(file_content: bytes) -> str:
         logger.error(f"Erreur extraction PDF: {str(e)}")
         # Fallback vers OCR si disponible
         if settings.OCR_ENABLED:
-            logger.info("📸 Tentative extraction via OCR...")
+            logger.info("[OCR] Tentative extraction via OCR...")
             return extract_text_with_ocr(file_content)
         raise
 
@@ -142,7 +142,7 @@ def extract_text_with_ocr(file_content: bytes) -> str:
         
         text_parts = []
         for i, image in enumerate(images):
-            logger.info(f"🔍 OCR page {i+1}/{len(images)}...")
+            logger.info(f"[OCR] OCR page {i+1}/{len(images)}...")
             text = pytesseract.image_to_string(image, lang='fra')
             if text.strip():
                 text_parts.append(text)
@@ -150,7 +150,7 @@ def extract_text_with_ocr(file_content: bytes) -> str:
         return "\n".join(text_parts)
         
     except ImportError:
-        logger.warning("⚠️ OCR non disponible (pytesseract ou pdf2image manquant)")
+        logger.warning("[WARN] OCR non disponible (pytesseract ou pdf2image manquant)")
         return ""
     except Exception as e:
         logger.error(f"Erreur OCR: {str(e)}")
@@ -170,7 +170,7 @@ def extract_text_from_file(file_content: bytes, filename: str) -> str:
     """
     file_extension = f".{filename.split('.')[-1].lower()}"
     
-    logger.info(f"🔍 Extraction du texte de {filename} (type: {file_extension})")
+    logger.info(f"[EXTRACTION] Extraction du texte de {filename} (type: {file_extension})")
     
     if file_extension == ".pdf":
         return extract_text_from_pdf(file_content)
@@ -204,7 +204,7 @@ def extract_text_with_tika(file_content: bytes) -> Optional[str]:
         return parsed.get('content', '')
         
     except ImportError:
-        logger.warning("⚠️ Tika non disponible")
+        logger.warning("[WARN] Tika non disponible")
         return None
     except Exception as e:
         logger.error(f"Erreur Tika: {str(e)}")

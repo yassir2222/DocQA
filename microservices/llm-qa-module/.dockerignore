@@ -1,0 +1,36 @@
+# Python virtual environments
+venv/
+.venv/
+menv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# Logs and data (will be created at runtime)
+logs/
+data/
+
+# Tests
+tests/
+*.test.py
+
+# Misc
+.env
+.env.local
+*.md
+!README.md

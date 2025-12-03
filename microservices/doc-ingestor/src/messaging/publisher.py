@@ -45,10 +45,10 @@ def init_rabbitmq():
             durable=True
         )
         
-        logger.info(f"✅ RabbitMQ connecté (queue: {settings.RABBITMQ_QUEUE})")
+        logger.info(f"[OK] RabbitMQ connecte (queue: {settings.RABBITMQ_QUEUE})")
         
     except Exception as e:
-        logger.error(f"❌ Erreur connexion RabbitMQ: {str(e)}")
+        logger.error(f"[ERREUR] Erreur connexion RabbitMQ: {str(e)}")
         logger.error("Assurez-vous que RabbitMQ est démarré et accessible")
         # Ne pas lever d'exception pour permettre au service de démarrer
         # Les messages seront simplement non publiés
@@ -69,11 +69,11 @@ def publish_document(message: Dict[str, Any]) -> bool:
     try:
         # Vérifier la connexion
         if _channel is None or _channel.is_closed:
-            logger.warning("⚠️ Channel RabbitMQ fermé, tentative de reconnexion...")
+            logger.warning("[WARN] Channel RabbitMQ ferme, tentative de reconnexion...")
             init_rabbitmq()
         
         if _channel is None:
-            logger.error("❌ Impossible de publier: pas de connexion RabbitMQ")
+            logger.error("[ERREUR] Impossible de publier: pas de connexion RabbitMQ")
             return False
         
         # Convertir en JSON
@@ -90,11 +90,11 @@ def publish_document(message: Dict[str, Any]) -> bool:
             )
         )
         
-        logger.info(f"📨 Message publié vers {settings.RABBITMQ_QUEUE} (doc_id: {message.get('document_id')})")
+        logger.info(f"[MSG] Message publie vers {settings.RABBITMQ_QUEUE} (doc_id: {message.get('document_id')})")
         return True
         
     except Exception as e:
-        logger.error(f"❌ Erreur publication RabbitMQ: {str(e)}")
+        logger.error(f"[ERREUR] Erreur publication RabbitMQ: {str(e)}")
         return False
 
 
@@ -105,14 +105,14 @@ def close_rabbitmq():
     try:
         if _channel and not _channel.is_closed:
             _channel.close()
-            logger.info("🔌 Channel RabbitMQ fermé")
+            logger.info("[OK] Channel RabbitMQ ferme")
         
         if _connection and not _connection.is_closed:
             _connection.close()
-            logger.info("🔌 Connexion RabbitMQ fermée")
+            logger.info("[OK] Connexion RabbitMQ fermee")
             
     except Exception as e:
-        logger.error(f"⚠️ Erreur fermeture RabbitMQ: {str(e)}")
+        logger.error(f"[WARN] Erreur fermeture RabbitMQ: {str(e)}")
 
 
 def check_rabbitmq_connection() -> bool:
@@ -159,5 +159,5 @@ def get_queue_status() -> Dict[str, Any]:
         }
         
     except Exception as e:
-        logger.error(f"❌ Erreur récupération statut queue: {str(e)}")
+        logger.error(f"[ERREUR] Erreur recuperation statut queue: {str(e)}")
         return {"error": str(e)}
