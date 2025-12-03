@@ -166,6 +166,44 @@ async def list_documents(
         )
 
 
+@router.get("/documents/stats")
+async def get_statistics():
+    """
+    Statistiques sur les documents ingérés
+    
+    Returns:
+        Statistiques diverses
+    """
+    logger.info("Récupération des statistiques")
+    
+    try:
+        all_docs = get_all_documents(limit=10000)
+        
+        total = len(all_docs)
+        processed = sum(1 for doc in all_docs if doc.get("processed", False))
+        by_type = {}
+        
+        for doc in all_docs:
+            doc_type = doc.get("document_type", "unknown")
+            by_type[doc_type] = by_type.get(doc_type, 0) + 1
+        
+        return {
+            "success": True,
+            "statistics": {
+                "total_documents": total,
+                "processed_documents": processed,
+                "pending_documents": total - processed,
+                "by_type": by_type
+            }
+        }
+    except Exception as e:
+        logger.error(f" Erreur lors de la récupération des statistiques: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erreur lors de la récupération des statistiques: {str(e)}"
+        )
+
+
 @router.get("/documents/{document_id}")
 async def get_document(document_id: int):
     """
@@ -202,39 +240,4 @@ async def get_document(document_id: int):
         )
 
 
-@router.get("/stats")
-async def get_statistics():
-    """
-    Statistiques sur les documents ingérés
-    
-    Returns:
-        Statistiques diverses
-    """
-    logger.info("Récupération des statistiques")
-    
-    try:
-        all_docs = get_all_documents(limit=10000)
-        
-        total = len(all_docs)
-        processed = sum(1 for doc in all_docs if doc.get("processed", False))
-        by_type = {}
-        
-        for doc in all_docs:
-            doc_type = doc.get("document_type", "unknown")
-            by_type[doc_type] = by_type.get(doc_type, 0) + 1
-        
-        return {
-            "success": True,
-            "statistics": {
-                "total_documents": total,
-                "processed_documents": processed,
-                "pending_documents": total - processed,
-                "by_type": by_type
-            }
-        }
-    except Exception as e:
-        logger.error(f" Erreur lors de la récupération des statistiques: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Erreur lors de la récupération des statistiques: {str(e)}"
-        )
+

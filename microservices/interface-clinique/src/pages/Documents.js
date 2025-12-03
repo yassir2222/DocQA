@@ -1,146 +1,35 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import api from "../services/api";
 
 const Icons = {
   upload: (
-    <svg
-      className="w-12 h-12"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-      />
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
     </svg>
   ),
   document: (
-    <svg
-      className="w-6 h-6"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-      />
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
     </svg>
   ),
   search: (
-    <svg
-      className="w-5 h-5"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-      />
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
     </svg>
   ),
-  eye: (
-    <svg
-      className="w-5 h-5"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-      />
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-      />
+  filter: (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+    </svg>
+  ),
+  download: (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
     </svg>
   ),
   trash: (
-    <svg
-      className="w-5 h-5"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-      />
-    </svg>
-  ),
-  hospital: (
-    <svg
-      className="w-6 h-6"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-      />
-    </svg>
-  ),
-  lab: (
-    <svg
-      className="w-6 h-6"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
-      />
-    </svg>
-  ),
-  image: (
-    <svg
-      className="w-6 h-6"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-      />
-    </svg>
-  ),
-  pill: (
-    <svg
-      className="w-6 h-6"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"
-      />
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
     </svg>
   ),
 };
@@ -149,11 +38,9 @@ export default function Documents() {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [dragActive, setDragActive] = useState(false);
-  const [filter, setFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const [filterType, setFilterType] = useState("all");
+  const [dragActive, setDragActive] = useState(false);
 
   useEffect(() => {
     loadDocuments();
@@ -161,44 +48,18 @@ export default function Documents() {
 
   const loadDocuments = async () => {
     try {
-      setDocuments([
-        {
-          id: 1,
-          name: "Compte-rendu_consultation_2024-01.pdf",
-          type: "consultation",
-          status: "processed",
-          uploadDate: "2024-01-15",
-          patientId: "P001",
-          size: "2.4 MB",
-        },
-        {
-          id: 2,
-          name: "Resultats_laboratoire_2024-01.pdf",
-          type: "laboratory",
-          status: "processed",
-          uploadDate: "2024-01-14",
-          patientId: "P001",
-          size: "1.8 MB",
-        },
-        {
-          id: 3,
-          name: "IRM_cerebrale_2024-01.pdf",
-          type: "imaging",
-          status: "processing",
-          uploadDate: "2024-01-13",
-          patientId: "P002",
-          size: "15.2 MB",
-        },
-        {
-          id: 4,
-          name: "Ordonnance_2024-01.pdf",
-          type: "prescription",
-          status: "pending",
-          uploadDate: "2024-01-12",
-          patientId: "P003",
-          size: "0.5 MB",
-        },
-      ]);
+      const response = await api.getDocuments();
+      const docs = response.documents || [];
+      const formattedDocs = docs.map((doc) => ({
+        id: doc.id,
+        name: doc.filename,
+        type: doc.content_type || "application/pdf",
+        size: formatSize(doc.size || 0),
+        date: new Date(doc.upload_date).toLocaleDateString(),
+        status: doc.processed ? "processed" : "processing",
+        patient: `Patient ${doc.patient_id || "Inconnu"}`,
+      }));
+      setDocuments(formattedDocs);
       setLoading(false);
     } catch (error) {
       console.error("Erreur chargement documents:", error);
@@ -206,7 +67,15 @@ export default function Documents() {
     }
   };
 
-  const handleDrag = useCallback((e) => {
+  const formatSize = (bytes) => {
+    if (bytes === 0) return "0 B";
+    const k = 1024;
+    const sizes = ["B", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  };
+
+  const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
     if (e.type === "dragenter" || e.type === "dragover") {
@@ -214,322 +83,225 @@ export default function Documents() {
     } else if (e.type === "dragleave") {
       setDragActive(false);
     }
-  }, []);
+  };
 
-  const handleDrop = useCallback((e) => {
+  const handleDrop = async (e) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setSelectedFile(e.dataTransfer.files[0]);
-    }
-  }, []);
 
-  const handleFileChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      await handleUpload(e.dataTransfer.files[0]);
     }
   };
 
-  const handleUpload = async () => {
-    if (!selectedFile) return;
-
+  const handleUpload = async (file) => {
     setUploading(true);
-    setUploadProgress(0);
-
-    // Simulate upload progress
-    const progressInterval = setInterval(() => {
-      setUploadProgress((prev) => {
-        if (prev >= 90) {
-          clearInterval(progressInterval);
-          return 90;
-        }
-        return prev + 10;
-      });
-    }, 200);
-
     try {
       const formData = new FormData();
-      formData.append("file", selectedFile);
+      formData.append("file", file);
       formData.append("document_type", "compte-rendu");
-
+      formData.append("patient_id", "PATIENT_001");
+      
       await api.uploadDocument(formData);
-      setUploadProgress(100);
-
-      setTimeout(() => {
-        setSelectedFile(null);
-        setUploadProgress(0);
-        loadDocuments();
-      }, 500);
+      await loadDocuments();
     } catch (error) {
       console.error("Erreur upload:", error);
+      alert("Erreur lors de l'upload");
     } finally {
-      clearInterval(progressInterval);
       setUploading(false);
     }
   };
 
-  const getStatusBadge = (status) => {
-    const config = {
-      processed: {
-        bg: "bg-emerald-100",
-        text: "text-emerald-700",
-        label: "Traite",
-      },
-      processing: {
-        bg: "bg-amber-100",
-        text: "text-amber-700",
-        label: "En cours",
-      },
-      pending: {
-        bg: "bg-slate-100",
-        text: "text-slate-700",
-        label: "En attente",
-      },
-      error: { bg: "bg-red-100", text: "text-red-700", label: "Erreur" },
-    };
-    const { bg, text, label } = config[status] || config.pending;
-    return (
-      <span
-        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${bg} ${text}`}
-      >
-        <span
-          className={`w-1.5 h-1.5 rounded-full ${
-            status === "processing" ? "animate-pulse" : ""
-          } ${text.replace("text-", "bg-")}`}
-        />
-        {label}
-      </span>
-    );
-  };
-
-  const getTypeIcon = (type) => {
-    const icons = {
-      consultation: Icons.hospital,
-      laboratory: Icons.lab,
-      imaging: Icons.image,
-      prescription: Icons.pill,
-    };
-    return icons[type] || Icons.document;
-  };
-
-  const getTypeColor = (type) => {
-    const colors = {
-      consultation: "from-blue-500 to-cyan-500",
-      laboratory: "from-purple-500 to-indigo-500",
-      imaging: "from-amber-500 to-orange-500",
-      prescription: "from-emerald-500 to-teal-500",
-    };
-    return colors[type] || "from-slate-500 to-slate-600";
-  };
-
   const filteredDocuments = documents.filter((doc) => {
-    const matchesFilter = filter === "all" || doc.status === filter;
-    const matchesSearch =
-      doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      doc.patientId.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesFilter && matchesSearch;
+    const matchesSearch = doc.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = filterType === "all" || doc.type.includes(filterType);
+    return matchesSearch && matchesType;
   });
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="relative">
-          <div className="w-16 h-16 border-4 border-cyan-200 rounded-full animate-spin border-t-cyan-600" />
-        </div>
+      <div className="flex items-center justify-center h-96">
+        <div className="w-12 h-12 border-4 border-brand-100 rounded-full animate-spin border-t-brand-600" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-800 via-slate-700 to-slate-600 bg-clip-text text-transparent">
-          Gestion des Documents
-        </h1>
-        <p className="text-slate-500 mt-1">
-          Uploadez et gerez vos documents medicaux
-        </p>
+    <div className="space-y-8 animate-fade-in">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold font-display text-slate-900">Documents</h1>
+          <p className="text-slate-500 mt-1">Gérez vos documents médicaux</p>
+        </div>
+        <button
+          onClick={() => document.getElementById("file-upload").click()}
+          className="px-4 py-2 bg-brand-600 text-white rounded-xl hover:bg-brand-700 transition-colors shadow-lg shadow-brand-500/20 flex items-center gap-2 font-medium"
+        >
+          {Icons.upload}
+          <span>Uploader un document</span>
+        </button>
+        <input
+          id="file-upload"
+          type="file"
+          className="hidden"
+          onChange={(e) => e.target.files[0] && handleUpload(e.target.files[0])}
+        />
       </div>
 
-      {/* Upload Zone */}
+      {/* Upload Area */}
       <div
-        className={`relative border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-300 ${
+        className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-200 ${
           dragActive
-            ? "border-cyan-500 bg-cyan-50 scale-[1.02]"
-            : selectedFile
-            ? "border-emerald-500 bg-emerald-50"
-            : "border-slate-300 hover:border-slate-400 bg-white"
+            ? "border-brand-500 bg-brand-50"
+            : "border-slate-200 hover:border-brand-400 hover:bg-slate-50"
         }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
         onDrop={handleDrop}
       >
-        {selectedFile ? (
-          <div className="space-y-6">
-            <div className="w-20 h-20 mx-auto bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center text-white shadow-lg">
-              {Icons.document}
-            </div>
-            <div>
-              <p className="text-lg font-semibold text-slate-800">
-                {selectedFile.name}
-              </p>
-              <p className="text-sm text-slate-500">
-                {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
-              </p>
-            </div>
-
-            {uploading && (
-              <div className="w-full max-w-xs mx-auto">
-                <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full transition-all duration-300"
-                    style={{ width: `${uploadProgress}%` }}
-                  />
-                </div>
-                <p className="text-sm text-slate-500 mt-2">
-                  {uploadProgress}% complete
-                </p>
-              </div>
+        <div className="flex flex-col items-center gap-3">
+          <div className={`p-4 rounded-full ${dragActive ? "bg-brand-100 text-brand-600" : "bg-slate-100 text-slate-400"}`}>
+            {uploading ? (
+              <div className="w-8 h-8 border-2 border-current rounded-full animate-spin border-t-transparent" />
+            ) : (
+              <div className="w-8 h-8">{Icons.upload}</div>
             )}
-
-            <div className="flex justify-center gap-4">
-              <button
-                onClick={handleUpload}
-                disabled={uploading}
-                className="px-8 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-xl font-medium shadow-lg shadow-cyan-500/25 hover:shadow-xl hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {uploading ? "Upload en cours..." : "Uploader le fichier"}
-              </button>
-              <button
-                onClick={() => setSelectedFile(null)}
-                disabled={uploading}
-                className="px-8 py-3 bg-slate-100 text-slate-700 rounded-xl font-medium hover:bg-slate-200 transition-colors disabled:opacity-50"
-              >
-                Annuler
-              </button>
-            </div>
           </div>
-        ) : (
-          <>
-            <div className="w-20 h-20 mx-auto bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl flex items-center justify-center text-slate-400 mb-6">
-              {Icons.upload}
-            </div>
-            <p className="text-lg font-medium text-slate-700">
-              Glissez-deposez un document ici
+          <div>
+            <p className="text-lg font-medium text-slate-900">
+              {uploading ? "Upload en cours..." : "Glissez-déposez vos fichiers ici"}
             </p>
-            <p className="text-slate-500 my-2">ou</p>
-            <label className="inline-block px-8 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-xl font-medium cursor-pointer shadow-lg shadow-cyan-500/25 hover:shadow-xl hover:-translate-y-0.5 transition-all">
-              Selectionner un fichier
-              <input
-                type="file"
-                className="hidden"
-                onChange={handleFileChange}
-                accept=".pdf,.doc,.docx,.txt"
-              />
-            </label>
-            <p className="mt-6 text-xs text-slate-400">
-              Formats acceptes: PDF, DOC, DOCX, TXT (max 50 MB)
+            <p className="text-sm text-slate-500 mt-1">
+              ou cliquez pour sélectionner (PDF, DOCX, JPG)
             </p>
-          </>
-        )}
+          </div>
+        </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="flex flex-wrap gap-2">
-            {[
-              { value: "all", label: "Tous" },
-              { value: "processed", label: "Traites" },
-              { value: "processing", label: "En cours" },
-              { value: "pending", label: "En attente" },
-            ].map(({ value, label }) => (
-              <button
-                key={value}
-                onClick={() => setFilter(value)}
-                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                  filter === value
-                    ? "bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/25"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 flex flex-col md:flex-row gap-4">
+        <div className="flex-1 relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+            {Icons.search}
           </div>
+          <input
+            type="text"
+            placeholder="Rechercher un document..."
+            className="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-xl leading-5 bg-slate-50 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all sm:text-sm"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div className="flex items-center gap-2">
           <div className="relative">
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+            <select
+              className="appearance-none bg-slate-50 border border-slate-200 text-slate-700 py-2 pl-4 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 text-sm font-medium"
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+            >
+              <option value="all">Tous les types</option>
+              <option value="pdf">PDF</option>
+              <option value="image">Images</option>
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+              {Icons.filter}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Documents List */}
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-slate-100">
+            <thead className="bg-slate-50">
+              <tr>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  Nom du document
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  Patient
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  Date
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  Taille
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  Statut
+                </th>
+                <th className="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-slate-100">
+              {filteredDocuments.map((doc) => (
+                <tr key={doc.id} className="hover:bg-slate-50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0 h-10 w-10 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center">
+                        {Icons.document}
+                      </div>
+                      <div className="ml-4">
+                        <div className="text-sm font-medium text-slate-900">{doc.name}</div>
+                        <div className="text-xs text-slate-500">{doc.type}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="h-6 w-6 rounded-full bg-accent-100 text-accent-600 flex items-center justify-center text-xs font-bold mr-2">
+                        {doc.patient.charAt(0)}
+                      </div>
+                      <span className="text-sm text-slate-600">{doc.patient}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                    {doc.date}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                    {doc.size}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span
+                      className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        doc.status === "processed"
+                          ? "bg-emerald-100 text-emerald-800"
+                          : "bg-amber-100 text-amber-800"
+                      }`}
+                    >
+                      {doc.status === "processed" ? "Traité" : "En cours"}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div className="flex items-center justify-end gap-2">
+                      <button className="text-slate-400 hover:text-brand-600 transition-colors p-1">
+                        {Icons.download}
+                      </button>
+                      <button className="text-slate-400 hover:text-red-600 transition-colors p-1">
+                        {Icons.trash}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {filteredDocuments.length === 0 && (
+          <div className="p-12 text-center">
+            <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
               {Icons.search}
             </div>
-            <input
-              type="text"
-              placeholder="Rechercher..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-12 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent w-full md:w-64 transition-all"
-            />
+            <h3 className="text-lg font-medium text-slate-900">Aucun document trouvé</h3>
+            <p className="text-slate-500 mt-1">Essayez de modifier vos filtres ou uploadez un nouveau document.</p>
           </div>
-        </div>
+        )}
       </div>
-
-      {/* Documents Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredDocuments.map((doc) => (
-          <div
-            key={doc.id}
-            className="group bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-          >
-            <div className={`h-2 bg-gradient-to-r ${getTypeColor(doc.type)}`} />
-            <div className="p-6">
-              <div className="flex items-start gap-4">
-                <div
-                  className={`p-3 rounded-xl bg-gradient-to-br ${getTypeColor(
-                    doc.type
-                  )} text-white shadow-lg`}
-                >
-                  {getTypeIcon(doc.type)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-slate-800 truncate group-hover:text-cyan-600 transition-colors">
-                    {doc.name}
-                  </p>
-                  <p className="text-sm text-slate-500 mt-1">
-                    {doc.patientId} - {doc.size}
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
-                <div>
-                  {getStatusBadge(doc.status)}
-                  <p className="text-xs text-slate-400 mt-2">
-                    {doc.uploadDate}
-                  </p>
-                </div>
-                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button className="p-2 rounded-lg bg-slate-100 text-slate-600 hover:bg-cyan-100 hover:text-cyan-600 transition-colors">
-                    {Icons.eye}
-                  </button>
-                  <button className="p-2 rounded-lg bg-slate-100 text-slate-600 hover:bg-red-100 hover:text-red-600 transition-colors">
-                    {Icons.trash}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {filteredDocuments.length === 0 && (
-        <div className="text-center py-16 bg-white rounded-2xl border border-slate-100">
-          <div className="w-16 h-16 mx-auto bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 mb-4">
-            {Icons.document}
-          </div>
-          <p className="text-slate-500">Aucun document trouve</p>
-        </div>
-      )}
     </div>
   );
 }

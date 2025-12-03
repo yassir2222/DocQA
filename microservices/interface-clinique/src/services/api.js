@@ -200,9 +200,32 @@ const api = {
 
   getDashboardStats: async () => {
     try {
-      const response = await apiClient.get("/api/dashboard/stats");
-      return response.data;
+      const [docStatsRes, auditStatsRes] = await Promise.allSettled([
+        apiClient.get("/api/documents/stats"),
+        apiClient.get("/api/audit/stats"),
+      ]);
+
+      const docStats =
+        docStatsRes.status === "fulfilled"
+          ? docStatsRes.value.data.statistics
+          : {};
+      const auditStats =
+        auditStatsRes.status === "fulfilled" ? auditStatsRes.value.data : {};
+
+      return {
+        documents: {
+          total: docStats.total_documents || 0,
+          processed: docStats.processed_documents || 0,
+          pending: docStats.pending_documents || 0,
+        },
+        questions: {
+          total: auditStats.logsByAction?.["QA_QUERY"] || 0,
+          today: 0,
+        },
+        services: [],
+      };
     } catch (error) {
+      console.error("Dashboard stats error", error);
       return {
         documents: { total: 0, processed: 0, pending: 0 },
         questions: { total: 0, today: 0 },
