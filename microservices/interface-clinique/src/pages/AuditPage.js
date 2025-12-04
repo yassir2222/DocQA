@@ -88,7 +88,9 @@ export default function AuditPage() {
     setLoading(true);
     try {
       const response = await api.getAuditLogs();
-      if (response.success && Array.isArray(response.logs)) {
+      if (response.content && Array.isArray(response.content)) {
+        setLogs(response.content);
+      } else if (response.success && Array.isArray(response.logs)) {
         setLogs(response.logs);
       } else if (Array.isArray(response)) {
         setLogs(response);
@@ -108,9 +110,12 @@ export default function AuditPage() {
   }, []);
 
   const filteredLogs = logs.filter((log) => {
+    const userName = log.userId || log.user || "";
+    const details = log.details || "";
+    
     const matchesSearch =
-      log.user?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.details?.toLowerCase().includes(searchTerm.toLowerCase());
+      userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      details.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = !filterAction || log.action === filterAction;
     return matchesSearch && matchesFilter;
   });
@@ -128,7 +133,7 @@ export default function AuditPage() {
         [
           new Date(log.timestamp).toLocaleString("fr-FR"),
           actionLabels[log.action] || log.action,
-          log.user,
+          log.userId || log.user,
           `"${log.details}"`,
           log.ip,
         ].join(",")
@@ -189,7 +194,7 @@ export default function AuditPage() {
           },
           {
             label: "Utilisateurs Actifs",
-            value: [...new Set(logs.map((l) => l.user))].length,
+            value: [...new Set(logs.map((l) => l.userId || l.user))].length,
             color: "from-brand-500 to-accent-500",
           },
           {
@@ -297,13 +302,19 @@ export default function AuditPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-2 text-sm text-slate-600">
                         {Icons.clock}
-                        {new Date(log.timestamp).toLocaleDateString("fr-FR", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
+                        {(() => {
+                          const dateVal = log.timestamp || log.createdAt;
+                          const dateObj = Array.isArray(dateVal) 
+                            ? new Date(dateVal[0], dateVal[1]-1, dateVal[2], dateVal[3], dateVal[4], dateVal[5])
+                            : new Date(dateVal);
+                          return dateObj.toLocaleDateString("fr-FR", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          });
+                        })()}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -322,7 +333,7 @@ export default function AuditPage() {
                           {Icons.user}
                         </div>
                         <span className="text-sm font-medium text-slate-700">
-                          {log.user}
+                          {log.userId || log.user || "Inconnu"}
                         </span>
                       </div>
                     </td>

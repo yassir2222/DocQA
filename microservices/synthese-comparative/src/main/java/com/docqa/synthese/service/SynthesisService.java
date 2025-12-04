@@ -22,13 +22,15 @@ public class SynthesisService {
 
     private final WebClient webClient;
     private final LLMClientService llmClientService;
+    private final AuditClientService auditClientService;
 
     @Value("${services.indexeur.url}")
     private String indexeurUrl;
 
-    public SynthesisService(LLMClientService llmClientService) {
+    public SynthesisService(LLMClientService llmClientService, AuditClientService auditClientService) {
         this.webClient = WebClient.builder().build();
         this.llmClientService = llmClientService;
+        this.auditClientService = auditClientService;
     }
 
     /**
@@ -63,6 +65,15 @@ public class SynthesisService {
             result.setProcessingTimeMs((int) (System.currentTimeMillis() - startTime));
 
             logger.info("✅ Synthèse générée en {}ms", result.getProcessingTimeMs());
+            
+            // Audit
+            auditClientService.logAction(
+                "GENERATE_SYNTHESIS", 
+                request.getUserId(), 
+                "Type: " + request.getSynthesisType() + ", Docs: " + request.getDocumentIds().size(), 
+                result.getId()
+            );
+            
             return result;
 
         } catch (Exception e) {
@@ -116,6 +127,15 @@ public class SynthesisService {
             result.setProcessingTimeMs((int) (System.currentTimeMillis() - startTime));
 
             logger.info("✅ Comparaison générée en {}ms", result.getProcessingTimeMs());
+            
+            // Audit
+            auditClientService.logAction(
+                "GENERATE_COMPARISON", 
+                request.getUserId(), 
+                "Type: " + request.getComparisonType() + ", P1: " + request.getPatientId1() + ", P2: " + request.getPatientId2(), 
+                result.getId()
+            );
+            
             return result;
 
         } catch (Exception e) {

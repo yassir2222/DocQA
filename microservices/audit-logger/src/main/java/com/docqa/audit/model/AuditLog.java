@@ -1,6 +1,8 @@
 package com.docqa.audit.model;
 
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -61,6 +63,8 @@ public class AuditLog {
     private String errorMessage;
 
     @Column(name = "created_at")
+    @JsonProperty("timestamp")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
 
     @PrePersist

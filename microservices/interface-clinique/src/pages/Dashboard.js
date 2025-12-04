@@ -113,17 +113,27 @@ export default function Dashboard() {
         avgResponseTime: 1.2,
       });
 
-      if (auditLogs.success && Array.isArray(auditLogs.logs)) {
-        const activity = auditLogs.logs.map((log) => ({
+      const logsData = auditLogs.content || auditLogs.logs || (Array.isArray(auditLogs) ? auditLogs : []);
+      
+      if (Array.isArray(logsData)) {
+        const activity = logsData.map((log) => ({
           id: log.id,
           type:
             log.action === "UPLOAD"
               ? "upload"
               : log.action === "QUERY"
               ? "query"
+              : log.action === "GENERATE_SYNTHESIS"
+              ? "synthesis"
               : "document",
-          message: log.details?.filename || log.action,
-          time: new Date(log.timestamp).toLocaleTimeString(),
+          message: log.details || log.action,
+          time: (() => {
+            const dateVal = log.timestamp || log.createdAt;
+            const dateObj = Array.isArray(dateVal) 
+              ? new Date(dateVal[0], dateVal[1]-1, dateVal[2], dateVal[3], dateVal[4], dateVal[5])
+              : new Date(dateVal);
+            return dateObj.toLocaleTimeString();
+          })(),
           status: "success",
         }));
         setRecentActivity(activity);

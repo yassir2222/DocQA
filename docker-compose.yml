@@ -216,9 +216,9 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/docqa_synthese
       - SPRING_DATASOURCE_USERNAME=docqa_user
       - SPRING_DATASOURCE_PASSWORD=docqa_password
-      - LLM_SERVICE_URL=http://llm-qa-module:8004
-      - INDEXEUR_SERVICE_URL=http://indexeur-semantique:8003
-      - AUDIT_SERVICE_URL=http://audit-logger:8006
+      - SERVICES_LLMQA_URL=http://llm-qa-module:8004
+      - SERVICES_INDEXEUR_URL=http://indexeur-semantique:8003
+      - SERVICES_AUDIT_URL=http://audit-logger:8006
     depends_on:
       postgres:
         condition: service_healthy
