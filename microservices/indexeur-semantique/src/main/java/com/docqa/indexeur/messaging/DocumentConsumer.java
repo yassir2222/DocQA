@@ -43,8 +43,15 @@ public class DocumentConsumer {
             String filename = (String) payload.get("filename");
             String content = (String) payload.get("text_content");
             
-            logger.info("Processing document: id={}, filename={}", docId, filename);
-            indexingService.indexDocument(docId, filename, content);
+            // Extract patient_id from metadata
+            String patientId = null;
+            if (payload.containsKey("metadata")) {
+                Map<String, Object> metadata = (Map<String, Object>) payload.get("metadata");
+                patientId = (String) metadata.get("patient_id");
+            }
+            
+            logger.info("Processing document: id={}, filename={}, patientId={}", docId, filename, patientId);
+            indexingService.indexDocument(docId, filename, content, patientId);
             logger.info("Document indexed successfully: {}", docId);
 
         } catch (Exception e) {

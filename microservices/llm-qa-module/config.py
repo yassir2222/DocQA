@@ -37,12 +37,12 @@ class Settings(BaseSettings):
     OLLAMA_MODEL: str = "mistral-nemo"  # Mistral Nemo 12B Instruct
     USE_LOCAL_LLM: bool = True
     
-    # LLM Parameters for Mistral Nemo
-    LLM_TEMPERATURE: float = 0.1  # Low for factual responses
-    LLM_TOP_P: float = 0.9
-    LLM_TOP_K: int = 40
-    LLM_NUM_CTX: int = 8192  # Mistral Nemo supports 128k but 8k is enough for RAG
-    LLM_REPEAT_PENALTY: float = 1.1
+    # LLM Parameters for Mistral Nemo - Optimized for Medical Q&A
+    LLM_TEMPERATURE: float = 0.05  # Very low for precise medical responses
+    LLM_TOP_P: float = 0.85  # Slightly lower for more focused responses
+    LLM_TOP_K: int = 30  # Reduced for more deterministic output
+    LLM_NUM_CTX: int = 16384  # Larger context for better document understanding
+    LLM_REPEAT_PENALTY: float = 1.15  # Slightly higher to avoid repetition
     
     # IndexeurSemantique Service
     INDEXEUR_SERVICE_URL: str = "http://localhost:8003"
@@ -54,12 +54,12 @@ class Settings(BaseSettings):
     VECTOR_STORE_PATH: str = "./data/vector_store"
     EMBEDDING_MODEL: str = "sentence-transformers/all-MiniLM-L6-v2"
     
-    # RAG Query Settings
+    # RAG Query Settings - Optimized for Medical Documents
     RAG_TOP_K_RESULTS: int = 5  # Number of documents to retrieve
-    RAG_CHUNK_SIZE: int = 512  # Size of text chunks
-    RAG_CHUNK_OVERLAP: int = 50  # Overlap between chunks
-    RAG_SIMILARITY_THRESHOLD: float = 0.3  # Minimum similarity score
-    MAX_CONTEXT_LENGTH: int = 6000  # Max context for Mistral Nemo
+    RAG_CHUNK_SIZE: int = 1024  # Larger chunks for better context
+    RAG_CHUNK_OVERLAP: int = 100  # More overlap to avoid cutting important info
+    RAG_SIMILARITY_THRESHOLD: float = 0.25  # Lower threshold to include more relevant docs
+    MAX_CONTEXT_LENGTH: int = 12000  # Larger context with 16k context window
     
     # Reranking (optional)
     USE_RERANKING: bool = True

@@ -2,9 +2,9 @@ spring:
   application:
     name: synthese-comparative
   datasource:
-    url: jdbc:postgresql://localhost:5433/docqa_synthese
-    username: docqa_user
-    password: docqa_password
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5433}/docqa_synthese
+    username: ${DB_USER:docqa_user}
+    password: ${DB_PASSWORD:docqa_password}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -21,17 +21,17 @@ server:
 # Services externes
 services:
   indexeur:
-    url: http://localhost:8003
+    url: ${INDEXEUR_URL:http://localhost:8003}
   llmqa:
-    url: http://localhost:8004
+    url: ${LLMQA_URL:http://localhost:8004}
   audit:
-    url: http://localhost:8006
+    url: ${AUDIT_URL:http://localhost:8006}
 
 # Configuration LLM
 llm:
   ollama:
-    url: http://localhost:11434
-    model: llama2
+    url: ${OLLAMA_URL:http://host.docker.internal:11434}
+    model: ${OLLAMA_MODEL:mistral-nemo}
   use-local: true
 
 springdoc:

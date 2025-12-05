@@ -21,12 +21,18 @@ public class Document {
     private String originalDocId;
 
     private String filename;
+    
+    @Column(name = "patient_id")
+    private String patientId;
 
     @Column(columnDefinition = "TEXT")
     private String content;
 
     @Column(name = "embedding", columnDefinition = "float8[]")
     private double[] embedding; // Using double[] for JPA mapping to PostgreSQL array
+    
+    @Transient
+    private Double score;
 
     private LocalDateTime indexedAt;
 

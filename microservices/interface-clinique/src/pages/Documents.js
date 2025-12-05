@@ -41,6 +41,7 @@ export default function Documents() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [dragActive, setDragActive] = useState(false);
+  const [patientName, setPatientName] = useState("");
 
   useEffect(() => {
     loadDocuments();
@@ -57,7 +58,8 @@ export default function Documents() {
         size: formatSize(doc.size || 0),
         date: new Date(doc.upload_date).toLocaleDateString(),
         status: doc.processed ? "processed" : "processing",
-        patient: `Patient ${doc.patient_id || "Inconnu"}`,
+        patient: doc.patient_id || "Inconnu",
+        patientId: doc.patient_id,
       }));
       setDocuments(formattedDocs);
       setLoading(false);
@@ -96,12 +98,16 @@ export default function Documents() {
   };
 
   const handleUpload = async (file) => {
+    if (!patientName.trim()) {
+      alert("Veuillez entrer le nom du patient avant d'uploader");
+      return;
+    }
     setUploading(true);
     try {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("document_type", "compte-rendu");
-      formData.append("patient_id", "PATIENT_001");
+      formData.append("patient_id", patientName.trim());
       
       await api.uploadDocument(formData);
       await loadDocuments();
@@ -147,6 +153,23 @@ export default function Documents() {
           className="hidden"
           onChange={(e) => e.target.files[0] && handleUpload(e.target.files[0])}
         />
+      </div>
+
+      {/* Patient Name Input */}
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
+        <label className="block text-sm font-medium text-slate-700 mb-2">
+          Nom du patient
+        </label>
+        <input
+          type="text"
+          placeholder="Ex: Jean Dupont, Marie Martin..."
+          className="block w-full md:w-1/3 px-4 py-2 border border-slate-200 rounded-xl bg-slate-50 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all sm:text-sm"
+          value={patientName}
+          onChange={(e) => setPatientName(e.target.value)}
+        />
+        <p className="text-xs text-slate-500 mt-2">
+          Ce nom sera associé aux documents uploadés. Un même patient peut avoir plusieurs documents.
+        </p>
       </div>
 
       {/* Upload Area */}

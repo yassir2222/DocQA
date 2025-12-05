@@ -120,16 +120,38 @@ const api = {
 
   // === Question-Reponse ===
 
-  askQuestion: async (question, patientId = null) => {
+  askQuestion: async (question, patientId = null, documentId = null) => {
     try {
-      const response = await apiClient.post("/api/qa/ask", {
+      const payload = {
         question,
         patient_id: patientId,
         max_context_docs: 5,
+      };
+      
+      // Ajouter document_id si spécifié
+      if (documentId) {
+        payload.document_id = documentId;
+      }
+      
+      // Timeout plus long pour le LLM (3 minutes)
+      const response = await apiClient.post("/api/qa/ask", payload, {
+        timeout: 180000,
       });
       return response.data;
     } catch (error) {
-      console.warn("Service Q/R non disponible");
+      console.warn("Service Q/R erreur:", error.response?.status, error.response?.data);
+      
+      // Handle specific error cases
+      if (error.response?.status === 404) {
+        const errorDetail = error.response?.data?.detail || "Aucun document trouvé";
+        return {
+          answer: `Je n'ai pas trouvé de documents pertinents pour répondre à votre question.\n\n**Votre question:** "${question}"\n\n**Suggestion:** Essayez de poser une question plus spécifique en lien avec les documents médicaux du patient.`,
+          sources: [],
+          confidence: 0,
+        };
+      }
+      
+      // Generic error (service unavailable)
       return {
         answer: `Le service de questions/reponses n'est pas disponible actuellement.\n\nVotre question: "${question}"\n\nVerifiez que tous les services sont demarres.`,
         sources: [],

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
 
@@ -52,7 +52,6 @@ const Icons = {
 };
 
 export default function Dashboard() {
-  console.log("Dashboard component rendering");
   const [stats, setStats] = useState({
     totalDocuments: 0,
     processedDocuments: 0,
@@ -67,15 +66,21 @@ export default function Dashboard() {
     totalQueries: 0,
     avgResponseTime: 0,
   });
+  const animationRan = useRef(false);
 
   useEffect(() => {
     loadDashboardData();
   }, []);
 
   useEffect(() => {
+    // Only run animation once when stats are loaded (not zero) and animation hasn't run yet
+    if (animationRan.current || stats.totalDocuments === 0) return;
+    animationRan.current = true;
+
     const duration = 1500;
     const steps = 60;
     const stepDuration = duration / steps;
+    const targetStats = { ...stats };
 
     let step = 0;
     const timer = setInterval(() => {
@@ -84,10 +89,10 @@ export default function Dashboard() {
       const easeOut = 1 - Math.pow(1 - progress, 3);
 
       setAnimatedStats({
-        totalDocuments: Math.round(stats.totalDocuments * easeOut),
-        processedDocuments: Math.round(stats.processedDocuments * easeOut),
-        totalQueries: Math.round(stats.totalQueries * easeOut),
-        avgResponseTime: parseFloat((stats.avgResponseTime * easeOut).toFixed(1)),
+        totalDocuments: Math.round(targetStats.totalDocuments * easeOut),
+        processedDocuments: Math.round(targetStats.processedDocuments * easeOut),
+        totalQueries: Math.round(targetStats.totalQueries * easeOut),
+        avgResponseTime: parseFloat((targetStats.avgResponseTime * easeOut).toFixed(1)),
       });
 
       if (step >= steps) clearInterval(timer);
@@ -97,14 +102,11 @@ export default function Dashboard() {
   }, [stats]);
 
   const loadDashboardData = async () => {
-    console.log("Loading dashboard data...");
     try {
       const [dashboardStats, auditLogs] = await Promise.all([
         api.getDashboardStats(),
         api.getAuditLogs({ limit: 5 }),
       ]);
-      console.log("Dashboard stats:", dashboardStats);
-      console.log("Audit logs:", auditLogs);
 
       setStats({
         totalDocuments: dashboardStats.documents?.total || 0,

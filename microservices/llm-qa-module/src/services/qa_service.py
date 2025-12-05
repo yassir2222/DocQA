@@ -181,25 +181,31 @@ Patient: {patient_id}
     def _build_mistral_prompt(self, question: str, context: str) -> str:
         """
         Build optimized prompt for Mistral Nemo 12B Instruct
-        Uses the recommended prompt format
+        Uses the recommended prompt format with enhanced medical context
         """
-        system_prompt = """Tu es un assistant medical expert specialise dans l'analyse de documents cliniques.
-Tu dois repondre aux questions en te basant UNIQUEMENT sur les documents fournis.
-Sois precis, professionnel et cite tes sources."""
+        system_prompt = """Tu es un assistant medical expert francophone, specialise dans l'analyse de dossiers patients et documents cliniques.
 
-        user_prompt = f"""Voici les documents medicaux pertinents:
+Ton role:
+- Analyser les documents medicaux fournis avec precision
+- Repondre aux questions en citant les informations pertinentes
+- Utiliser la terminologie medicale appropriee
+- Etre direct et concis dans tes reponses
+
+Regles strictes:
+- Base-toi sur les documents fournis
+- Ne fais pas de suppositions non etayees
+- NE JAMAIS ajouter de disclaimers ou avertissements du type "ces informations sont basees sur les documents" ou "il est important de noter"
+- Reponds directement a la question sans commentaires meta sur ta reponse"""
+
+        user_prompt = f"""DOCUMENTS MEDICAUX DU PATIENT:
 
 {context}
 
----
+{'='*50}
 
 QUESTION: {question}
 
-INSTRUCTIONS:
-1. Reponds en te basant UNIQUEMENT sur les documents ci-dessus
-2. Si l'information n'est pas dans les documents, dis-le clairement
-3. Structure ta reponse de maniere claire et professionnelle
-4. Utilise un langage medical precis mais accessible
+Reponds directement et professionnellement. Pas de disclaimers ni de remarques sur les limites des documents.
 
 REPONSE:"""
 

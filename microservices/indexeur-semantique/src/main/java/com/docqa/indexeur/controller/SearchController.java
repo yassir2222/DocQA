@@ -31,8 +31,9 @@ public class SearchController {
     public ResponseEntity<Map<String, Object>> searchPost(@RequestBody Map<String, Object> request) {
         String query = (String) request.getOrDefault("query", "");
         int topK = request.containsKey("topK") ? ((Number) request.get("topK")).intValue() : 10;
+        String patientId = (String) request.get("patientId");
         
-        List<Document> results = indexingService.search(query, topK);
+        List<Document> results = indexingService.search(query, topK, patientId);
         
         Map<String, Object> response = new HashMap<>();
         response.put("results", results);

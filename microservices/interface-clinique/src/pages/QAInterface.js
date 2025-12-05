@@ -17,9 +17,14 @@ const Icons = {
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
     </svg>
   ),
-  refresh: (
+  document: (
     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    </svg>
+  ),
+  folder: (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
     </svg>
   ),
 };
@@ -29,14 +34,17 @@ export default function QAInterface() {
     {
       id: 1,
       type: "bot",
-      content: "Bonjour ! Je suis votre assistant médical. Posez-moi une question sur les dossiers patients.",
+      content: "Bonjour ! Je suis votre assistant médical. Sélectionnez un patient et un document, puis posez-moi vos questions.",
       timestamp: new Date(),
     },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [documents, setDocuments] = useState([]);
   const [patients, setPatients] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState("");
+  const [selectedDocument, setSelectedDocument] = useState("");
+  const [patientDocuments, setPatientDocuments] = useState([]);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -48,18 +56,42 @@ export default function QAInterface() {
   }, [messages]);
 
   useEffect(() => {
-    loadPatients();
+    loadDocuments();
   }, []);
 
-  const loadPatients = async () => {
+  // Quand le patient change, filtrer ses documents
+  useEffect(() => {
+    if (selectedPatient) {
+      const docs = documents.filter((d) => d.patient_id === selectedPatient);
+      setPatientDocuments(docs);
+      // Sélectionner le premier document par défaut
+      if (docs.length > 0) {
+        setSelectedDocument(docs[0].id);
+      } else {
+        setSelectedDocument("");
+      }
+    } else {
+      setPatientDocuments([]);
+      setSelectedDocument("");
+    }
+  }, [selectedPatient, documents]);
+
+  const loadDocuments = async () => {
     try {
       const response = await api.getDocuments();
       const docs = response.documents || [];
+      setDocuments(docs);
+      
+      // Extraire les patients uniques
       const uniquePatients = [...new Set(docs.map((d) => d.patient_id))].filter(Boolean);
       setPatients(uniquePatients);
-      if (uniquePatients.length > 0) setSelectedPatient(uniquePatients[0]);
+      
+      // Sélectionner le premier patient par défaut
+      if (uniquePatients.length > 0) {
+        setSelectedPatient(uniquePatients[0]);
+      }
     } catch (error) {
-      console.error("Erreur chargement patients:", error);
+      console.error("Erreur chargement documents:", error);
     }
   };
 
@@ -79,7 +111,8 @@ export default function QAInterface() {
     setLoading(true);
 
     try {
-      const response = await api.askQuestion(input, selectedPatient);
+      // Utiliser le document sélectionné s'il y en a un, sinon le patient
+      const response = await api.askQuestion(input, selectedPatient, selectedDocument || null);
       
       const botMessage = {
         id: Date.now() + 1,
@@ -94,7 +127,7 @@ export default function QAInterface() {
       const errorMessage = {
         id: Date.now() + 1,
         type: "bot",
-        content: "Désolé, je n'ai pas pu traiter votre demande. Veuillez réessayer.",
+        content: error.message || "Désolé, je n'ai pas pu traiter votre demande. Veuillez réessayer.",
         isError: true,
         timestamp: new Date(),
       };
@@ -112,20 +145,77 @@ export default function QAInterface() {
           <p className="text-slate-500 mt-1">Posez des questions sur les dossiers médicaux</p>
         </div>
         
-        <div className="flex items-center gap-3 bg-white p-2 rounded-xl shadow-sm border border-slate-200">
-          <span className="text-sm font-medium text-slate-600 pl-2">Dossier patient :</span>
-          <select
-            value={selectedPatient}
-            onChange={(e) => setSelectedPatient(e.target.value)}
-            className="form-select bg-slate-50 border-none rounded-lg text-sm font-medium text-brand-700 focus:ring-2 focus:ring-brand-500 py-1.5 pl-3 pr-8"
-          >
-            {patients.map((p) => (
-              <option key={p} value={p}>{p}</option>
-            ))}
-            {patients.length === 0 && <option value="">Aucun patient</option>}
-          </select>
+        {/* Sélection Patient et Document */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          {/* Sélection du patient */}
+          <div className="flex items-center gap-2 bg-white p-2 rounded-xl shadow-sm border border-slate-200">
+            <span className="text-sm font-medium text-slate-600 pl-2 flex items-center gap-1">
+              {Icons.user}
+              Patient :
+            </span>
+            <select
+              value={selectedPatient}
+              onChange={(e) => setSelectedPatient(e.target.value)}
+              className="form-select bg-slate-50 border-none rounded-lg text-sm font-medium text-brand-700 focus:ring-2 focus:ring-brand-500 py-1.5 pl-3 pr-8"
+            >
+              {patients.map((p) => (
+                <option key={p} value={p}>{p}</option>
+              ))}
+              {patients.length === 0 && <option value="">Aucun patient</option>}
+            </select>
+          </div>
+
+          {/* Sélection du document */}
+          <div className="flex items-center gap-2 bg-white p-2 rounded-xl shadow-sm border border-slate-200">
+            <span className="text-sm font-medium text-slate-600 pl-2 flex items-center gap-1">
+              {Icons.document}
+              Document :
+            </span>
+            <select
+              value={selectedDocument}
+              onChange={(e) => setSelectedDocument(e.target.value)}
+              className="form-select bg-slate-50 border-none rounded-lg text-sm font-medium text-brand-700 focus:ring-2 focus:ring-brand-500 py-1.5 pl-3 pr-8 max-w-[200px]"
+              disabled={patientDocuments.length === 0}
+            >
+              <option value="">Tous les documents</option>
+              {patientDocuments.map((doc) => (
+                <option key={doc.id} value={doc.id}>
+                  {doc.filename.length > 25 ? doc.filename.substring(0, 25) + "..." : doc.filename}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
+
+      {/* Info sur les documents du patient */}
+      {selectedPatient && (
+        <div className="mb-4 p-3 bg-brand-50 border border-brand-200 rounded-xl">
+          <div className="flex items-center gap-2 text-brand-700">
+            {Icons.folder}
+            <span className="text-sm font-medium">
+              {patientDocuments.length} document(s) pour {selectedPatient}
+            </span>
+          </div>
+          {patientDocuments.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {patientDocuments.map((doc) => (
+                <span
+                  key={doc.id}
+                  onClick={() => setSelectedDocument(doc.id)}
+                  className={`text-xs px-2 py-1 rounded-lg cursor-pointer transition-all ${
+                    selectedDocument === doc.id
+                      ? "bg-brand-600 text-white"
+                      : "bg-white text-brand-600 border border-brand-200 hover:bg-brand-100"
+                  }`}
+                >
+                  {doc.filename}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
         {/* Messages Area */}
@@ -161,7 +251,7 @@ export default function QAInterface() {
                     <span className="font-medium">Sources :</span>
                     {msg.sources.map((source, idx) => (
                       <span key={idx} className="bg-slate-100 px-2 py-1 rounded text-slate-600 border border-slate-200">
-                        {source}
+                        {typeof source === 'string' ? source : source.filename || source.document_id || 'Document'}
                       </span>
                     ))}
                   </div>
@@ -198,11 +288,11 @@ export default function QAInterface() {
               onChange={(e) => setInput(e.target.value)}
               placeholder="Posez votre question ici..."
               className="flex-1 px-6 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all placeholder-slate-400"
-              disabled={loading}
+              disabled={loading || !selectedPatient}
             />
             <button
               type="submit"
-              disabled={loading || !input.trim()}
+              disabled={loading || !input.trim() || !selectedPatient}
               className="px-6 py-3 bg-brand-600 text-white rounded-xl hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-brand-500/20 flex items-center gap-2 font-medium"
             >
               {loading ? (

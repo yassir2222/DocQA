@@ -219,6 +219,10 @@ services:
       - SERVICES_LLMQA_URL=http://llm-qa-module:8004
       - SERVICES_INDEXEUR_URL=http://indexeur-semantique:8003
       - SERVICES_AUDIT_URL=http://audit-logger:8006
+      - LLM_OLLAMA_URL=http://host.docker.internal:11434
+      - LLM_OLLAMA_MODEL=mistral-nemo
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       postgres:
         condition: service_healthy

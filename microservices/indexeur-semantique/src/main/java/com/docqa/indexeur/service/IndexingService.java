@@ -23,8 +23,8 @@ public class IndexingService {
         this.embeddingService = embeddingService;
     }
 
-    public void indexDocument(String originalDocId, String filename, String content) {
-        logger.info("Indexing document: {}", filename);
+    public void indexDocument(String originalDocId, String filename, String content, String patientId) {
+        logger.info("Indexing document: {} for patient: {}", filename, patientId);
 
         // Generate embedding
         float[] embeddingFloat = embeddingService.generateEmbedding(content);
@@ -39,25 +39,36 @@ public class IndexingService {
         document.setOriginalDocId(originalDocId);
         document.setFilename(filename);
         document.setContent(content);
+        document.setPatientId(patientId);
         document.setEmbedding(embeddingDouble);
 
         documentRepository.save(document);
         logger.info("Document indexed successfully: {}", filename);
     }
 
-    public List<Document> search(String query, int limit) {
+    public List<Document> search(String query, int limit, String patientId) {
         // Simple cosine similarity search (in-memory for now, can be optimized with
         // pgvector)
         float[] queryEmbedding = embeddingService.generateEmbedding(query);
 
         List<Document> allDocs = documentRepository.findAll();
+        
+        // Filter by patientId if provided
+        if (patientId != null && !patientId.isEmpty()) {
+            allDocs = allDocs.stream()
+                    .filter(d -> patientId.equals(d.getPatientId()))
+                    .collect(Collectors.toList());
+        }
 
         return allDocs.stream()
-                .sorted((d1, d2) -> Double.compare(
-                        cosineSimilarity(queryEmbedding, d2.getEmbedding()),
-                        cosineSimilarity(queryEmbedding, d1.getEmbedding())))
+                .peek(d -> d.setScore(cosineSimilarity(queryEmbedding, d.getEmbedding())))
+                .sorted((d1, d2) -> Double.compare(d2.getScore(), d1.getScore()))
                 .limit(limit)
                 .collect(Collectors.toList());
+    }
+    
+    public List<Document> search(String query, int limit) {
+        return search(query, limit, null);
     }
 
     private double cosineSimilarity(float[] vectorA, double[] vectorB) {

@@ -145,23 +145,32 @@ public class SynthesisService {
     }
 
     /**
-     * Récupère les documents depuis l'IndexeurSémantique
+     * Récupère les documents depuis l'IndexeurSémantique ou doc-ingestor
      */
     private List<Map<String, Object>> fetchDocuments(List<String> documentIds) {
-        // En mode développement, utiliser des données mock
-        // En production, appeler l'IndexeurSémantique
         List<Map<String, Object>> documents = new ArrayList<>();
         
         for (String docId : documentIds) {
             try {
-                // Tentative d'appel au service réel
-                // Si échec, utiliser des données mock
+                // Appeler l'indexeur-semantique pour récupérer le contenu
+                Map<String, Object> doc = webClient.get()
+                        .uri(indexeurUrl + "/api/documents/" + docId)
+                        .retrieve()
+                        .bodyToMono(Map.class)
+                        .block();
+                
+                if (doc != null) {
+                    documents.add(doc);
+                    logger.info("✅ Document {} récupéré", docId);
+                }
+            } catch (Exception e) {
+                logger.warn("⚠️ Document {} non trouvé via API, utilisation de l'ID comme référence", docId);
+                // Créer un placeholder avec l'ID
                 Map<String, Object> doc = new HashMap<>();
                 doc.put("id", docId);
-                doc.put("content", getMockContent(docId));
+                doc.put("filename", docId);
+                doc.put("content", "Document ID: " + docId);
                 documents.add(doc);
-            } catch (Exception e) {
-                logger.warn("Document {} non trouvé, utilisation de données mock", docId);
             }
         }
         
@@ -186,7 +195,10 @@ public class SynthesisService {
      * Construit le prompt pour une synthèse
      */
     private String buildSynthesisPrompt(String type, String focus, String context) {
-        String instruction = switch (type) {
+        // Handle null type
+        String safeType = type != null ? type : "SUMMARY";
+        
+        String instruction = switch (safeType) {
             case "SUMMARY" -> "Générez un résumé structuré du dossier médical suivant.";
             case "EVOLUTION" -> "Analysez l'évolution de l'état du patient à travers les documents suivants.";
             case "TREATMENT_HISTORY" -> "Retracez l'historique des traitements du patient.";
@@ -199,18 +211,19 @@ public class SynthesisService {
         }
 
         return String.format("""
-            Vous êtes un expert médical. %s%s
+            Tu es un expert médical francophone. %s%s
             
-            DOCUMENTS:
+            DOCUMENTS MEDICAUX:
             %s
             
             INSTRUCTIONS:
-            - Structurez votre réponse avec des sections claires
-            - Mettez en évidence les points importants
-            - Soyez précis et professionnel
-            - Citez les informations clés du dossier
+            - Analyse les documents et génère une synthèse structurée
+            - Identifie les informations clés: diagnostic, traitements, évolution
+            - Sois précis et professionnel
+            - Ne fais pas de commentaires sur les limites des documents
+            - Réponds directement avec la synthèse
             
-            SYNTHÈSE:
+            SYNTHESE:
             """, instruction, focusInstruction, context);
     }
 
@@ -218,7 +231,10 @@ public class SynthesisService {
      * Construit le prompt pour une comparaison
      */
     private String buildComparisonPrompt(String type, String context1, String context2) {
-        String instruction = switch (type) {
+        // Handle null type
+        String safeType = type != null ? type : "GENERAL";
+        
+        String instruction = switch (safeType) {
             case "TREATMENT" -> "Comparez les traitements des deux patients.";
             case "EVOLUTION" -> "Comparez l'évolution des deux patients.";
             case "DIAGNOSIS" -> "Comparez les diagnostics des deux patients.";
