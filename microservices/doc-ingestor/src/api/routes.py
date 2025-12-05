@@ -12,7 +12,8 @@ from src.database.repository import (
     save_document,
     get_document_by_id,
     get_all_documents,
-    update_document_status
+    update_document_status,
+    delete_document
 )
 from src.messaging.publisher import publish_document
 from config import settings
@@ -237,6 +238,83 @@ async def get_document(document_id: int):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erreur lors de la récupération du document: {str(e)}"
+        )
+
+
+@router.delete("/documents/{document_id}")
+async def delete_document_endpoint(document_id: int):
+    """
+    Supprime un document spécifique
+    
+    Args:
+        document_id: ID du document à supprimer
+    
+    Returns:
+        Confirmation de suppression
+    """
+    logger.info(f" Suppression du document {document_id}")
+    
+    try:
+        deleted = delete_document(document_id)
+        
+        if not deleted:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Document {document_id} non trouvé"
+            )
+        
+        return {
+            "success": True,
+            "message": f"Document {document_id} supprimé avec succès"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f" Erreur lors de la suppression: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erreur lors de la suppression du document: {str(e)}"
+        )
+
+
+@router.get("/documents/{document_id}/content")
+async def get_document_content(document_id: int):
+    """
+    Récupère le contenu textuel d'un document pour visualisation
+    
+    Args:
+        document_id: ID du document
+    
+    Returns:
+        Contenu textuel du document
+    """
+    logger.info(f" Récupération du contenu du document {document_id}")
+    
+    try:
+        document = get_document_by_id(document_id)
+        
+        if not document:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Document {document_id} non trouvé"
+            )
+        
+        return {
+            "success": True,
+            "document_id": document_id,
+            "filename": document.get("filename", ""),
+            "content": document.get("text_content", ""),
+            "document_type": document.get("document_type", ""),
+            "patient_id": document.get("patient_id", ""),
+            "created_at": str(document.get("created_at", ""))
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f" Erreur lors de la récupération du contenu: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erreur lors de la récupération du contenu: {str(e)}"
         )
 
 
