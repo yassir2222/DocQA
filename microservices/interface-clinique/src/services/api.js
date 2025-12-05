@@ -127,30 +127,35 @@ const api = {
         patient_id: patientId,
         max_context_docs: 5,
       };
-      
+
       // Ajouter document_id si spécifié
       if (documentId) {
         payload.document_id = documentId;
       }
-      
+
       // Timeout plus long pour le LLM (3 minutes)
       const response = await apiClient.post("/api/qa/ask", payload, {
         timeout: 180000,
       });
       return response.data;
     } catch (error) {
-      console.warn("Service Q/R erreur:", error.response?.status, error.response?.data);
-      
+      console.warn(
+        "Service Q/R erreur:",
+        error.response?.status,
+        error.response?.data
+      );
+
       // Handle specific error cases
       if (error.response?.status === 404) {
-        const errorDetail = error.response?.data?.detail || "Aucun document trouvé";
+        const errorDetail =
+          error.response?.data?.detail || "Aucun document trouvé";
         return {
           answer: `Je n'ai pas trouvé de documents pertinents pour répondre à votre question.\n\n**Votre question:** "${question}"\n\n**Suggestion:** Essayez de poser une question plus spécifique en lien avec les documents médicaux du patient.`,
           sources: [],
           confidence: 0,
         };
       }
-      
+
       // Generic error (service unavailable)
       return {
         answer: `Le service de questions/reponses n'est pas disponible actuellement.\n\nVotre question: "${question}"\n\nVerifiez que tous les services sont demarres.`,
@@ -175,24 +180,26 @@ const api = {
         format: options.format || "markdown",
         language: options.language || "fr",
       });
-      
+
       const data = response.data;
-      
+
       // Transformation de la réponse pour le frontend
       return {
         title: "Synthèse du dossier",
         generatedAt: data.generatedAt,
-        documentsAnalyzed: data.sourceDocuments ? data.sourceDocuments.length : 0,
+        documentsAnalyzed: data.sourceDocuments
+          ? data.sourceDocuments.length
+          : 0,
         sections: [
           {
             title: "Résumé Global",
-            content: data.summary
+            content: data.summary,
           },
           {
             title: "Points Clés",
-            items: data.keyPoints || []
-          }
-        ]
+            items: data.keyPoints || [],
+          },
+        ],
       };
     } catch (error) {
       console.warn("Service Synthese non disponible");
@@ -253,11 +260,11 @@ const api = {
       // Actually, gateway implementation of /api/dashboard/stats returns:
       // "questions": {"total": 0, "today": 0} (default)
       // It doesn't seem to fetch real question stats in the gateway code I saw.
-      
-      // Let's keep the separate audit fetch if we want real question stats, 
+
+      // Let's keep the separate audit fetch if we want real question stats,
       // OR trust the gateway. The gateway code showed it returns default 0 for questions.
       // So we should probably fetch audit stats here to be sure, or just return what gateway gives.
-      
+
       // Better approach: Use gateway response but map fields correctly.
       return {
         documents: {
@@ -292,6 +299,125 @@ const api = {
 
   getSettings: () => {
     return getSettings();
+  },
+
+  // === Notifications ===
+
+  getNotifications: async (params = {}) => {
+    try {
+      const response = await apiClient.get("/api/notifications", { params });
+      return response.data;
+    } catch (error) {
+      console.error("Erreur notifications:", error);
+      return { notifications: [], total: 0, unreadCount: 0 };
+    }
+  },
+
+  getUnreadCount: async () => {
+    try {
+      const response = await apiClient.get("/api/notifications/unread-count");
+      return response.data;
+    } catch (error) {
+      return { unreadCount: 0 };
+    }
+  },
+
+  createNotification: async (notification) => {
+    const response = await apiClient.post("/api/notifications", notification);
+    return response.data;
+  },
+
+  markNotificationRead: async (notificationId) => {
+    const response = await apiClient.put(
+      `/api/notifications/${notificationId}/read`
+    );
+    return response.data;
+  },
+
+  markAllNotificationsRead: async () => {
+    const response = await apiClient.put("/api/notifications/read-all");
+    return response.data;
+  },
+
+  deleteNotification: async (notificationId) => {
+    const response = await apiClient.delete(
+      `/api/notifications/${notificationId}`
+    );
+    return response.data;
+  },
+
+  clearAllNotifications: async () => {
+    const response = await apiClient.delete("/api/notifications");
+    return response.data;
+  },
+
+  // === Conversations Q&A ===
+
+  getConversations: async (patientId = null, limit = 20) => {
+    try {
+      const params = { limit };
+      if (patientId) params.patient_id = patientId;
+      const response = await apiClient.get("/api/conversations", { params });
+      return response.data;
+    } catch (error) {
+      console.error("Erreur récupération conversations:", error);
+      return { conversations: [], total: 0 };
+    }
+  },
+
+  getConversation: async (conversationId) => {
+    const response = await apiClient.get(
+      `/api/conversations/${conversationId}`
+    );
+    return response.data;
+  },
+
+  createConversation: async (title, patientId = null) => {
+    const response = await apiClient.post("/api/conversations", {
+      title,
+      patientId,
+    });
+    return response.data;
+  },
+
+  addMessageToConversation: async (
+    conversationId,
+    role,
+    content,
+    sources = null
+  ) => {
+    const response = await apiClient.post(
+      `/api/conversations/${conversationId}/messages`,
+      {
+        role,
+        content,
+        sources,
+      }
+    );
+    return response.data;
+  },
+
+  updateConversation: async (conversationId, title) => {
+    const response = await apiClient.put(
+      `/api/conversations/${conversationId}`,
+      {
+        title,
+      }
+    );
+    return response.data;
+  },
+
+  deleteConversation: async (conversationId) => {
+    const response = await apiClient.delete(
+      `/api/conversations/${conversationId}`
+    );
+    return response.data;
+  },
+
+  clearConversations: async (patientId = null) => {
+    const params = patientId ? { patient_id: patientId } : {};
+    const response = await apiClient.delete("/api/conversations", { params });
+    return response.data;
   },
 };
 

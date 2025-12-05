@@ -267,6 +267,42 @@ def update_document_status(document_id: int, processed: bool):
         raise
 
 
+def delete_document(document_id: int) -> bool:
+    """
+    Supprime un document de la base de données
+    
+    Args:
+        document_id: ID du document à supprimer
+    
+    Returns:
+        True si supprimé, False si non trouvé
+    """
+    conn = None
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        # Vérifier si le document existe
+        cursor.execute("SELECT id FROM documents WHERE id = %s", (document_id,))
+        if not cursor.fetchone():
+            cursor.close()
+            return False
+        
+        # Supprimer le document
+        cursor.execute("DELETE FROM documents WHERE id = %s", (document_id,))
+        conn.commit()
+        cursor.close()
+        
+        logger.info(f"[OK] Document {document_id} supprime")
+        return True
+        
+    except Exception as e:
+        logger.error(f"[ERREUR] Erreur suppression document {document_id}: {str(e)}")
+        if conn:
+            conn.rollback()
+        raise
+
+
 def close_connection():
     """Ferme la connexion à la base de données"""
     global _connection
