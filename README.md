@@ -6,6 +6,22 @@
 ![React](https://img.shields.io/badge/React-18-61DAFB)
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED)
 
+## 📋 Dernières Modifications (6 Décembre 2025)
+
+### ✨ Nouvelles Fonctionnalités
+- **Synthèse Intelligente fonctionnelle** : Affichage correct des résumés générés par IA avec structure résumé + points clés
+- **Migration vers Llama 3.1 8B** : Remplacement de Mistral Nemo 12B (7.1GB) par Llama 3.1 8B (4.9GB) pour une meilleure efficacité mémoire
+
+### 🐛 Corrections
+- Correction du bug d'affichage des synthèses dans le frontend
+- Résolution du problème de transformation des données API entre backend et frontend
+- Amélioration de la gestion du cache Docker lors des rebuilds
+
+### 🔧 Améliorations Techniques
+- Ajout de logs de débogage pour le suivi du flux de génération de synthèses
+- Optimisation de la configuration Docker pour forcer les rebuilds sans cache
+- Mise à jour de la documentation avec les nouveaux paramètres du modèle
+
 ## 🏥 Contexte
 
 Système intelligent de traitement et analyse de documents médicaux non structurés utilisant des LLM (Large Language Models) pour transformer les textes cliniques en réponses précises et contextualisées.
@@ -142,11 +158,11 @@ DocQA-MS/
 | `LLM_PROVIDER`    | Fournisseur LLM | `ollama`                                                       |
 | `OLLAMA_BASE_URL` | URL Ollama      | `http://host.docker.internal:11434`                            |
 
-### Configuration LLM - Mistral Nemo 12B avec RAG
+### Configuration LLM - Llama 3.1 8B avec RAG
 
-Le système utilise **Mistral Nemo 12B Instruct** via Ollama avec une architecture RAG (Retrieval-Augmented Generation) pour des réponses précises basées sur les documents médicaux.
+Le système utilise **Llama 3.1 8B** via Ollama avec une architecture RAG (Retrieval-Augmented Generation) pour des réponses précises basées sur les documents médicaux. Ce modèle a été choisi pour son efficacité mémoire (4.9GB) tout en maintenant d'excellentes performances.
 
-#### Prérequis: Installer Ollama et Mistral Nemo
+#### Prérequis: Installer Ollama et Llama 3.1
 
 **Windows:**
 
@@ -155,8 +171,8 @@ Le système utilise **Mistral Nemo 12B Instruct** via Ollama avec une architectu
 # Ou via winget:
 winget install Ollama.Ollama
 
-# Télécharger le modèle Mistral Nemo 12B (environ 7 Go)
-ollama pull mistral-nemo
+# Télécharger le modèle Llama 3.1 8B (environ 4.9 Go)
+ollama pull llama3.1
 
 # Démarrer le serveur Ollama
 ollama serve
@@ -168,8 +184,8 @@ ollama serve
 # Installer Ollama
 curl -fsSL https://ollama.com/install.sh | sh
 
-# Télécharger Mistral Nemo 12B
-ollama pull mistral-nemo
+# Télécharger Llama 3.1 8B
+ollama pull llama3.1
 
 # Démarrer le serveur
 ollama serve
@@ -181,22 +197,24 @@ ollama serve
 # Vérifier que Ollama fonctionne
 curl http://localhost:11434/api/tags
 
-# Tester Mistral Nemo
-ollama run mistral-nemo "Bonjour, es-tu prêt?"
+# Tester Llama 3.1
+ollama run llama3.1 "Bonjour, es-tu prêt?"
 ```
 
 #### Configuration RAG
 
 Le module LLM QA utilise RAG avec les paramètres suivants (modifiables via `.env`):
 
-| Paramètre           | Valeur         | Description                             |
-| ------------------- | -------------- | --------------------------------------- |
-| `OLLAMA_MODEL`      | `mistral-nemo` | Modèle Mistral Nemo 12B Instruct        |
-| `LLM_TEMPERATURE`   | `0.1`          | Réponses factuelles (basse température) |
-| `LLM_NUM_CTX`       | `8192`         | Fenêtre de contexte                     |
-| `RAG_TOP_K_RESULTS` | `5`            | Documents récupérés                     |
-| `USE_RERANKING`     | `true`         | Reranking pour meilleure précision      |
-| `RERANK_TOP_K`      | `3`            | Documents finaux après reranking        |
+| Paramètre           | Valeur      | Description                             |
+| ------------------- | ----------- | --------------------------------------- |
+| `OLLAMA_MODEL`      | `llama3.1`  | Modèle Llama 3.1 8B (4.9GB)             |
+| `LLM_TEMPERATURE`   | `0.1`       | Réponses factuelles (basse température) |
+| `LLM_NUM_CTX`       | `8192`      | Fenêtre de contexte                     |
+| `RAG_TOP_K_RESULTS` | `5`         | Documents récupérés                     |
+| `USE_RERANKING`     | `true`      | Reranking pour meilleure précision      |
+| `RERANK_TOP_K`      | `3`         | Documents finaux après reranking        |
+
+**Note:** Llama 3.1 8B offre un excellent équilibre entre performance et consommation mémoire, le rendant idéal pour des environnements avec des ressources limitées.
 
 #### Alternative: OpenAI (Optionnel)
 
@@ -255,22 +273,29 @@ curl http://localhost:8006/actuator/health
 
 ### 4. Questions/Réponses
 
-- Interface conversationnelle
-- Contexte patient
-- Sources citées
+- Interface conversationnelle avec Llama 3.1 8B
+- RAG (Retrieval-Augmented Generation) pour réponses précises
+- Contexte patient et historique de conversation
+- Sources citées avec numéros de documents
 - Score de confiance
+- Support multilingue (français par défaut)
 
-### 5. Synthèses
+### 5. Synthèses Intelligentes ✨
 
-- Résumé de dossier patient
-- Comparaison entre patients
-- Export PDF/Markdown
+- **Résumé automatique** de dossiers patients via IA
+- **Génération de points clés** extraits des documents
+- **Comparaison multi-patients** pour analyses comparatives
+- Support de multiples documents simultanément
+- Affichage structuré avec résumé et points importants
+- Export Markdown pour archivage
+- Génération rapide (8-15 secondes avec Llama 3.1)
 
 ### 6. Audit
 
-- Traçabilité complète
-- Filtrage avancé
-- Export CSV
+- Traçabilité complète de toutes les opérations
+- Journalisation des générations de synthèses
+- Filtrage avancé par type d'action et date
+- Export CSV pour analyses
 
 ## 🔒 Sécurité
 
