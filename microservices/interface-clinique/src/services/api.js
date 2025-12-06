@@ -174,12 +174,19 @@ const api = {
 
   generateSynthesis: async (documentIds, options = {}) => {
     try {
-      const response = await apiClient.post("/api/synthesis/generate", {
-        documentIds,
-        synthesisType: options.type || "SUMMARY",
-        format: options.format || "markdown",
-        language: options.language || "fr",
-      });
+      // Timeout plus long pour la synthèse (LLM peut prendre du temps)
+      const response = await apiClient.post(
+        "/api/synthesis/generate",
+        {
+          documentIds,
+          synthesisType: options.type || "SUMMARY",
+          format: options.format || "markdown",
+          language: options.language || "fr",
+        },
+        {
+          timeout: 300000, // 5 minutes pour la génération LLM
+        }
+      );
 
       const data = response.data;
       console.log("🔍 API Response Data:", data);
@@ -191,7 +198,7 @@ const api = {
         title: "Synthèse du dossier",
         documentsAnalyzed: data.sourceDocuments?.length || 0,
       };
-      
+
       console.log("🔍 Returning to component:", result);
       return result;
     } catch (error) {

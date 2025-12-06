@@ -34,7 +34,7 @@ class Settings(BaseSettings):
     
     # Ollama Configuration - Llama 3.1 8B
     OLLAMA_BASE_URL: str = "http://localhost:11434"
-    OLLAMA_MODEL: str = "llama3.1"  # Llama 3.1 8B (4.9GB - memory efficient)
+    OLLAMA_MODEL: str = "llama3.1:8b"  # Llama 3.1 8B (4.9GB - memory efficient)
     USE_LOCAL_LLM: bool = True
     
     # LLM Parameters for Mistral Nemo - Optimized for Medical Q&A
