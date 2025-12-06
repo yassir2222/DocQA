@@ -180,10 +180,10 @@ services:
       # Services
       - INDEXEUR_SERVICE_URL=http://indexeur-semantique:8003
       - AUDIT_SERVICE_URL=http://audit-logger:8006
-      # Ollama - Mistral Nemo 12B
+      # Ollama - Llama 3.1 8B (memory efficient)
       - USE_LOCAL_LLM=true
       - OLLAMA_BASE_URL=http://host.docker.internal:11434
-      - OLLAMA_MODEL=mistral-nemo
+      - OLLAMA_MODEL=llama3.1
       # LLM Parameters
       - LLM_TEMPERATURE=0.1
       - LLM_TOP_P=0.9
@@ -220,7 +220,7 @@ services:
       - SERVICES_INDEXEUR_URL=http://indexeur-semantique:8003
       - SERVICES_AUDIT_URL=http://audit-logger:8006
       - LLM_OLLAMA_URL=http://host.docker.internal:11434
-      - LLM_OLLAMA_MODEL=mistral-nemo
+      - LLM_OLLAMA_MODEL=llama3.1
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:

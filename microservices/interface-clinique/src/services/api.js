@@ -182,27 +182,20 @@ const api = {
       });
 
       const data = response.data;
+      console.log("🔍 API Response Data:", data);
 
-      // Transformation de la réponse pour le frontend
-      return {
+      // Retourner directement les données du backend
+      const result = {
+        ...data,
+        // Compatibilité avec l'ancien format
         title: "Synthèse du dossier",
-        generatedAt: data.generatedAt,
-        documentsAnalyzed: data.sourceDocuments
-          ? data.sourceDocuments.length
-          : 0,
-        sections: [
-          {
-            title: "Résumé Global",
-            content: data.summary,
-          },
-          {
-            title: "Points Clés",
-            items: data.keyPoints || [],
-          },
-        ],
+        documentsAnalyzed: data.sourceDocuments?.length || 0,
       };
+      
+      console.log("🔍 Returning to component:", result);
+      return result;
     } catch (error) {
-      console.warn("Service Synthese non disponible");
+      console.error("❌ Service Synthese error:", error);
       throw error;
     }
   },

@@ -32,9 +32,9 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: Optional[str] = None
     OPENAI_MODEL: str = "gpt-3.5-turbo"
     
-    # Ollama Configuration - Mistral Nemo 12B Instruct
+    # Ollama Configuration - Llama 3.1 8B
     OLLAMA_BASE_URL: str = "http://localhost:11434"
-    OLLAMA_MODEL: str = "mistral-nemo"  # Mistral Nemo 12B Instruct
+    OLLAMA_MODEL: str = "llama3.1"  # Llama 3.1 8B (4.9GB - memory efficient)
     USE_LOCAL_LLM: bool = True
     
     # LLM Parameters for Mistral Nemo - Optimized for Medical Q&A

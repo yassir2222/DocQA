@@ -315,14 +315,18 @@ export default function Synthesis() {
 
     try {
       const selectedPatients = getSelectedPatients();
+      console.log("🚀 Generating synthesis for docs:", selectedDocs);
       const response = await api.generateSynthesis(selectedDocs, {
         comparisonMode:
           selectedPatients.length > 1 ? "cross-patient" : "single-patient",
         patients: selectedPatients,
       });
+      console.log("✅ Got synthesis response:", response);
+      console.log("📊 Has summary?", !!response?.summary);
+      console.log("📊 Has keyPoints?", !!response?.keyPoints);
       setSynthesis(response);
     } catch (error) {
-      console.error("Erreur génération synthèse:", error);
+      console.error("❌ Erreur génération synthèse:", error);
       alert("Erreur lors de la génération de la synthèse. Veuillez réessayer.");
       setSynthesis(null);
     } finally {
