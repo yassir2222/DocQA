@@ -310,7 +310,7 @@ Projet de fin d'études - 2024
 
 ## 👥 Contributeurs
 
-- Développeur Principal: [ACHRAF]
+- Achraf , Yassir , Saad , Anas
 
 ### 7. InterfaceClinique (React)
 
@@ -384,9 +384,7 @@ mvn spring-boot:run
 - Authentification et autorisation (Auth0)
 - Conformité RGPD et réglementations médicales
 
-## 👥 Équipe
 
-Projet académique professionnel - Maroc
 
 ## 📄 License
 
