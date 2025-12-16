@@ -283,7 +283,7 @@ export default function Dashboard() {
 
   const StatCard = ({ title, value, icon, gradient, trend, delay = 0 }) => (
     <div
-      className="group relative bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-slate-200 hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+      className="group relative bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-slate-200 dark:hover:border-slate-600 dark:border-slate-700 hover:-translate-y-1 transition-all duration-300 overflow-hidden"
       style={{ animationDelay: `${delay}ms` }}
     >
       {/* Background gradient on hover */}
@@ -298,8 +298,8 @@ export default function Dashboard() {
 
       <div className="relative flex items-start justify-between">
         <div className="space-y-3">
-          <p className="text-sm font-medium text-slate-500">{title}</p>
-          <p className="text-4xl font-bold font-display text-slate-900 tracking-tight">
+          <p className="text-sm font-medium text-slate-500 dark:text-slate-400 dark:text-slate-500">{title}</p>
+          <p className="text-4xl font-bold font-display text-slate-900 dark:text-white tracking-tight">
             {value}
           </p>
           {trend && (
@@ -308,7 +308,7 @@ export default function Dashboard() {
                 {Icons.arrowUp}
               </div>
               <span className="text-sm font-semibold">{trend}%</span>
-              <span className="text-xs text-slate-400">ce mois</span>
+              <span className="text-xs text-slate-400 dark:text-slate-500">ce mois</span>
             </div>
           )}
         </div>
@@ -350,7 +350,7 @@ export default function Dashboard() {
 
     return (
       <div
-        className="flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 transition-all duration-200 group cursor-pointer"
+        className="flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 dark:bg-slate-900 transition-all duration-200 group cursor-pointer"
         style={{ animationDelay: `${index * 100}ms` }}
       >
         <div
@@ -361,12 +361,12 @@ export default function Dashboard() {
           {getIcon(activity.type)}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-slate-800 truncate group-hover:text-indigo-600 transition-colors">
+          <p className="text-sm font-medium text-slate-800 dark:text-white truncate group-hover:text-indigo-600 dark:text-indigo-400 transition-colors">
             {activity.message}
           </p>
-          <p className="text-xs text-slate-400 mt-0.5">{activity.time}</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{activity.time}</p>
         </div>
-        <div className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-400">
+        <div className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 dark:text-slate-500">
           {Icons.arrowRight}
         </div>
       </div>
@@ -376,7 +376,7 @@ export default function Dashboard() {
   const QuickAction = ({ href, icon, title, description, gradient }) => (
     <Link
       to={href}
-      className="group relative flex flex-col items-center p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:border-slate-200 hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+      className="group relative flex flex-col items-center p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-slate-200 dark:hover:border-slate-600 dark:border-slate-700 hover:-translate-y-1 transition-all duration-300 overflow-hidden"
     >
       <div
         className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
@@ -386,10 +386,10 @@ export default function Dashboard() {
       >
         {icon}
       </div>
-      <span className="relative mt-4 text-sm font-bold text-slate-800 group-hover:text-slate-900">
+      <span className="relative mt-4 text-sm font-bold text-slate-800 dark:text-white group-hover:text-slate-900 dark:text-white">
         {title}
       </span>
-      <span className="relative text-xs text-slate-500 mt-1 text-center">
+      <span className="relative text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-1 text-center">
         {description}
       </span>
     </Link>
@@ -399,7 +399,7 @@ export default function Dashboard() {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="relative">
-          <div className="w-16 h-16 border-4 border-indigo-100 rounded-full" />
+          <div className="w-16 h-16 border-4 border-indigo-100 dark:border-indigo-800 rounded-full" />
           <div className="w-16 h-16 border-4 border-indigo-600 rounded-full animate-spin border-t-transparent absolute inset-0" />
         </div>
       </div>
@@ -412,21 +412,21 @@ export default function Dashboard() {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-3xl font-bold font-display text-slate-900">
+            <h1 className="text-3xl font-bold font-display text-slate-900 dark:text-white">
               Tableau de bord
             </h1>
-            <span className="px-3 py-1 text-xs font-semibold text-indigo-600 bg-indigo-100 rounded-full">
+            <span className="px-3 py-1 text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-100 rounded-full">
               Live
             </span>
           </div>
-          <p className="text-slate-500">
+          <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500">
             Vue d'ensemble de votre activité médicale
           </p>
         </div>
         <div className="flex items-center gap-3">
           <Link
             to="/documents"
-            className="flex items-center gap-2 px-5 py-2.5 bg-white text-slate-700 font-medium rounded-xl border border-slate-200 shadow-sm hover:bg-slate-50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+            className="flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 dark:bg-slate-900 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
           >
             {Icons.upload}
             <span>Uploader</span>
@@ -479,19 +479,19 @@ export default function Dashboard() {
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Activity */}
-        <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-          <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+        <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+          <div className="p-6 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-bold font-display text-slate-900">
+              <h2 className="text-lg font-bold font-display text-slate-900 dark:text-white">
                 Activité récente
               </h2>
-              <p className="text-sm text-slate-500 mt-0.5">
+              <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-0.5">
                 Dernières actions sur le système
               </p>
             </div>
             <Link
               to="/audit"
-              className="flex items-center gap-1.5 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors group"
+              className="flex items-center gap-1.5 text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:text-indigo-300 transition-colors group"
             >
               Voir tout
               <span className="group-hover:translate-x-0.5 transition-transform">
@@ -499,7 +499,7 @@ export default function Dashboard() {
               </span>
             </Link>
           </div>
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-slate-100 dark:divide-slate-700">
             {recentActivity.map((activity, index) => (
               <ActivityItem
                 key={activity.id}
@@ -509,13 +509,13 @@ export default function Dashboard() {
             ))}
             {recentActivity.length === 0 && (
               <div className="p-12 text-center">
-                <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
+                <div className="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400 dark:text-slate-500">
                   {Icons.document}
                 </div>
-                <h3 className="text-lg font-semibold text-slate-700">
+                <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-200">
                   Aucune activité récente
                 </h3>
-                <p className="text-slate-500 mt-1">
+                <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-1">
                   Commencez par uploader un document
                 </p>
               </div>
@@ -526,8 +526,8 @@ export default function Dashboard() {
         {/* Right Column */}
         <div className="space-y-6">
           {/* Quick Actions */}
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
-            <h2 className="text-lg font-bold font-display text-slate-900 mb-5">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-6">
+            <h2 className="text-lg font-bold font-display text-slate-900 dark:text-white mb-5">
               Actions rapides
             </h2>
             <div className="grid grid-cols-2 gap-4">

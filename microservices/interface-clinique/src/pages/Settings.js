@@ -206,7 +206,7 @@ const Icons = {
 };
 
 const statusColors = {
-  healthy: "bg-emerald-100 text-emerald-700 border-emerald-200",
+  healthy: "bg-emerald-100 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-700",
   degraded: "bg-amber-100 text-amber-700 border-amber-200",
   error: "bg-red-100 text-red-700 border-red-200",
 };
@@ -223,18 +223,12 @@ export default function Settings() {
     theme: "light",
     autoSave: true,
     notifications: {
-      email: true,
-      push: false,
-      desktop: true,
+      enabled: true,
     },
     llm: {
       model: "gpt-4",
       temperature: 0.7,
       maxTokens: 2000,
-    },
-    security: {
-      sessionTimeout: 30,
-      twoFactor: false,
     },
   });
   const [services, setServices] = useState([]);
@@ -290,10 +284,10 @@ export default function Settings() {
   };
 
   const SettingSection = ({ icon, title, description, gradient, children }) => (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow">
+    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden hover:shadow-md transition-all">
       <div
-        className={`p-5 border-b border-slate-100 flex items-center gap-4 bg-gradient-to-r ${
-          gradient || "from-slate-50 to-white"
+        className={`p-5 border-b border-slate-100 dark:border-slate-700 flex items-center gap-4 bg-gradient-to-r ${
+          gradient || "from-slate-50 to-white dark:from-slate-800 dark:to-slate-700"
         }`}
       >
         <div
@@ -304,8 +298,8 @@ export default function Settings() {
           {icon}
         </div>
         <div>
-          <h2 className="text-lg font-bold text-slate-900">{title}</h2>
-          <p className="text-sm text-slate-500">{description}</p>
+          <h2 className="text-lg font-bold text-slate-900 dark:text-white">{title}</h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400">{description}</p>
         </div>
       </div>
       <div className="p-6 space-y-5">{children}</div>
@@ -315,11 +309,11 @@ export default function Settings() {
   const ToggleSwitch = ({ checked, onChange, label, description }) => (
     <div className="flex items-center justify-between py-2 group">
       <div>
-        <span className="text-sm font-semibold text-slate-700 block">
+        <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 block">
           {label}
         </span>
         {description && (
-          <span className="text-xs text-slate-400">{description}</span>
+          <span className="text-xs text-slate-400 dark:text-slate-500">{description}</span>
         )}
       </div>
       <button
@@ -327,7 +321,7 @@ export default function Settings() {
         className={`relative w-14 h-7 rounded-full transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 ${
           checked
             ? "bg-gradient-to-r from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/30"
-            : "bg-slate-200 hover:bg-slate-300"
+            : "bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500"
         }`}
       >
         <span
@@ -342,7 +336,6 @@ export default function Settings() {
   const tabs = [
     { id: "general", label: "Général", icon: Icons.globe },
     { id: "notifications", label: "Notifications", icon: Icons.bell },
-    { id: "security", label: "Sécurité", icon: Icons.shield },
     { id: "about", label: "À propos", icon: Icons.info },
   ];
 
@@ -352,15 +345,15 @@ export default function Settings() {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-3xl font-bold font-display text-slate-900">
+            <h1 className="text-3xl font-bold font-display text-slate-900 dark:text-white">
               Paramètres
             </h1>
-            <span className="px-3 py-1 text-xs font-semibold bg-indigo-100 text-indigo-700 rounded-full flex items-center gap-1">
+            <span className="px-3 py-1 text-xs font-semibold bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 dark:text-indigo-300 rounded-full flex items-center gap-1">
               {Icons.cog}
               Configuration
             </span>
           </div>
-          <p className="text-slate-500">
+          <p className="text-slate-500 dark:text-slate-400">
             Personnalisez votre expérience et gérez les services
           </p>
         </div>
@@ -385,7 +378,7 @@ export default function Settings() {
       </div>
 
       {/* Tab Navigation */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-2">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-2">
         <div className="flex flex-wrap gap-2">
           {tabs.map((tab) => (
             <button
@@ -394,7 +387,7 @@ export default function Settings() {
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${
                 activeTab === tab.id
                   ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/20"
-                  : "text-slate-600 hover:bg-slate-100"
+                  : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
               }`}
             >
               {tab.icon}
@@ -415,21 +408,24 @@ export default function Settings() {
               description="Préférences linguistiques"
               gradient="from-indigo-500 to-purple-600"
             >
-              <div className="space-y-5">
+              <div className="space-y-6">
+
+                {/* Language */}
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-3">
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-3">
                     Langue de l'interface
                   </label>
                   <div className="flex justify-center">
-                    <div className="p-6 rounded-xl border-2 border-indigo-500 bg-indigo-50 text-indigo-700 shadow-lg shadow-indigo-500/10 text-center min-w-[150px]">
+                    <div className="p-6 rounded-xl border-2 border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 dark:text-indigo-300 shadow-lg shadow-indigo-500/10 text-center min-w-[150px]">
                       <span className="text-4xl block mb-2">🇫🇷</span>
                       <span className="text-lg font-semibold">Français</span>
-                      <span className="block text-xs text-indigo-500 mt-1">
+                      <span className="block text-xs text-indigo-500 dark:text-indigo-400 dark:text-indigo-400 mt-1">
                         Langue par défaut
                       </span>
                     </div>
                   </div>
                 </div>
+
                 <ToggleSwitch
                   checked={settings.autoSave}
                   onChange={(val) => handleChange(null, "autoSave", val)}
@@ -448,128 +444,28 @@ export default function Settings() {
               icon={Icons.bell}
               title="Préférences de Notification"
               description="Gérez comment vous recevez les alertes"
-              gradient="from-amber-500 to-orange-600"
+              gradient="from-indigo-500 to-purple-600"
             >
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="p-5 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white">
-                      📧
-                    </div>
-                    <span className="font-bold text-slate-800">Email</span>
+              <div className="p-5 rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 border border-indigo-100 dark:border-indigo-800">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white">
+                    {Icons.bell}
                   </div>
-                  <ToggleSwitch
-                    checked={settings.notifications.email}
-                    onChange={(val) =>
-                      handleChange("notifications", "email", val)
-                    }
-                    label="Activer"
-                    description="Alertes par email"
-                  />
+                  <span className="font-bold text-slate-800 dark:text-white">Notifications</span>
                 </div>
-
-                <div className="p-5 rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-100">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white">
-                      📱
-                    </div>
-                    <span className="font-bold text-slate-800">Push</span>
-                  </div>
-                  <ToggleSwitch
-                    checked={settings.notifications.push}
-                    onChange={(val) =>
-                      handleChange("notifications", "push", val)
-                    }
-                    label="Activer"
-                    description="Notifications push"
-                  />
-                </div>
-
-                <div className="p-5 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white">
-                      🖥️
-                    </div>
-                    <span className="font-bold text-slate-800">Bureau</span>
-                  </div>
-                  <ToggleSwitch
-                    checked={settings.notifications.desktop}
-                    onChange={(val) =>
-                      handleChange("notifications", "desktop", val)
-                    }
-                    label="Activer"
-                    description="Alertes bureau"
-                  />
-                </div>
+                <ToggleSwitch
+                  checked={settings.notifications.enabled}
+                  onChange={(val) =>
+                    handleChange("notifications", "enabled", val)
+                  }
+                  label="Activer les notifications"
+                  description="Recevoir des alertes et notifications du système"
+                />
               </div>
             </SettingSection>
           </div>
         )}
-        {/* Security */}
-        {activeTab === "security" && (
-          <div className="lg:col-span-2">
-            <SettingSection
-              icon={Icons.shield}
-              title="Sécurité du Compte"
-              description="Protection et authentification"
-              gradient="from-emerald-500 to-teal-600"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="p-5 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200">
-                  <label className="block text-sm font-semibold text-slate-700 mb-3">
-                    ⏱️ Expiration de session
-                  </label>
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="number"
-                      value={settings.security.sessionTimeout}
-                      onChange={(e) =>
-                        handleChange(
-                          "security",
-                          "sessionTimeout",
-                          parseInt(e.target.value)
-                        )
-                      }
-                      className="flex-1 px-4 py-3.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-400 bg-white font-bold text-slate-700 text-center text-lg"
-                    />
-                    <span className="text-sm text-slate-500 font-medium">
-                      minutes
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-400 mt-2">
-                    Délai d'inactivité avant déconnexion automatique
-                  </p>
-                </div>
 
-                <div className="p-5 rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-200">
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <span className="font-bold text-slate-800 block">
-                        🔐 Double authentification
-                      </span>
-                      <span className="text-xs text-slate-500">
-                        Sécurité renforcée avec 2FA
-                      </span>
-                    </div>
-                    {settings.security.twoFactor && (
-                      <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold">
-                        Activé
-                      </span>
-                    )}
-                  </div>
-                  <ToggleSwitch
-                    checked={settings.security.twoFactor}
-                    onChange={(val) =>
-                      handleChange("security", "twoFactor", val)
-                    }
-                    label="Activer 2FA"
-                    description="Code de vérification supplémentaire"
-                  />
-                </div>
-              </div>
-            </SettingSection>
-          </div>
-        )}
         {/* About */}
         {activeTab === "about" && (
           <div className="lg:col-span-2">
@@ -583,7 +479,7 @@ export default function Settings() {
                 {/* Description principale */}
                 <div className="p-6 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white">
                   <h3 className="text-xl font-bold mb-3 flex items-center gap-2">
-                    🏥 DocQA Medical System
+                    DocQA Medical System
                   </h3>
                   <p className="text-sm opacity-90 mb-4 leading-relaxed">
                     DocQA est une plateforme médicale intelligente conçue pour
@@ -593,7 +489,7 @@ export default function Settings() {
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-sm">
                       <span className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
-                        ✓
+                        {Icons.check}
                       </span>
                       <span>
                         Solution sécurisée et conforme aux normes médicales
@@ -601,13 +497,13 @@ export default function Settings() {
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <span className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
-                        ✓
+                        {Icons.check}
                       </span>
                       <span>Traitement intelligent des documents médicaux</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <span className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
-                        ✓
+                        {Icons.check}
                       </span>
                       <span>
                         Assistance IA pour les professionnels de santé
@@ -618,46 +514,48 @@ export default function Settings() {
 
                 {/* Fonctionnalités */}
                 <div className="space-y-4">
-                  <h4 className="text-sm font-bold text-slate-700 uppercase tracking-wide">
+                  <h4 className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
                     Fonctionnalités Principales
                   </h4>
                   {[
                     {
                       label: "Gestion Documentaire",
                       desc: "Upload, stockage et organisation des documents médicaux",
-                      icon: "📄",
+                      icon: Icons.save,
                     },
                     {
                       label: "Questions & Réponses IA",
                       desc: "Posez des questions sur vos documents et obtenez des réponses précises",
-                      icon: "💬",
+                      icon: Icons.cpu,
                     },
                     {
                       label: "Synthèse Comparative",
                       desc: "Comparez et analysez plusieurs documents automatiquement",
-                      icon: "📊",
+                      icon: Icons.link,
                     },
                     {
                       label: "Anonymisation",
                       desc: "Protection des données sensibles des patients",
-                      icon: "🔒",
+                      icon: Icons.shield,
                     },
                     {
                       label: "Journal d'Audit",
                       desc: "Traçabilité complète de toutes les opérations",
-                      icon: "📋",
+                      icon: Icons.info,
                     },
                   ].map((item, idx) => (
                     <div
                       key={idx}
-                      className="flex items-start gap-3 p-3 rounded-xl bg-gradient-to-r from-slate-50 to-white border border-slate-100 hover:border-indigo-200 hover:shadow-sm transition-all"
+                      className="flex items-start gap-3 p-3 rounded-xl bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-700 border border-slate-100 dark:border-slate-700 hover:border-indigo-200 dark:hover:border-indigo-600 hover:shadow-sm transition-all"
                     >
-                      <span className="text-2xl">{item.icon}</span>
+                      <span className="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                        {item.icon}
+                      </span>
                       <div>
-                        <span className="text-sm font-semibold text-slate-800 block">
+                        <span className="text-sm font-semibold text-slate-800 dark:text-white block">
                           {item.label}
                         </span>
-                        <span className="text-xs text-slate-500">
+                        <span className="text-xs text-slate-500 dark:text-slate-400">
                           {item.desc}
                         </span>
                       </div>
@@ -667,13 +565,13 @@ export default function Settings() {
               </div>
 
               {/* Version info */}
-              <div className="mt-6 pt-6 border-t border-slate-200">
+              <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
-                    <span className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 text-sm font-semibold">
-                      📦 Version 1.0.0
+                    <span className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-semibold">
+                      Version 1.0.0
                     </span>
-                    <span className="text-sm text-slate-500">
+                    <span className="text-sm text-slate-500 dark:text-slate-400">
                       © 2024 DocQA Medical System - Tous droits réservés
                     </span>
                   </div>

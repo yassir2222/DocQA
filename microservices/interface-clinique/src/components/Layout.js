@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useNotifications } from "../context/NotificationContext";
+import { useTheme } from "../context/ThemeContext";
 import NotificationPanel from "./NotificationPanel";
 
 // Premium Icons
@@ -190,6 +191,7 @@ export default function Layout({ children }) {
   const [currentTime, setCurrentTime] = useState(new Date());
   const location = useLocation();
   const { unreadCount, togglePanel } = useNotifications();
+  const { isDark, toggleTheme } = useTheme();
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
@@ -215,7 +217,7 @@ export default function Layout({ children }) {
   };
 
   return (
-    <div className="h-screen overflow-hidden bg-slate-50 flex">
+    <div className="h-screen overflow-hidden bg-slate-50 dark:bg-slate-900 flex">
       {/* Sidebar - Desktop */}
       <aside
         className={`hidden lg:flex flex-col fixed inset-y-0 left-0 z-50 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-white transition-all duration-300 ease-out ${
@@ -238,10 +240,10 @@ export default function Layout({ children }) {
             </div>
             {isSidebarOpen && (
               <div className="animate-fade-in">
-                <h1 className="text-lg font-bold font-display tracking-tight bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+                <h1 className="text-lg font-bold font-display tracking-tight" style={{ color: 'white' }}>
                   DocQA
                 </h1>
-                <p className="text-[10px] text-slate-400 uppercase tracking-widest">
+                <p className="text-[10px] uppercase tracking-widest" style={{ color: '#cbd5e1' }}>
                   Medical Suite
                 </p>
               </div>
@@ -404,20 +406,20 @@ export default function Layout({ children }) {
         }`}
       >
         {/* Header */}
-        <header className="h-20 bg-white/80 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-40">
+        <header className="h-20 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-700/80 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-40">
           <div className="flex items-center gap-4">
             <button
               onClick={() => setIsMobileMenuOpen(true)}
-              className="lg:hidden p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+              className="lg:hidden p-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors"
             >
               {Icons.menu}
             </button>
 
             <div className="hidden md:block">
-              <h2 className="text-lg font-semibold text-slate-800">
+              <h2 className="text-lg font-semibold text-slate-800 dark:text-white">
                 {getGreeting()}, Dr. Martin
               </h2>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-slate-500 dark:text-slate-400">
                 {currentTime.toLocaleDateString("fr-FR", {
                   weekday: "long",
                   day: "numeric",
@@ -431,23 +433,40 @@ export default function Layout({ children }) {
             {/* Notifications */}
             <button
               onClick={togglePanel}
-              className="relative p-2.5 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+              className="relative p-2.5 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors"
             >
               {Icons.bell}
               {unreadCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 min-w-[20px] h-5 px-1.5 flex items-center justify-center text-xs font-bold bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full ring-2 ring-white animate-pulse">
+                <span className="absolute -top-0.5 -right-0.5 min-w-[20px] h-5 px-1.5 flex items-center justify-center text-xs font-bold bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full ring-2 ring-white dark:ring-slate-800 animate-pulse">
                   {unreadCount > 99 ? "99+" : unreadCount}
                 </span>
               )}
             </button>
 
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="p-2.5 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-all duration-300"
+              title={isDark ? "Mode clair" : "Mode sombre"}
+            >
+              {isDark ? (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+              )}
+            </button>
+
             {/* Divider */}
-            <div className="hidden lg:block h-8 w-px bg-slate-200" />
+            <div className="hidden lg:block h-8 w-px bg-slate-200 dark:bg-slate-700" />
 
             {/* Status */}
-            <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200">
+            <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full border border-emerald-200 dark:border-emerald-800">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-xs font-medium text-emerald-700">
+              <span className="text-xs font-medium text-emerald-700 dark:text-emerald-400">
                 Système actif
               </span>
             </div>
@@ -455,7 +474,7 @@ export default function Layout({ children }) {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-4 lg:p-8 scroll-smooth scrollbar-thin">
+        <main className="flex-1 overflow-y-auto p-4 lg:p-8 scroll-smooth scrollbar-thin bg-slate-50 dark:bg-slate-900">
           <div className="max-w-7xl mx-auto animate-fade-in">{children}</div>
         </main>
       </div>

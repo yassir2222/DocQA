@@ -226,9 +226,9 @@ const notificationConfig = {
   },
   info: {
     icon: Icons.info,
-    bgColor: "bg-slate-50",
+    bgColor: "bg-slate-50 dark:bg-slate-900",
     iconBg: "bg-slate-500",
-    borderColor: "border-slate-200",
+    borderColor: "border-slate-200 dark:border-slate-700",
   },
 };
 
@@ -257,7 +257,7 @@ const NotificationItem = ({ notification, onRead, onDelete }) => {
     <div
       className={`relative p-4 rounded-xl border transition-all duration-200 ${
         notification.read
-          ? "bg-white border-slate-100 opacity-70"
+          ? "bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700 opacity-70"
           : `${config.bgColor} ${config.borderColor}`
       } hover:shadow-md group`}
     >
@@ -274,7 +274,7 @@ const NotificationItem = ({ notification, onRead, onDelete }) => {
           <div className="flex items-start justify-between gap-2">
             <h4
               className={`text-sm font-semibold ${
-                notification.read ? "text-slate-600" : "text-slate-800"
+                notification.read ? "text-slate-600 dark:text-slate-300" : "text-slate-800 dark:text-white"
               }`}
             >
               {notification.title}
@@ -285,7 +285,7 @@ const NotificationItem = ({ notification, onRead, onDelete }) => {
           </div>
           <p
             className={`text-sm mt-1 ${
-              notification.read ? "text-slate-400" : "text-slate-600"
+              notification.read ? "text-slate-400" : "text-slate-600 dark:text-slate-300"
             }`}
           >
             {notification.message}
@@ -298,7 +298,7 @@ const NotificationItem = ({ notification, onRead, onDelete }) => {
         {!notification.read && (
           <button
             onClick={() => onRead(notification.id)}
-            className="p-1.5 rounded-lg bg-white/80 hover:bg-white text-slate-500 hover:text-emerald-600 shadow-sm transition-all"
+            className="p-1.5 rounded-lg bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-emerald-600 shadow-sm transition-all"
             title="Marquer comme lu"
           >
             {Icons.check}
@@ -306,7 +306,7 @@ const NotificationItem = ({ notification, onRead, onDelete }) => {
         )}
         <button
           onClick={() => onDelete(notification.id)}
-          className="p-1.5 rounded-lg bg-white/80 hover:bg-white text-slate-500 hover:text-red-600 shadow-sm transition-all"
+          className="p-1.5 rounded-lg bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-red-600 shadow-sm transition-all"
           title="Supprimer"
         >
           {Icons.trash}
@@ -344,7 +344,7 @@ const NotificationPanel = () => {
 
       {/* Panel */}
       <div
-        className="absolute top-20 right-4 lg:right-8 w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden animate-fade-in"
+        className="absolute top-20 right-4 lg:right-8 w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-2xl overflow-hidden animate-fade-in"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -392,12 +392,12 @@ const NotificationPanel = () => {
           {loading ? (
             <div className="flex flex-col items-center justify-center py-12">
               <div className="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
-              <p className="text-sm text-slate-500 mt-3">Chargement...</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-3">Chargement...</p>
             </div>
           ) : notifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-slate-300">
               {Icons.bell}
-              <p className="text-sm text-slate-500 mt-3">Aucune notification</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-3">Aucune notification</p>
               <p className="text-xs text-slate-400">Vous êtes à jour !</p>
             </div>
           ) : (
@@ -414,8 +414,8 @@ const NotificationPanel = () => {
 
         {/* Footer */}
         {notifications.length > 0 && (
-          <div className="px-5 py-3 bg-slate-50 border-t border-slate-100 text-center">
-            <span className="text-xs text-slate-500">
+          <div className="px-5 py-3 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-700 text-center">
+            <span className="text-xs text-slate-500 dark:text-slate-400">
               {notifications.length} notification
               {notifications.length > 1 ? "s" : ""}
             </span>

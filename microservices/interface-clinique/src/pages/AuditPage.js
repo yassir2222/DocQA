@@ -278,13 +278,13 @@ const actionLabels = {
 };
 
 const actionColors = {
-  DOCUMENT_UPLOAD: "bg-emerald-100 text-emerald-700 border-emerald-200",
+  DOCUMENT_UPLOAD: "bg-emerald-100 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-700",
   DOCUMENT_VIEW: "bg-blue-100 text-blue-700 border-blue-200",
   DOCUMENT_DELETE: "bg-red-100 text-red-700 border-red-200",
-  QA_QUERY: "bg-indigo-100 text-indigo-700 border-indigo-200",
+  QA_QUERY: "bg-indigo-100 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-700",
   SYNTHESIS_GENERATE: "bg-amber-100 text-amber-700 border-amber-200",
   USER_LOGIN: "bg-cyan-100 text-cyan-700 border-cyan-200",
-  USER_LOGOUT: "bg-slate-100 text-slate-700 border-slate-200",
+  USER_LOGOUT: "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700",
   DEID_PROCESS: "bg-pink-100 text-pink-700 border-pink-200",
 };
 
@@ -378,7 +378,7 @@ export default function AuditPage() {
       value: logs.length,
       icon: Icons.activity,
       gradient: "from-indigo-500 to-purple-600",
-      bgGradient: "from-indigo-50 to-purple-50",
+      bgGradient: "from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30",
     },
     {
       label: "Aujourd'hui",
@@ -388,21 +388,21 @@ export default function AuditPage() {
       ).length,
       icon: Icons.calendar,
       gradient: "from-emerald-500 to-teal-600",
-      bgGradient: "from-emerald-50 to-teal-50",
+      bgGradient: "from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30",
     },
     {
       label: "Utilisateurs",
       value: [...new Set(logs.map((l) => l.userId || l.user))].length,
       icon: Icons.users,
       gradient: "from-cyan-500 to-blue-600",
-      bgGradient: "from-cyan-50 to-blue-50",
+      bgGradient: "from-cyan-50 to-blue-50 dark:from-cyan-900/30 dark:to-blue-900/30",
     },
     {
       label: "Questions IA",
       value: logs.filter((l) => l.action === "QA_QUERY").length,
       icon: Icons.chat,
       gradient: "from-amber-500 to-orange-600",
-      bgGradient: "from-amber-50 to-orange-50",
+      bgGradient: "from-amber-50 to-orange-50 dark:from-amber-900/30 dark:to-orange-900/30",
     },
   ];
 
@@ -412,22 +412,22 @@ export default function AuditPage() {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-3xl font-bold font-display text-slate-900">
+            <h1 className="text-3xl font-bold font-display text-slate-900 dark:text-white">
               Journal d'Audit
             </h1>
-            <span className="px-3 py-1 text-xs font-semibold bg-emerald-100 text-emerald-700 rounded-full flex items-center gap-1">
+            <span className="px-3 py-1 text-xs font-semibold bg-emerald-100 text-emerald-700 dark:text-emerald-300 rounded-full flex items-center gap-1">
               {Icons.shield}
               Sécurisé
             </span>
           </div>
-          <p className="text-slate-500">
+          <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500">
             Traçabilité et conformité des opérations médicales
           </p>
         </div>
         <div className="flex items-center gap-3">
           <button
             onClick={loadLogs}
-            className="flex items-center gap-2 px-4 py-2.5 text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm"
+            className="flex items-center gap-2 px-4 py-2.5 text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 dark:bg-slate-900 hover:border-slate-300 dark:border-slate-600 dark:hover:border-slate-500 transition-all shadow-sm"
           >
             {Icons.refresh}
             <span className="hidden sm:inline">Actualiser</span>
@@ -451,7 +451,7 @@ export default function AuditPage() {
           >
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-600">
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-300">
                   {stat.label}
                 </p>
                 <p
@@ -471,10 +471,10 @@ export default function AuditPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-4">
         <div className="flex flex-col lg:flex-row gap-4">
           <div className="flex-1 relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500">
               {Icons.search}
             </span>
             <input
@@ -485,11 +485,11 @@ export default function AuditPage() {
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full pl-12 pr-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 bg-slate-50 text-sm transition-all"
+              className="w-full pl-12 pr-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 bg-slate-50 dark:bg-slate-900 text-sm transition-all"
             />
           </div>
           <div className="relative min-w-[220px]">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500">
               {Icons.filter}
             </span>
             <select
@@ -498,7 +498,7 @@ export default function AuditPage() {
                 setFilterAction(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full pl-12 pr-8 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 appearance-none bg-slate-50 text-slate-700 font-medium text-sm cursor-pointer transition-all"
+              className="w-full pl-12 pr-8 py-3 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 appearance-none bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-medium text-sm cursor-pointer transition-all"
             >
               <option value="">Toutes les actions</option>
               {Object.entries(actionLabels).map(([key, label]) => (
@@ -512,27 +512,27 @@ export default function AuditPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20">
             <div className="relative">
-              <div className="w-14 h-14 border-4 border-indigo-100 rounded-full" />
+              <div className="w-14 h-14 border-4 border-indigo-100 dark:border-indigo-800 rounded-full" />
               <div className="w-14 h-14 border-4 border-indigo-600 rounded-full animate-spin border-t-transparent absolute inset-0" />
             </div>
-            <p className="text-sm text-slate-500 mt-4">
+            <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-4">
               Chargement des logs...
             </p>
           </div>
         ) : paginatedLogs.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 space-y-4">
-            <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-slate-300">
+            <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center text-slate-300">
               {Icons.clipboard}
             </div>
             <div className="text-center">
-              <h3 className="text-xl font-bold text-slate-900">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white">
                 Aucun log trouvé
               </h3>
-              <p className="text-slate-500 mt-1">
+              <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-1">
                 Modifiez vos filtres ou attendez de nouvelles activités
               </p>
             </div>
@@ -541,34 +541,34 @@ export default function AuditPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-gradient-to-r from-slate-50 to-slate-100">
-                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                <tr className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 dark:from-slate-800 dark:to-slate-700 dark:to-slate-700">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
                     Date/Heure
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
                     Action
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
                     Utilisateur
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
                     Détails
                   </th>
-                  <th className="px-6 py-4 text-center text-xs font-bold text-slate-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-center text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                 {paginatedLogs.map((log, idx) => (
                   <tr
                     key={log.id || idx}
-                    className="hover:bg-slate-50 transition-colors group"
+                    className="hover:bg-slate-50 dark:hover:bg-slate-700 dark:bg-slate-900 transition-colors group"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-2 text-sm">
-                        <span className="text-slate-400">{Icons.clock}</span>
-                        <span className="text-slate-700 font-medium">
+                        <span className="text-slate-400 dark:text-slate-500">{Icons.clock}</span>
+                        <span className="text-slate-700 dark:text-slate-200 font-medium">
                           {(() => {
                             const dateVal = log.timestamp || log.createdAt;
                             const dateObj = Array.isArray(dateVal)
@@ -595,7 +595,7 @@ export default function AuditPage() {
                       <span
                         className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border ${
                           actionColors[log.action] ||
-                          "bg-slate-100 text-slate-700 border-slate-200"
+                          "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700"
                         }`}
                       >
                         <span>{actionIcons[log.action] || "•"}</span>
@@ -609,14 +609,14 @@ export default function AuditPage() {
                             .charAt(0)
                             .toUpperCase()}
                         </div>
-                        <span className="text-sm font-semibold text-slate-700">
+                        <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">
                           {log.userId || log.user || "Inconnu"}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-2 text-sm text-slate-600 max-w-xs">
-                        <span className="text-slate-400">{Icons.document}</span>
+                      <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 max-w-xs">
+                        <span className="text-slate-400 dark:text-slate-500">{Icons.document}</span>
                         <span className="truncate" title={log.details}>
                           {log.details || "—"}
                         </span>
@@ -625,7 +625,7 @@ export default function AuditPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-center">
                       <button
                         onClick={() => setSelectedLog(log)}
-                        className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-lg hover:bg-indigo-100 hover:border-indigo-300 transition-all shadow-sm hover:shadow"
+                        className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700 rounded-lg hover:bg-indigo-100 hover:border-indigo-300 dark:hover:border-indigo-600 transition-all shadow-sm hover:shadow"
                       >
                         {Icons.eye}
                         Voir
@@ -640,17 +640,17 @@ export default function AuditPage() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-slate-100 bg-gradient-to-r from-slate-50 to-white gap-4">
-            <p className="text-sm text-slate-600">
-              <span className="font-semibold text-slate-800">
+          <div className="flex flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-slate-100 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 gap-4">
+            <p className="text-sm text-slate-600 dark:text-slate-300">
+              <span className="font-semibold text-slate-800 dark:text-white">
                 {(currentPage - 1) * logsPerPage + 1}
               </span>
               {" - "}
-              <span className="font-semibold text-slate-800">
+              <span className="font-semibold text-slate-800 dark:text-white">
                 {Math.min(currentPage * logsPerPage, filteredLogs.length)}
               </span>
               {" sur "}
-              <span className="font-semibold text-slate-800">
+              <span className="font-semibold text-slate-800 dark:text-white">
                 {filteredLogs.length}
               </span>
               {" entrées"}
@@ -659,7 +659,7 @@ export default function AuditPage() {
               <button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="p-2 rounded-xl border border-slate-200 hover:bg-white hover:border-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all bg-white shadow-sm"
+                className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-white dark:bg-slate-800 hover:border-slate-300 dark:border-slate-600 dark:hover:border-slate-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all bg-white dark:bg-slate-800 shadow-sm"
               >
                 {Icons.chevronLeft}
               </button>
@@ -681,7 +681,7 @@ export default function AuditPage() {
                     className={`w-10 h-10 rounded-xl text-sm font-semibold transition-all ${
                       currentPage === pageNum
                         ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/30"
-                        : "border border-slate-200 hover:bg-white hover:border-slate-300 bg-white text-slate-600"
+                        : "border border-slate-200 dark:border-slate-700 hover:bg-white dark:bg-slate-800 hover:border-slate-300 dark:border-slate-600 dark:hover:border-slate-500 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300"
                     }`}
                   >
                     {pageNum}
@@ -693,7 +693,7 @@ export default function AuditPage() {
                   setCurrentPage((p) => Math.min(totalPages, p + 1))
                 }
                 disabled={currentPage === totalPages}
-                className="p-2 rounded-xl border border-slate-200 hover:bg-white hover:border-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all bg-white shadow-sm"
+                className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-white dark:bg-slate-800 hover:border-slate-300 dark:border-slate-600 dark:hover:border-slate-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all bg-white dark:bg-slate-800 shadow-sm"
               >
                 {Icons.chevronRight}
               </button>
@@ -711,7 +711,7 @@ export default function AuditPage() {
             onClick={() => setSelectedLog(null)}
           >
             <div
-              className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-hidden animate-fade-in"
+              className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-hidden animate-fade-in"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
@@ -741,11 +741,11 @@ export default function AuditPage() {
               <div className="p-6 space-y-4 overflow-y-auto max-h-[60vh]">
                 {/* Info générales */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-                    <span className="text-xs text-slate-500 uppercase tracking-wide block mb-1">
+                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700">
+                    <span className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 uppercase tracking-wide block mb-1">
                       Date & Heure
                     </span>
-                    <span className="text-sm font-semibold text-slate-800">
+                    <span className="text-sm font-semibold text-slate-800 dark:text-white">
                       {(() => {
                         const dateVal =
                           selectedLog.timestamp || selectedLog.createdAt;
@@ -770,8 +770,8 @@ export default function AuditPage() {
                       })()}
                     </span>
                   </div>
-                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-                    <span className="text-xs text-slate-500 uppercase tracking-wide block mb-1">
+                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700">
+                    <span className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 uppercase tracking-wide block mb-1">
                       Utilisateur
                     </span>
                     <div className="flex items-center gap-2">
@@ -780,7 +780,7 @@ export default function AuditPage() {
                           .charAt(0)
                           .toUpperCase()}
                       </div>
-                      <span className="text-sm font-semibold text-slate-800">
+                      <span className="text-sm font-semibold text-slate-800 dark:text-white">
                         {selectedLog.userId || selectedLog.user || "Inconnu"}
                       </span>
                     </div>
@@ -788,14 +788,14 @@ export default function AuditPage() {
                 </div>
 
                 {/* Type d'action */}
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-                  <span className="text-xs text-slate-500 uppercase tracking-wide block mb-2">
+                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700">
+                  <span className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 uppercase tracking-wide block mb-2">
                     Type d'Action
                   </span>
                   <span
                     className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold border ${
                       actionColors[selectedLog.action] ||
-                      "bg-slate-100 text-slate-700 border-slate-200"
+                      "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700"
                     }`}
                   >
                     <span className="text-lg">
@@ -806,8 +806,8 @@ export default function AuditPage() {
                 </div>
 
                 {/* Détails / Contenu */}
-                <div className="p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100">
-                  <span className="text-xs text-indigo-600 uppercase tracking-wide block mb-2 font-semibold">
+                <div className="p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 border border-indigo-100 dark:border-indigo-800">
+                  <span className="text-xs text-indigo-600 dark:text-indigo-400 uppercase tracking-wide block mb-2 font-semibold">
                     {selectedLog.action === "SYNTHESIS_GENERATE"
                       ? "📊 Synthèse Générée"
                       : selectedLog.action === "QA_QUERY"
@@ -817,8 +817,8 @@ export default function AuditPage() {
                       ? "📄 Document"
                       : "📝 Détails"}
                   </span>
-                  <div className="bg-white rounded-lg p-4 border border-indigo-100 shadow-inner">
-                    <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">
+                  <div className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-indigo-100 dark:border-indigo-800 shadow-inner">
+                    <p className="text-sm text-slate-700 dark:text-slate-200 whitespace-pre-wrap leading-relaxed">
                       {selectedLog.details ||
                         selectedLog.content ||
                         "Aucun détail disponible"}
@@ -832,7 +832,7 @@ export default function AuditPage() {
                   selectedLog.synthesisId) && (
                   <div className="grid grid-cols-3 gap-3">
                     {selectedLog.documentId && (
-                      <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-100 text-center">
+                      <div className="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100 dark:border-emerald-800 text-center">
                         <span className="text-xs text-emerald-600 block">
                           ID Document
                         </span>
@@ -842,7 +842,7 @@ export default function AuditPage() {
                       </div>
                     )}
                     {selectedLog.patientId && (
-                      <div className="p-3 rounded-lg bg-blue-50 border border-blue-100 text-center">
+                      <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/30 border border-blue-100 text-center">
                         <span className="text-xs text-blue-600 block">
                           ID Patient
                         </span>
@@ -852,7 +852,7 @@ export default function AuditPage() {
                       </div>
                     )}
                     {selectedLog.synthesisId && (
-                      <div className="p-3 rounded-lg bg-amber-50 border border-amber-100 text-center">
+                      <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/30 border border-amber-100 text-center">
                         <span className="text-xs text-amber-600 block">
                           ID Synthèse
                         </span>
@@ -866,7 +866,7 @@ export default function AuditPage() {
               </div>
 
               {/* Footer */}
-              <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+              <div className="px-6 py-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-700 flex justify-end">
                 <button
                   onClick={() => setSelectedLog(null)}
                   className="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold shadow-lg shadow-indigo-500/30 hover:shadow-xl hover:-translate-y-0.5 transition-all"

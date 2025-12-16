@@ -373,7 +373,7 @@ export default function Synthesis() {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-3xl font-bold font-display text-slate-900">
+            <h1 className="text-3xl font-bold font-display text-slate-900 dark:text-white">
               Synthèse
             </h1>
             {selectedPatients.length > 1 && (
@@ -382,7 +382,7 @@ export default function Synthesis() {
               </span>
             )}
           </div>
-          <p className="text-slate-500">
+          <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500">
             Comparez et analysez les documents médicaux
           </p>
         </div>
@@ -403,23 +403,23 @@ export default function Synthesis() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Documents par Patient */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col h-[650px]">
-          <div className="p-5 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden flex flex-col h-[650px]">
+          <div className="p-5 border-b border-slate-100 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg">
                 {Icons.folder}
               </div>
               <div>
-                <h2 className="text-lg font-bold text-slate-900">
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">
                   Documents par Patient
                 </h2>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500">
                   {documents.length} documents disponibles
                 </p>
               </div>
             </div>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500">
                 {Icons.search}
               </span>
               <input
@@ -427,7 +427,7 @@ export default function Synthesis() {
                 placeholder="Rechercher un patient ou document..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 bg-white text-sm transition-all"
+                className="w-full pl-12 pr-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 bg-white dark:bg-slate-800 text-sm transition-all"
               />
             </div>
           </div>
@@ -436,20 +436,20 @@ export default function Synthesis() {
             {loadingDocs ? (
               <div className="flex flex-col items-center justify-center py-16">
                 <div className="relative">
-                  <div className="w-12 h-12 border-4 border-indigo-100 rounded-full" />
+                  <div className="w-12 h-12 border-4 border-indigo-100 dark:border-indigo-800 rounded-full" />
                   <div className="w-12 h-12 border-4 border-indigo-600 rounded-full animate-spin border-t-transparent absolute inset-0" />
                 </div>
-                <p className="text-sm text-slate-500 mt-4">
+                <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-4">
                   Chargement des documents...
                 </p>
               </div>
             ) : filteredPatients.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
-                <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-300 mb-4">
+                <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-300 mb-4">
                   {Icons.user}
                 </div>
-                <h3 className="font-semibold text-slate-700">Aucun résultat</h3>
-                <p className="text-sm text-slate-500 mt-1">
+                <h3 className="font-semibold text-slate-700 dark:text-slate-200">Aucun résultat</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-1">
                   Modifiez votre recherche
                 </p>
               </div>
@@ -469,16 +469,16 @@ export default function Synthesis() {
                     key={patientId}
                     className={`rounded-xl overflow-hidden border transition-all duration-200 ${
                       someSelected
-                        ? "border-indigo-200 shadow-md"
-                        : "border-slate-200"
+                        ? "border-indigo-200 dark:border-indigo-700 shadow-md"
+                        : "border-slate-200 dark:border-slate-700"
                     }`}
                   >
                     {/* Patient Header */}
                     <div
                       className={`flex items-center justify-between p-4 cursor-pointer transition-all ${
                         someSelected
-                          ? "bg-gradient-to-r from-indigo-50 to-purple-50"
-                          : "bg-slate-50 hover:bg-slate-100"
+                          ? "bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30"
+                          : "bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-700"
                       }`}
                     >
                       <div
@@ -489,16 +489,16 @@ export default function Synthesis() {
                           className={`w-11 h-11 rounded-xl flex items-center justify-center shadow transition-all ${
                             someSelected
                               ? "bg-gradient-to-br from-indigo-500 to-purple-600 text-white"
-                              : "bg-white text-slate-500 border border-slate-200"
+                              : "bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700"
                           }`}
                         >
                           {Icons.user}
                         </div>
                         <div>
-                          <h3 className="font-semibold text-slate-900">
+                          <h3 className="font-semibold text-slate-900 dark:text-white">
                             {patientId}
                           </h3>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500">
                             {patientDocs.length} document
                             {patientDocs.length > 1 ? "s" : ""}
                           </p>
@@ -519,7 +519,7 @@ export default function Synthesis() {
                         className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                           allSelected
                             ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/30"
-                            : "bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 hover:text-indigo-600"
+                            : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-600 hover:text-indigo-600 dark:text-indigo-400"
                         }`}
                       >
                         {allSelected ? "✓ Sélectionné" : "Tout sélectionner"}
@@ -528,15 +528,15 @@ export default function Synthesis() {
 
                     {/* Documents List */}
                     {isExpanded && (
-                      <div className="p-3 space-y-2 bg-white">
+                      <div className="p-3 space-y-2 bg-white dark:bg-slate-800">
                         {patientDocs.map((doc) => (
                           <div
                             key={doc.id}
                             onClick={() => toggleDocument(doc.id)}
                             className={`p-3 rounded-xl border cursor-pointer transition-all duration-200 ${
                               selectedDocs.includes(doc.id)
-                                ? "border-indigo-400 bg-indigo-50 shadow-sm"
-                                : "border-slate-100 hover:border-indigo-200 hover:bg-slate-50"
+                                ? "border-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 shadow-sm"
+                                : "border-slate-100 dark:border-slate-700 hover:border-indigo-200 dark:hover:border-indigo-700 dark:border-indigo-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:bg-slate-900"
                             }`}
                           >
                             <div className="flex items-center gap-3">
@@ -544,7 +544,7 @@ export default function Synthesis() {
                                 className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all ${
                                   selectedDocs.includes(doc.id)
                                     ? "bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow"
-                                    : "bg-slate-100 text-slate-400"
+                                    : "bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500"
                                 }`}
                               >
                                 {selectedDocs.includes(doc.id)
@@ -556,12 +556,12 @@ export default function Synthesis() {
                                   className={`font-medium truncate text-sm transition-colors ${
                                     selectedDocs.includes(doc.id)
                                       ? "text-indigo-900"
-                                      : "text-slate-700"
+                                      : "text-slate-700 dark:text-slate-200"
                                   }`}
                                 >
                                   {doc.filename}
                                 </h4>
-                                <p className="text-xs text-slate-500">
+                                <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500">
                                   {new Date(doc.created_at).toLocaleDateString(
                                     "fr-FR"
                                   )}
@@ -579,15 +579,15 @@ export default function Synthesis() {
           </div>
 
           {/* Footer */}
-          <div className="p-4 border-t border-slate-100 bg-gradient-to-r from-slate-50 to-white">
+          <div className="p-4 border-t border-slate-100 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-slate-700">
+                <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">
                   {selectedDocs.length} sélectionné
                   {selectedDocs.length > 1 ? "s" : ""}
                 </span>
                 {selectedPatients.length > 0 && (
-                  <span className="text-xs text-slate-500 px-2 py-0.5 bg-slate-100 rounded-full">
+                  <span className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 px-2 py-0.5 bg-slate-100 dark:bg-slate-700 rounded-full">
                     {selectedPatients.length} patient
                     {selectedPatients.length > 1 ? "s" : ""}
                   </span>
@@ -607,15 +607,15 @@ export default function Synthesis() {
         </div>
 
         {/* Synthesis Result */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col h-[650px]">
-          <div className="p-5 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden flex flex-col h-[650px]">
+          <div className="p-5 border-b border-slate-100 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg">
                 {Icons.clipboard}
               </div>
               <div>
-                <h2 className="text-lg font-bold text-slate-900">Résultat</h2>
-                <p className="text-sm text-slate-500">
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">Résultat</h2>
+                <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500">
                   Synthèse générée par IA
                 </p>
               </div>
@@ -623,7 +623,7 @@ export default function Synthesis() {
             {synthesis && (
               <button
                 onClick={handleExport}
-                className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-600 border border-indigo-200 rounded-xl hover:bg-indigo-50 transition-colors text-sm font-medium shadow-sm"
+                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-700 rounded-xl hover:bg-indigo-50 dark:hover:bg-indigo-900/30 dark:bg-indigo-900/30 transition-colors text-sm font-medium shadow-sm"
               >
                 {Icons.download}
                 <span>Exporter</span>
@@ -635,17 +635,17 @@ export default function Synthesis() {
             {loading ? (
               <div className="flex flex-col items-center justify-center h-full space-y-6">
                 <div className="relative">
-                  <div className="w-20 h-20 border-4 border-indigo-100 rounded-full" />
+                  <div className="w-20 h-20 border-4 border-indigo-100 dark:border-indigo-800 rounded-full" />
                   <div className="absolute inset-0 w-20 h-20 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-                  <div className="absolute inset-0 flex items-center justify-center text-indigo-600">
+                  <div className="absolute inset-0 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
                     {Icons.sparkles}
                   </div>
                 </div>
                 <div className="text-center">
-                  <p className="text-lg font-semibold text-slate-900">
+                  <p className="text-lg font-semibold text-slate-900 dark:text-white">
                     Génération en cours...
                   </p>
-                  <p className="text-sm text-slate-500 mt-2">
+                  <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-2">
                     Analyse de {selectedDocs.length} document
                     {selectedDocs.length > 1 ? "s" : ""}
                     {selectedPatients.length > 1 &&
@@ -670,12 +670,12 @@ export default function Synthesis() {
             ) : synthesis ? (
               <div className="space-y-6 animate-fade-in">
                 {/* Header */}
-                <div className="pb-4 border-b border-slate-100">
+                <div className="pb-4 border-b border-slate-100 dark:border-slate-700">
                   <div className="flex items-center gap-2">
-                    <span className="px-3 py-1.5 bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 rounded-lg text-sm font-semibold">
+                    <span className="px-3 py-1.5 bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/50 dark:to-purple-900/50 text-indigo-700 dark:text-indigo-300 rounded-lg text-sm font-semibold">
                       {synthesis.type || "Synthèse IA"}
                     </span>
-                    <span className="text-sm text-slate-500">
+                    <span className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500">
                       {new Date(
                         synthesis.generatedAt || Date.now()
                       ).toLocaleDateString("fr-FR")}
@@ -685,15 +685,15 @@ export default function Synthesis() {
 
                 {/* Summary */}
                 <div className="space-y-3">
-                  <h3 className="font-bold text-slate-900 flex items-center gap-2">
+                  <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-xs flex items-center justify-center font-bold shadow">
                       1
                     </span>
                     Résumé
                   </h3>
                   <div className="pl-9">
-                    <div className="bg-gradient-to-br from-slate-50 to-white p-5 rounded-xl border border-slate-100 shadow-sm">
-                      <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">
+                    <div className="bg-gradient-to-br from-slate-50 dark:from-slate-800 to-white dark:from-slate-800 dark:to-slate-900 p-5 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
+                      <p className="text-slate-700 dark:text-slate-200 leading-relaxed whitespace-pre-wrap">
                         {synthesis.summary}
                       </p>
                     </div>
@@ -703,7 +703,7 @@ export default function Synthesis() {
                 {/* Key Points */}
                 {synthesis.keyPoints && synthesis.keyPoints.length > 0 && (
                   <div className="space-y-3">
-                    <h3 className="font-bold text-slate-900 flex items-center gap-2">
+                    <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
                       <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-white text-xs flex items-center justify-center font-bold shadow">
                         2
                       </span>
@@ -714,7 +714,7 @@ export default function Synthesis() {
                         {synthesis.keyPoints.map((point, idx) => (
                           <li
                             key={idx}
-                            className="flex items-start gap-3 text-slate-700 bg-white p-3 rounded-xl border border-slate-100 shadow-sm"
+                            className="flex items-start gap-3 text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm"
                           >
                             <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center flex-shrink-0 mt-0.5">
                               {Icons.lightbulb}
@@ -729,26 +729,26 @@ export default function Synthesis() {
 
                 {/* Processing info */}
                 {synthesis.processingTimeMs && (
-                  <div className="text-xs text-slate-400 pt-4 border-t border-slate-100 text-center">
+                  <div className="text-xs text-slate-400 dark:text-slate-500 pt-4 border-t border-slate-100 dark:border-slate-700 text-center">
                     ✨ Généré en {synthesis.processingTimeMs}ms
                   </div>
                 )}
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center h-full space-y-4 text-center">
-                <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-slate-300">
+                <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center text-slate-300">
                   {Icons.chart}
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-xl font-bold text-slate-900">
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">
                     Aucune synthèse
                   </h3>
-                  <p className="text-slate-500 max-w-xs">
+                  <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500 max-w-xs">
                     Sélectionnez des documents à gauche puis cliquez sur
                     "Générer la synthèse"
                   </p>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-slate-400 bg-slate-50 px-4 py-2 rounded-full">
+                <div className="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-900 px-4 py-2 rounded-full">
                   {Icons.lightbulb}
                   <span>Vous pouvez comparer plusieurs patients</span>
                 </div>

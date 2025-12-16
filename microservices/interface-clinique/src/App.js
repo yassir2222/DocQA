@@ -6,6 +6,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { NotificationProvider } from "./context/NotificationContext";
+import { ThemeProvider } from "./context/ThemeContext";
 import Layout from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
 import Documents from "./pages/Documents";
@@ -17,21 +18,24 @@ import Settings from "./pages/Settings";
 function App() {
   return (
     <Router>
-      <NotificationProvider>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/documents" element={<Documents />} />
-            <Route path="/qa" element={<QAInterface />} />
-            <Route path="/synthesis" element={<Synthesis />} />
-            <Route path="/audit" element={<AuditPage />} />
-            <Route path="/settings" element={<Settings />} />
-          </Routes>
-        </Layout>
-      </NotificationProvider>
+      <ThemeProvider>
+        <NotificationProvider>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/documents" element={<Documents />} />
+              <Route path="/qa" element={<QAInterface />} />
+              <Route path="/synthesis" element={<Synthesis />} />
+              <Route path="/audit" element={<AuditPage />} />
+              <Route path="/settings" element={<Settings />} />
+            </Routes>
+          </Layout>
+        </NotificationProvider>
+      </ThemeProvider>
     </Router>
   );
 }
 
 export default App;
+

@@ -247,16 +247,16 @@ const CustomDropdown = ({
         type="button"
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
-        className={`flex items-center gap-2 px-4 py-3 bg-white rounded-xl shadow-sm border border-slate-200 hover:border-indigo-300 transition-all duration-200 ${
+        className={`flex items-center gap-2 px-4 py-3 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-600 transition-all duration-200 ${
           disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
         }`}
       >
         <div className={`p-1.5 rounded-lg ${iconBgColor}`}>{icon}</div>
-        <span className="text-sm font-semibold text-slate-800 max-w-[150px] truncate">
+        <span className="text-sm font-semibold text-slate-800 dark:text-white max-w-[150px] truncate">
           {displayText}
         </span>
         <div
-          className={`text-slate-400 transition-transform duration-200 ${
+          className={`text-slate-400 dark:text-slate-500 transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""
           }`}
         >
@@ -266,7 +266,7 @@ const CustomDropdown = ({
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-full min-w-[200px] bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50 animate-slide-up">
+        <div className="absolute top-full left-0 mt-2 w-full min-w-[200px] bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 py-2 z-50 animate-slide-up">
           {options.map((option) => (
             <button
               key={option.value}
@@ -277,12 +277,12 @@ const CustomDropdown = ({
               }}
               className={`w-full text-left px-4 py-2.5 text-sm transition-colors duration-150 flex items-center gap-2 ${
                 value === option.value
-                  ? "bg-indigo-50 text-indigo-700 font-semibold"
-                  : "text-slate-700 hover:bg-slate-50"
+                  ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-semibold"
+                  : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 dark:bg-slate-900"
               }`}
             >
               {value === option.value && (
-                <span className="text-indigo-600">{Icons.check}</span>
+                <span className="text-indigo-600 dark:text-indigo-400">{Icons.check}</span>
               )}
               <span className={value === option.value ? "" : "ml-6"}>
                 {option.label}
@@ -290,7 +290,7 @@ const CustomDropdown = ({
             </button>
           ))}
           {options.length === 0 && (
-            <div className="px-4 py-3 text-sm text-slate-400 text-center">
+            <div className="px-4 py-3 text-sm text-slate-400 dark:text-slate-500 text-center">
               Aucune option
             </div>
           )}
@@ -579,21 +579,21 @@ export default function QAInterface() {
         className={`
         ${showHistory ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         fixed lg:relative inset-y-0 left-0 z-40 lg:z-0
-        w-80 bg-white border-r border-slate-200 flex flex-col
+        w-80 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col
         transition-transform duration-300 lg:transition-none
         shadow-xl lg:shadow-none rounded-r-2xl lg:rounded-none
       `}
       >
         {/* Header Historique */}
-        <div className="p-4 border-b border-slate-200">
+        <div className="p-4 border-b border-slate-200 dark:border-slate-700">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+            <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
               {Icons.history}
               Historique
             </h2>
             <button
               onClick={() => setShowHistory(false)}
-              className="lg:hidden p-2 text-slate-500 hover:text-slate-700"
+              className="lg:hidden p-2 text-slate-500 dark:text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:text-slate-200"
             >
               {Icons.chevronLeft}
             </button>
@@ -611,8 +611,8 @@ export default function QAInterface() {
         {/* Liste des conversations */}
         <div className="flex-1 overflow-y-auto p-3 space-y-2">
           {conversations.length === 0 ? (
-            <div className="text-center py-8 text-slate-400">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 flex items-center justify-center">
+            <div className="text-center py-8 text-slate-400 dark:text-slate-500">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center">
                 {Icons.chat}
               </div>
               <p className="text-sm">Aucune conversation</p>
@@ -627,33 +627,33 @@ export default function QAInterface() {
                   group p-3 rounded-xl cursor-pointer transition-all
                   ${
                     currentConversation?.id === conv.id
-                      ? "bg-indigo-50 border-2 border-indigo-200"
-                      : "hover:bg-slate-50 border-2 border-transparent"
+                      ? "bg-indigo-50 dark:bg-indigo-900/30 border-2 border-indigo-200 dark:border-indigo-700"
+                      : "hover:bg-slate-50 dark:hover:bg-slate-700 dark:bg-slate-900 border-2 border-transparent"
                   }
                 `}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-sm text-slate-800 truncate">
+                    <h3 className="font-semibold text-sm text-slate-800 dark:text-white truncate">
                       {conv.title}
                     </h3>
                     {conv.lastMessage && (
-                      <p className="text-xs text-slate-500 truncate mt-1">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 truncate mt-1">
                         {conv.lastMessage}
                       </p>
                     )}
                     <div className="flex items-center gap-2 mt-2">
-                      <span className="text-xs text-slate-400">
+                      <span className="text-xs text-slate-400 dark:text-slate-500">
                         {formatRelativeTime(conv.updatedAt)}
                       </span>
-                      <span className="text-xs px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full">
+                      <span className="text-xs px-2 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 dark:text-slate-500 rounded-full">
                         {conv.messageCount} msg
                       </span>
                     </div>
                   </div>
                   <button
                     onClick={(e) => deleteConversation(conv.id, e)}
-                    className="opacity-0 group-hover:opacity-100 p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                    className="opacity-0 group-hover:opacity-100 p-1.5 text-slate-400 dark:text-slate-500 hover:text-red-500 hover:bg-red-50 dark:bg-red-900/30 rounded-lg transition-all"
                   >
                     {Icons.trash}
                   </button>
@@ -675,19 +675,19 @@ export default function QAInterface() {
       {/* Zone principale */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 p-4 lg:p-6 border-b border-slate-200 bg-white">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 p-4 lg:p-6 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowHistory(true)}
-              className="lg:hidden p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl"
+              className="lg:hidden p-2 text-slate-500 dark:text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-700 rounded-xl"
             >
               {Icons.menu}
             </button>
             <div>
-              <h1 className="text-2xl font-bold font-display text-slate-900">
+              <h1 className="text-2xl font-bold font-display text-slate-900 dark:text-white">
                 Assistant IA
               </h1>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500">
                 {currentConversation
                   ? currentConversation.title
                   : "Nouvelle conversation"}
@@ -704,7 +704,7 @@ export default function QAInterface() {
               options={patients.map((p) => ({ value: p, label: p }))}
               placeholder="Sélectionner un patient"
               icon={Icons.user}
-              iconBgColor="bg-indigo-100 text-indigo-600"
+              iconBgColor="bg-indigo-100 text-indigo-600 dark:text-indigo-400"
               disabled={patients.length === 0}
             />
 
@@ -732,8 +732,8 @@ export default function QAInterface() {
 
         {/* Documents chips */}
         {selectedPatient && patientDocuments.length > 0 && (
-          <div className="mx-4 lg:mx-6 mt-4 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 rounded-2xl">
-            <div className="flex items-center gap-2 text-indigo-700 mb-3">
+          <div className="mx-4 lg:mx-6 mt-4 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 border border-indigo-100 dark:border-indigo-800 rounded-2xl">
+            <div className="flex items-center gap-2 text-indigo-700 dark:text-indigo-300 mb-3">
               {Icons.folder}
               <span className="text-sm font-semibold">
                 {patientDocuments.length} document
@@ -749,7 +749,7 @@ export default function QAInterface() {
                   className={`flex items-center gap-2 text-xs px-3 py-2 rounded-xl transition-all duration-200 ${
                     selectedDocument === doc.id
                       ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/30"
-                      : "bg-white text-slate-700 border border-slate-200 hover:border-indigo-300 hover:shadow-md"
+                      : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-600 hover:shadow-md"
                   }`}
                 >
                   {selectedDocument === doc.id && Icons.check}
@@ -763,7 +763,7 @@ export default function QAInterface() {
         )}
 
         {/* Chat Container */}
-        <div className="flex-1 overflow-hidden flex flex-col bg-slate-50">
+        <div className="flex-1 overflow-hidden flex flex-col bg-slate-50 dark:bg-slate-900">
           {/* Messages Area */}
           <div className="flex-1 overflow-y-auto p-4 lg:p-6 space-y-6">
             {messages.map((msg, index) => (
@@ -779,7 +779,7 @@ export default function QAInterface() {
                   className={`flex-shrink-0 w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg ${
                     msg.type === "user"
                       ? "bg-gradient-to-br from-indigo-600 to-purple-600 text-white"
-                      : "bg-gradient-to-br from-slate-100 to-slate-200 text-indigo-600"
+                      : "bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 text-indigo-600 dark:text-indigo-400"
                   }`}
                 >
                   {msg.type === "user" ? Icons.user : Icons.sparkles}
@@ -795,10 +795,10 @@ export default function QAInterface() {
                     className={`px-5 py-4 rounded-2xl shadow-sm ${
                       msg.type === "user"
                         ? "bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-tr-md"
-                        : "bg-white text-slate-800 border border-slate-100 rounded-tl-md"
+                        : "bg-white dark:bg-slate-800 text-slate-800 dark:text-white border border-slate-100 dark:border-slate-700 rounded-tl-md"
                     } ${
                       msg.isError
-                        ? "!bg-red-50 !text-red-600 !border-red-200"
+                        ? "!bg-red-50 dark:bg-red-900/30 !text-red-600 !border-red-200"
                         : ""
                     }`}
                   >
@@ -810,13 +810,13 @@ export default function QAInterface() {
                   {/* Sources */}
                   {msg.sources && msg.sources.length > 0 && (
                     <div className="mt-3 flex flex-wrap gap-2">
-                      <span className="text-xs text-slate-500 font-medium self-center mr-1">
+                      <span className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 font-medium self-center mr-1">
                         Sources:
                       </span>
                       {msg.sources.map((source, idx) => (
                         <span
                           key={idx}
-                          className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 border border-slate-200"
+                          className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
                         >
                           {Icons.document}
                           {typeof source === "string"
@@ -829,7 +829,7 @@ export default function QAInterface() {
                     </div>
                   )}
 
-                  <span className="text-xs text-slate-400 mt-2 px-1">
+                  <span className="text-xs text-slate-400 dark:text-slate-500 mt-2 px-1">
                     {msg.timestamp.toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",
@@ -842,10 +842,10 @@ export default function QAInterface() {
             {/* Loading Indicator */}
             {loading && (
               <div className="flex gap-4 animate-fade-in">
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 text-indigo-600 flex items-center justify-center shadow-lg">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shadow-lg">
                   {Icons.sparkles}
                 </div>
-                <div className="bg-white px-6 py-4 rounded-2xl rounded-tl-md border border-slate-100 shadow-sm">
+                <div className="bg-white dark:bg-slate-800 px-6 py-4 rounded-2xl rounded-tl-md border border-slate-100 dark:border-slate-700 shadow-sm">
                   <div className="flex items-center gap-1.5">
                     <div
                       className="w-2.5 h-2.5 bg-indigo-500 rounded-full animate-bounce"
@@ -869,7 +869,7 @@ export default function QAInterface() {
           {/* Quick Questions */}
           {messages.length <= 1 && !loading && (
             <div className="px-4 lg:px-6 pb-4">
-              <p className="text-sm text-slate-500 mb-3">
+              <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500 mb-3">
                 Questions suggérées :
               </p>
               <div className="flex flex-wrap gap-2">
@@ -877,7 +877,7 @@ export default function QAInterface() {
                   <button
                     key={idx}
                     onClick={() => setInput(question)}
-                    className="px-4 py-2 text-sm bg-white text-slate-700 rounded-xl hover:bg-indigo-100 hover:text-indigo-700 transition-all duration-200 border border-slate-200 hover:border-indigo-200"
+                    className="px-4 py-2 text-sm bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl hover:bg-indigo-100 hover:text-indigo-700 dark:text-indigo-300 transition-all duration-200 border border-slate-200 dark:border-slate-700 hover:border-indigo-200 dark:hover:border-indigo-700 dark:border-indigo-700"
                   >
                     {question}
                   </button>
@@ -887,7 +887,7 @@ export default function QAInterface() {
           )}
 
           {/* Input Area */}
-          <div className="p-4 bg-white border-t border-slate-200">
+          <div className="p-4 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700">
             <form
               onSubmit={handleSend}
               className="flex gap-3 max-w-4xl mx-auto"
@@ -903,12 +903,12 @@ export default function QAInterface() {
                       ? "Posez votre question..."
                       : "Sélectionnez d'abord un patient"
                   }
-                  className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 focus:bg-white transition-all placeholder-slate-400 pr-12"
+                  className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 focus:bg-white dark:bg-slate-800 transition-all placeholder-slate-400 dark:placeholder-slate-500 pr-12"
                   disabled={loading || !selectedPatient}
                 />
                 <button
                   type="button"
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-300 transition-colors"
                 >
                   {Icons.paperclip}
                 </button>
@@ -929,7 +929,7 @@ export default function QAInterface() {
               </button>
             </form>
 
-            <p className="text-center text-xs text-slate-400 mt-3">
+            <p className="text-center text-xs text-slate-400 dark:text-slate-500 mt-3">
               L'IA peut faire des erreurs. Vérifiez les informations
               importantes.
             </p>

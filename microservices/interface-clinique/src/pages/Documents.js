@@ -488,7 +488,7 @@ export default function Documents() {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="relative">
-          <div className="w-16 h-16 border-4 border-indigo-100 rounded-full" />
+          <div className="w-16 h-16 border-4 border-indigo-100 dark:border-indigo-800 rounded-full" />
           <div className="w-16 h-16 border-4 border-indigo-600 rounded-full animate-spin border-t-transparent absolute inset-0" />
         </div>
       </div>
@@ -501,14 +501,14 @@ export default function Documents() {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-3xl font-bold font-display text-slate-900">
+            <h1 className="text-3xl font-bold font-display text-slate-900 dark:text-white">
               Documents
             </h1>
-            <span className="px-3 py-1 text-xs font-semibold text-indigo-600 bg-indigo-100 rounded-full">
+            <span className="px-3 py-1 text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-100 rounded-full">
               {documents.length} fichiers
             </span>
           </div>
-          <p className="text-slate-500">
+          <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500">
             Gérez vos documents médicaux en toute sécurité
           </p>
         </div>
@@ -529,23 +529,23 @@ export default function Documents() {
       </div>
 
       {/* Patient Name Card */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-6">
         <div className="flex items-start gap-4">
           <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg">
             {Icons.user}
           </div>
           <div className="flex-1">
-            <label className="block text-sm font-bold text-slate-900 mb-2">
+            <label className="block text-sm font-bold text-slate-900 dark:text-white mb-2">
               Patient associé
             </label>
             <input
               type="text"
               placeholder="Entrez le nom du patient (ex: Jean Dupont)"
-              className="block w-full lg:w-1/2 px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm"
+              className="block w-full lg:w-1/2 px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:bg-white dark:bg-slate-800 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm"
               value={patientName}
               onChange={(e) => setPatientName(e.target.value)}
             />
-            <p className="text-xs text-slate-500 mt-2 flex items-center gap-1">
+            <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-2 flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
               Ce nom sera associé aux documents uploadés
             </p>
@@ -557,8 +557,8 @@ export default function Documents() {
       <div
         className={`relative rounded-2xl p-8 text-center transition-all duration-300 cursor-pointer overflow-hidden ${
           dragActive
-            ? "bg-indigo-50 border-2 border-indigo-500"
-            : "bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-dashed border-slate-300 hover:border-indigo-400 hover:bg-indigo-50/50"
+            ? "bg-indigo-50 dark:bg-indigo-900/30 border-2 border-indigo-500"
+            : "bg-gradient-to-br from-slate-50 dark:from-slate-800 to-slate-100 dark:to-slate-700 border-2 border-dashed border-slate-300 dark:border-slate-600 hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/30"
         }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
@@ -568,18 +568,18 @@ export default function Documents() {
       >
         {/* Background decoration */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-20 -right-20 w-64 h-64 bg-indigo-200/30 rounded-full blur-3xl" />
-          <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-purple-200/30 rounded-full blur-3xl" />
+          <div className="absolute -top-20 -right-20 w-64 h-64 bg-indigo-200/30 dark:bg-indigo-500/10 rounded-full blur-3xl" />
+          <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-purple-200/30 dark:bg-purple-500/10 rounded-full blur-3xl" />
         </div>
 
         <div className="relative flex flex-col items-center gap-4">
           <div
             className={`p-5 rounded-2xl transition-all duration-300 ${
               dragActive
-                ? "bg-indigo-100 text-indigo-600 scale-110"
+                ? "bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 scale-110"
                 : uploading
                 ? "bg-indigo-600 text-white"
-                : "bg-white text-slate-400 shadow-lg"
+                : "bg-white dark:bg-slate-800 text-slate-400 dark:text-slate-500 shadow-lg"
             }`}
           >
             {uploading ? (
@@ -607,20 +607,20 @@ export default function Documents() {
           </div>
 
           <div>
-            <p className="text-xl font-bold text-slate-900 mb-1">
+            <p className="text-xl font-bold text-slate-900 dark:text-white mb-1">
               {uploading
                 ? `Upload en cours... ${uploadProgress}%`
                 : dragActive
                 ? "Déposez votre fichier"
                 : "Glissez-déposez vos fichiers"}
             </p>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500">
               {uploading ? "Veuillez patienter" : "ou cliquez pour parcourir"}
             </p>
           </div>
 
           {uploading && (
-            <div className="w-64 h-2 bg-slate-200 rounded-full overflow-hidden">
+            <div className="w-64 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full transition-all duration-300"
                 style={{ width: `${uploadProgress}%` }}
@@ -632,7 +632,7 @@ export default function Documents() {
             {["PDF", "DOCX", "JPG", "PNG"].map((format) => (
               <span
                 key={format}
-                className="px-3 py-1 text-xs font-medium text-slate-600 bg-white rounded-lg shadow-sm"
+                className="px-3 py-1 text-xs font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 rounded-lg shadow-sm"
               >
                 {format}
               </span>
@@ -642,17 +642,17 @@ export default function Documents() {
       </div>
 
       {/* Filters Bar */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-4">
         <div className="flex flex-col lg:flex-row gap-4 items-center">
           {/* Search */}
           <div className="relative flex-1 w-full">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
               {Icons.search}
             </div>
             <input
               type="text"
               placeholder="Rechercher un document..."
-              className="block w-full pl-12 pr-4 py-3 border border-slate-200 rounded-xl bg-slate-50 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm"
+              className="block w-full pl-12 pr-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:bg-white dark:bg-slate-800 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -661,7 +661,7 @@ export default function Documents() {
           {/* Type Filter */}
           <div className="flex items-center gap-3">
             <select
-              className="appearance-none bg-slate-50 border border-slate-200 text-slate-700 py-3 pl-4 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-sm font-medium cursor-pointer"
+              className="appearance-none bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 py-3 pl-4 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-sm font-medium cursor-pointer"
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
             >
@@ -672,13 +672,13 @@ export default function Documents() {
             </select>
 
             {/* View Toggle */}
-            <div className="hidden lg:flex items-center p-1 bg-slate-100 rounded-xl">
+            <div className="hidden lg:flex items-center p-1 bg-slate-100 dark:bg-slate-700 rounded-xl">
               <button
                 onClick={() => setViewMode("list")}
                 className={`p-2 rounded-lg transition-all ${
                   viewMode === "list"
-                    ? "bg-white text-indigo-600 shadow-sm"
-                    : "text-slate-400 hover:text-slate-600"
+                    ? "bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm"
+                    : "text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-300"
                 }`}
               >
                 {Icons.list}
@@ -687,8 +687,8 @@ export default function Documents() {
                 onClick={() => setViewMode("grid")}
                 className={`p-2 rounded-lg transition-all ${
                   viewMode === "grid"
-                    ? "bg-white text-indigo-600 shadow-sm"
-                    : "text-slate-400 hover:text-slate-600"
+                    ? "bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm"
+                    : "text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-300"
                 }`}
               >
                 {Icons.grid}
@@ -705,7 +705,7 @@ export default function Documents() {
           {filteredDocuments.map((doc, index) => (
             <div
               key={doc.id}
-              className="group bg-white rounded-2xl shadow-sm border border-slate-100 p-5 hover:shadow-xl hover:border-slate-200 hover:-translate-y-1 transition-all duration-300"
+              className="group bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-5 hover:shadow-xl hover:border-slate-200 dark:hover:border-slate-600 dark:border-slate-700 hover:-translate-y-1 transition-all duration-300"
               style={{ animationDelay: `${index * 50}ms` }}
             >
               <div className="flex items-start justify-between mb-4">
@@ -719,8 +719,8 @@ export default function Documents() {
                 <span
                   className={`flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full ${
                     doc.status === "processed"
-                      ? "bg-emerald-100 text-emerald-700"
-                      : "bg-amber-100 text-amber-700"
+                      ? "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300"
+                      : "bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300"
                   }`}
                 >
                   {doc.status === "processed" ? Icons.check : Icons.clock}
@@ -728,7 +728,7 @@ export default function Documents() {
                 </span>
               </div>
 
-              <h3 className="font-semibold text-slate-900 truncate mb-2 group-hover:text-indigo-600 transition-colors">
+              <h3 className="font-semibold text-slate-900 dark:text-white truncate mb-2 group-hover:text-indigo-600 dark:text-indigo-400 transition-colors">
                 {doc.name}
               </h3>
 
@@ -736,24 +736,24 @@ export default function Documents() {
                 <div className="w-6 h-6 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white text-xs font-bold">
                   {doc.patient.charAt(0)}
                 </div>
-                <span className="text-sm text-slate-600 truncate">
+                <span className="text-sm text-slate-600 dark:text-slate-300 truncate">
                   {doc.patient}
                 </span>
               </div>
 
-              <div className="flex items-center justify-between text-xs text-slate-500">
+              <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500">
                 <span>{doc.date}</span>
                 <span>{doc.size}</span>
               </div>
 
               {/* Actions on hover */}
-              <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     handleView(doc);
                   }}
-                  className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all"
+                  className="p-2 rounded-lg text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 dark:bg-indigo-900/30 transition-all"
                   title="Visualiser"
                 >
                   {Icons.eye}
@@ -763,7 +763,7 @@ export default function Documents() {
                     e.stopPropagation();
                     handleDownload(doc);
                   }}
-                  className="p-2 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all"
+                  className="p-2 rounded-lg text-slate-400 dark:text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 dark:bg-emerald-900/30 transition-all"
                   title="Télécharger"
                 >
                   {Icons.download}
@@ -773,7 +773,7 @@ export default function Documents() {
                     e.stopPropagation();
                     handleDelete(doc);
                   }}
-                  className="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all"
+                  className="p-2 rounded-lg text-slate-400 dark:text-slate-500 hover:text-red-600 hover:bg-red-50 dark:bg-red-900/30 transition-all"
                   title="Supprimer"
                 >
                   {Icons.trash}
@@ -784,33 +784,33 @@ export default function Documents() {
         </div>
       ) : (
         /* List View */
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full">
               <thead>
-                <tr className="bg-gradient-to-r from-slate-50 to-slate-100">
-                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                <tr className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 dark:from-slate-800 dark:to-slate-700 dark:to-slate-700">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
                     Document
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
                     Patient
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
                     Date
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
                     Statut
                   </th>
-                  <th className="px-6 py-4 text-right text-xs font-bold text-slate-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-right text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                 {filteredDocuments.map((doc, index) => (
                   <tr
                     key={doc.id}
-                    className="hover:bg-slate-50 transition-colors group"
+                    className="hover:bg-slate-50 dark:hover:bg-slate-700 dark:bg-slate-900 transition-colors group"
                     style={{ animationDelay: `${index * 30}ms` }}
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -823,10 +823,10 @@ export default function Documents() {
                           {getFileExtension(doc.type)}
                         </div>
                         <div>
-                          <div className="text-sm font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                          <div className="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:text-indigo-400 transition-colors">
                             {doc.name}
                           </div>
-                          <div className="text-xs text-slate-500 mt-0.5">
+                          <div className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-0.5">
                             {doc.type.split("/")[1]?.toUpperCase() || "FILE"}
                           </div>
                         </div>
@@ -837,20 +837,20 @@ export default function Documents() {
                         <div className="h-8 w-8 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white text-xs font-bold shadow">
                           {doc.patient.charAt(0)}
                         </div>
-                        <span className="text-sm font-medium text-slate-700">
+                        <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
                           {doc.patient}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-slate-600">{doc.date}</span>
+                      <span className="text-sm text-slate-600 dark:text-slate-300">{doc.date}</span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
                         className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full ${
                           doc.status === "processed"
-                            ? "bg-emerald-100 text-emerald-700"
-                            : "bg-amber-100 text-amber-700"
+                            ? "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300"
+                            : "bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300"
                         }`}
                       >
                         {doc.status === "processed" ? Icons.check : Icons.clock}
@@ -861,21 +861,21 @@ export default function Documents() {
                       <div className="flex items-center justify-end gap-1">
                         <button
                           onClick={() => handleView(doc)}
-                          className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all opacity-0 group-hover:opacity-100"
+                          className="p-2 rounded-lg text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 dark:bg-indigo-900/30 transition-all opacity-0 group-hover:opacity-100"
                           title="Visualiser"
                         >
                           {Icons.eye}
                         </button>
                         <button
                           onClick={() => handleDownload(doc)}
-                          className="p-2 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all opacity-0 group-hover:opacity-100"
+                          className="p-2 rounded-lg text-slate-400 dark:text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 dark:bg-emerald-900/30 transition-all opacity-0 group-hover:opacity-100"
                           title="Télécharger"
                         >
                           {Icons.download}
                         </button>
                         <button
                           onClick={() => handleDelete(doc)}
-                          className="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100"
+                          className="p-2 rounded-lg text-slate-400 dark:text-slate-500 hover:text-red-600 hover:bg-red-50 dark:bg-red-900/30 transition-all opacity-0 group-hover:opacity-100"
                           title="Supprimer"
                         >
                           {Icons.trash}
@@ -890,13 +890,13 @@ export default function Documents() {
 
           {filteredDocuments.length === 0 && (
             <div className="p-16 text-center">
-              <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-300">
+              <div className="w-20 h-20 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-300">
                 {Icons.document}
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-2">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
                 Aucun document trouvé
               </h3>
-              <p className="text-slate-500 mb-6">
+              <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500 mb-6">
                 Essayez de modifier vos filtres ou uploadez un nouveau document.
               </p>
               <button
@@ -913,10 +913,10 @@ export default function Documents() {
 
       {/* Stats Footer */}
       {filteredDocuments.length > 0 && (
-        <div className="flex items-center justify-between text-sm text-slate-500 px-2">
+        <div className="flex items-center justify-between text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500 px-2">
           <span>
             Affichage de{" "}
-            <span className="font-semibold text-slate-700">
+            <span className="font-semibold text-slate-700 dark:text-slate-200">
               {filteredDocuments.length}
             </span>{" "}
             document{filteredDocuments.length > 1 ? "s" : ""}
@@ -937,11 +937,11 @@ export default function Documents() {
             onClick={(e) => e.target === e.currentTarget && closeViewer()}
           >
             <div
-              className="relative w-full max-w-5xl max-h-[85vh] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-fade-in"
+              className="relative w-full max-w-5xl max-h-[85vh] bg-white dark:bg-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-fade-in"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Modal Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white shrink-0">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 shrink-0">
                 <div className="flex items-center gap-4">
                   <div
                     className={`h-12 w-12 rounded-xl bg-gradient-to-br ${getFileColor(
@@ -951,10 +951,10 @@ export default function Documents() {
                     {getFileExtension(viewerDoc.type)}
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-slate-900">
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                       {viewerDoc.name}
                     </h3>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500">
                       Patient: {viewerDoc.patient} • {viewerDoc.date}
                     </p>
                   </div>
@@ -962,14 +962,14 @@ export default function Documents() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleDownload(viewerDoc)}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-xl hover:bg-slate-200 transition-all"
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-700 rounded-xl hover:bg-slate-200 transition-all"
                   >
                     {Icons.download}
                     <span className="hidden sm:inline">Télécharger</span>
                   </button>
                   <button
                     onClick={closeViewer}
-                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all"
+                    className="p-2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 dark:bg-slate-700 rounded-xl transition-all"
                   >
                     <svg
                       className="w-6 h-6"
@@ -989,15 +989,15 @@ export default function Documents() {
               </div>
 
               {/* Document Content */}
-              <div className="flex-1 relative bg-slate-50 overflow-auto min-h-0">
+              <div className="flex-1 relative bg-slate-50 dark:bg-slate-900 overflow-auto min-h-0">
                 {viewerLoading && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-white z-10">
+                  <div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-slate-800 z-10">
                     <div className="flex flex-col items-center gap-4">
                       <div className="relative">
-                        <div className="w-16 h-16 border-4 border-indigo-100 rounded-full" />
+                        <div className="w-16 h-16 border-4 border-indigo-100 dark:border-indigo-800 rounded-full" />
                         <div className="w-16 h-16 border-4 border-indigo-600 rounded-full animate-spin border-t-transparent absolute inset-0" />
                       </div>
-                      <p className="text-sm text-slate-500">
+                      <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500">
                         Chargement du document...
                       </p>
                     </div>
@@ -1006,9 +1006,9 @@ export default function Documents() {
 
                 {!viewerLoading && (
                   <div className="h-full overflow-auto p-6">
-                    <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+                    <div className="max-w-4xl mx-auto bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-8">
                       {/* Document Header */}
-                      <div className="flex items-center gap-4 pb-6 mb-6 border-b border-slate-100">
+                      <div className="flex items-center gap-4 pb-6 mb-6 border-b border-slate-100 dark:border-slate-700">
                         <div
                           className={`h-14 w-14 rounded-xl bg-gradient-to-br ${getFileColor(
                             viewerDoc.type
@@ -1017,10 +1017,10 @@ export default function Documents() {
                           {getFileExtension(viewerDoc.type)}
                         </div>
                         <div>
-                          <h3 className="font-bold text-slate-900">
+                          <h3 className="font-bold text-slate-900 dark:text-white">
                             {viewerDoc.name}
                           </h3>
-                          <p className="text-sm text-slate-500">
+                          <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500">
                             Patient: {viewerDoc.patient} • {viewerDoc.date}
                           </p>
                         </div>
@@ -1028,7 +1028,7 @@ export default function Documents() {
 
                       {/* Document Text Content */}
                       <div className="prose prose-slate max-w-none">
-                        <pre className="whitespace-pre-wrap font-sans text-slate-700 text-sm leading-relaxed bg-slate-50 p-6 rounded-xl border border-slate-100">
+                        <pre className="whitespace-pre-wrap font-sans text-slate-700 dark:text-slate-200 text-sm leading-relaxed bg-slate-50 dark:bg-slate-900 p-6 rounded-xl border border-slate-100 dark:border-slate-700">
                           {viewerContent}
                         </pre>
                       </div>
