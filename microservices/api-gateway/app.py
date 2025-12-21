@@ -9,7 +9,7 @@ from fastapi.responses import JSONResponse
 import httpx
 from typing import Optional, List
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import uuid
 
 from config import settings
@@ -20,6 +20,15 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+# Constantes pour les messages d'erreur (éviter la duplication)
+ERROR_DOC_INGESTOR_UNAVAILABLE = "Service doc-ingestor indisponible"
+ERROR_INDEXER_UNAVAILABLE = "Service indexeur indisponible"
+ERROR_DEID_UNAVAILABLE = "Service deid indisponible"
+ERROR_LLM_QA_UNAVAILABLE = "Service llm-qa indisponible"
+ERROR_AUDIT_UNAVAILABLE = "Service audit indisponible"
+ERROR_CONVERSATION_NOT_FOUND = "Conversation non trouvée"
+ERROR_NOTIFICATION_NOT_FOUND = "Notification non trouvée"
 
 # Client HTTP asynchrone global
 http_client: Optional[httpx.AsyncClient] = None
@@ -65,13 +74,25 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Configuration CORS
+# Configuration CORS - Restreindre les origines autorisées
+# Note: En production, utiliser HTTPS et configurer via variables d'environnement
+ALLOWED_ORIGINS = [
+    # Développement (HTTP)
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:8000",
+    "http://interface-clinique:80",
+    # Production (HTTPS) - à configurer selon l'environnement
+    "https://localhost:3000",
+    "https://localhost:8000",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # À restreindre en production
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "X-Request-ID"],
 )
 
 
@@ -175,7 +196,7 @@ async def upload_document(
             message=f"L'upload du document '{file.filename}' a échoué.",
             priority="high"
         )
-        raise HTTPException(status_code=503, detail="Service doc-ingestor indisponible")
+        raise HTTPException(status_code=503, detail=ERROR_DOC_INGESTOR_UNAVAILABLE)
 
 
 @app.get("/api/documents")
@@ -200,7 +221,7 @@ async def get_documents(
         return JSONResponse(content=response.json(), status_code=response.status_code)
     except httpx.RequestError as e:
         logger.error(f"[ERREUR] Get documents: {e}")
-        raise HTTPException(status_code=503, detail="Service doc-ingestor indisponible")
+        raise HTTPException(status_code=503, detail=ERROR_DOC_INGESTOR_UNAVAILABLE)
 
 
 @app.get("/api/documents/{document_id}")
@@ -213,7 +234,7 @@ async def get_document(document_id: int):
         return JSONResponse(content=response.json(), status_code=response.status_code)
     except httpx.RequestError as e:
         logger.error(f"[ERREUR] Get document {document_id}: {e}")
-        raise HTTPException(status_code=503, detail="Service doc-ingestor indisponible")
+        raise HTTPException(status_code=503, detail=ERROR_DOC_INGESTOR_UNAVAILABLE)
 
 
 @app.delete("/api/documents/{document_id}")
@@ -236,7 +257,7 @@ async def delete_document(document_id: int):
         return JSONResponse(content=response.json(), status_code=response.status_code)
     except httpx.RequestError as e:
         logger.error(f"[ERREUR] Delete document {document_id}: {e}")
-        raise HTTPException(status_code=503, detail="Service doc-ingestor indisponible")
+        raise HTTPException(status_code=503, detail=ERROR_DOC_INGESTOR_UNAVAILABLE)
 
 
 @app.get("/api/documents/{document_id}/content")
@@ -249,7 +270,7 @@ async def get_document_content(document_id: int):
         return JSONResponse(content=response.json(), status_code=response.status_code)
     except httpx.RequestError as e:
         logger.error(f"[ERREUR] Get document content {document_id}: {e}")
-        raise HTTPException(status_code=503, detail="Service doc-ingestor indisponible")
+        raise HTTPException(status_code=503, detail=ERROR_DOC_INGESTOR_UNAVAILABLE)
 
 
 # ============ ANONYMISATION (DeID-Service) ============
@@ -266,7 +287,7 @@ async def anonymize_document(request: Request):
         return JSONResponse(content=response.json(), status_code=response.status_code)
     except httpx.RequestError as e:
         logger.error(f"[ERREUR] Anonymize: {e}")
-        raise HTTPException(status_code=503, detail="Service deid indisponible")
+        raise HTTPException(status_code=503, detail=ERROR_DEID_UNAVAILABLE)
 
 
 @app.get("/api/deid/mappings/{document_id}")
@@ -279,7 +300,7 @@ async def get_mappings(document_id: int):
         return JSONResponse(content=response.json(), status_code=response.status_code)
     except httpx.RequestError as e:
         logger.error(f"[ERREUR] Get mappings: {e}")
-        raise HTTPException(status_code=503, detail="Service deid indisponible")
+        raise HTTPException(status_code=503, detail=ERROR_DEID_UNAVAILABLE)
 
 
 # ============ INDEXATION (Indexeur-Semantique) ============
@@ -296,7 +317,7 @@ async def search_documents(request: Request):
         return JSONResponse(content=response.json(), status_code=response.status_code)
     except httpx.RequestError as e:
         logger.error(f"[ERREUR] Search: {e}")
-        raise HTTPException(status_code=503, detail="Service indexeur indisponible")
+        raise HTTPException(status_code=503, detail=ERROR_INDEXER_UNAVAILABLE)
 
 
 @app.post("/api/index")
@@ -365,7 +386,7 @@ async def get_chat_history(session_id: str):
         return JSONResponse(content=response.json(), status_code=response.status_code)
     except httpx.RequestError as e:
         logger.error(f"[ERREUR] Get history: {e}")
-        raise HTTPException(status_code=503, detail="Service llm-qa indisponible")
+        raise HTTPException(status_code=503, detail=ERROR_LLM_QA_UNAVAILABLE)
 
 
 # ============ SYNTHESE (Synthese-Comparative) ============
@@ -467,7 +488,7 @@ async def get_audit_stats(
         return JSONResponse(content=response.json(), status_code=response.status_code)
     except httpx.RequestError as e:
         logger.error(f"[ERREUR] Get audit stats: {e}")
-        raise HTTPException(status_code=503, detail="Service audit indisponible")
+        raise HTTPException(status_code=503, detail=ERROR_AUDIT_UNAVAILABLE)
 
 
 @app.post("/api/audit/log")
@@ -505,8 +526,8 @@ async def get_dashboard_stats():
         )
         if response.status_code == 200:
             stats["documents"] = response.json()
-    except:
-        pass
+    except httpx.RequestError as e:
+        logger.warning(f"Could not fetch document stats: {e}")
     
     # Récupérer l'état des services
     stats["services"] = await check_services_health()
@@ -544,8 +565,8 @@ def create_notification(
         "data": data or {},
         "priority": priority,  # low, normal, high, urgent
         "read": False,
-        "createdAt": datetime.utcnow().isoformat(),
-        "expiresAt": (datetime.utcnow() + timedelta(days=7)).isoformat()
+        "createdAt": datetime.now(timezone.utc).isoformat(),
+        "expiresAt": (datetime.now(timezone.utc) + timedelta(days=7)).isoformat()
     }
     notifications_store.insert(0, notification)
     
@@ -611,7 +632,7 @@ async def mark_notification_read(notification_id: str):
         if notification["id"] == notification_id:
             notification["read"] = True
             return {"success": True, "notification": notification}
-    raise HTTPException(status_code=404, detail="Notification non trouvée")
+    raise HTTPException(status_code=404, detail=ERROR_NOTIFICATION_NOT_FOUND)
 
 
 @app.put("/api/notifications/read-all")
@@ -633,7 +654,7 @@ async def delete_notification(notification_id: str):
     notifications_store = [n for n in notifications_store if n["id"] != notification_id]
     if len(notifications_store) < initial_len:
         return {"success": True}
-    raise HTTPException(status_code=404, detail="Notification non trouvée")
+    raise HTTPException(status_code=404, detail=ERROR_NOTIFICATION_NOT_FOUND)
 
 
 @app.delete("/api/notifications")
@@ -714,7 +735,7 @@ async def get_conversation(conversation_id: str):
     for conv in conversations_store:
         if conv["id"] == conversation_id:
             return conv
-    raise HTTPException(status_code=404, detail="Conversation non trouvée")
+    raise HTTPException(status_code=404, detail=ERROR_CONVERSATION_NOT_FOUND)
 
 
 @app.post("/api/conversations")
@@ -740,7 +761,7 @@ async def add_message(conversation_id: str, request: Request):
     )
     if message:
         return message
-    raise HTTPException(status_code=404, detail="Conversation non trouvée")
+    raise HTTPException(status_code=404, detail=ERROR_CONVERSATION_NOT_FOUND)
 
 
 @app.put("/api/conversations/{conversation_id}")
@@ -753,7 +774,7 @@ async def update_conversation(conversation_id: str, request: Request):
                 conv["title"] = body["title"]
             conv["updatedAt"] = datetime.now().isoformat()
             return conv
-    raise HTTPException(status_code=404, detail="Conversation non trouvée")
+    raise HTTPException(status_code=404, detail=ERROR_CONVERSATION_NOT_FOUND)
 
 
 @app.delete("/api/conversations/{conversation_id}")
@@ -764,7 +785,7 @@ async def delete_conversation(conversation_id: str):
     conversations_store = [c for c in conversations_store if c["id"] != conversation_id]
     if len(conversations_store) < initial_len:
         return {"success": True}
-    raise HTTPException(status_code=404, detail="Conversation non trouvée")
+    raise HTTPException(status_code=404, detail=ERROR_CONVERSATION_NOT_FOUND)
 
 
 @app.delete("/api/conversations")

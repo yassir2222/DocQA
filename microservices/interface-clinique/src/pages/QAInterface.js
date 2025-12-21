@@ -92,6 +92,61 @@ const Icons = {
       />
     </svg>
   ),
+  microphone: (
+    <svg
+      className="w-5 h-5"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
+      />
+    </svg>
+  ),
+  microphoneOff: (
+    <svg
+      className="w-5 h-5"
+      fill="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path d="M12 14a3 3 0 003-3V5a3 3 0 00-6 0v6a3 3 0 003 3z" />
+      <path d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    </svg>
+  ),
+  speaker: (
+    <svg
+      className="w-4 h-4"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+      />
+    </svg>
+  ),
+  speakerOff: (
+    <svg
+      className="w-4 h-4"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15zm12-3l4-4m0 4l-4-4"
+      />
+    </svg>
+  ),
   check: (
     <svg
       className="w-4 h-4"
@@ -321,6 +376,88 @@ export default function QAInterface() {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
+  // États pour la reconnaissance et synthèse vocale
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
+  const recognitionRef = useRef(null);
+
+  // Initialiser la reconnaissance vocale
+  useEffect(() => {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = true;
+      recognitionRef.current.lang = 'fr-FR';
+
+      recognitionRef.current.onresult = (event) => {
+        const transcript = Array.from(event.results)
+          .map(result => result[0].transcript)
+          .join('');
+        setInput(transcript);
+      };
+
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+      };
+
+      recognitionRef.current.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        setIsListening(false);
+      };
+    }
+  }, []);
+
+  // Fonction pour démarrer/arrêter l'écoute
+  const toggleListening = () => {
+    if (!recognitionRef.current) {
+      alert('La reconnaissance vocale n\'est pas supportée par votre navigateur.');
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    } else {
+      setInput('');
+      recognitionRef.current.start();
+      setIsListening(true);
+    }
+  };
+
+  // Fonction pour lire le texte à voix haute
+  const speakText = (text) => {
+    if (!voiceEnabled || !('speechSynthesis' in window)) return;
+
+    // Arrêter toute synthèse en cours
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'fr-FR';
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+
+    // Essayer de trouver une voix française
+    const voices = window.speechSynthesis.getVoices();
+    const frenchVoice = voices.find(voice => voice.lang.startsWith('fr'));
+    if (frenchVoice) {
+      utterance.voice = frenchVoice;
+    }
+
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+
+    window.speechSynthesis.speak(utterance);
+  };
+
+  // Fonction pour arrêter la synthèse vocale
+  const stopSpeaking = () => {
+    window.speechSynthesis.cancel();
+    setIsSpeaking(false);
+  };
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -508,6 +645,11 @@ export default function QAInterface() {
       };
 
       setMessages((prev) => [...prev, botMessage]);
+
+      // Lire la réponse à voix haute si la voix est activée
+      if (voiceEnabled && response.answer) {
+        speakText(response.answer);
+      }
 
       // Sauvegarder la réponse
       await api.addMessageToConversation(
@@ -908,11 +1050,36 @@ export default function QAInterface() {
                 />
                 <button
                   type="button"
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-300 transition-colors"
+                  onClick={toggleListening}
+                  disabled={loading || !selectedPatient}
+                  className={`absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full transition-all ${
+                    isListening 
+                      ? "bg-red-500 text-white animate-pulse" 
+                      : "text-slate-400 dark:text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
+                  } ${loading || !selectedPatient ? "opacity-50 cursor-not-allowed" : ""}`}
+                  title={isListening ? "Arrêter l'écoute" : "Parler"}
                 >
-                  {Icons.paperclip}
+                  {isListening ? Icons.microphoneOff : Icons.microphone}
                 </button>
               </div>
+
+              {/* Toggle Voice Response */}
+              <button
+                type="button"
+                onClick={() => {
+                  setVoiceEnabled(!voiceEnabled);
+                  if (isSpeaking) stopSpeaking();
+                }}
+                className={`p-4 rounded-2xl border transition-all ${
+                  voiceEnabled
+                    ? "bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400"
+                    : "bg-slate-50 dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-400 dark:text-slate-500"
+                }`}
+                title={voiceEnabled ? "Désactiver la réponse vocale" : "Activer la réponse vocale"}
+              >
+                {voiceEnabled ? Icons.speaker : Icons.speakerOff}
+              </button>
+
               <button
                 type="submit"
                 disabled={loading || !input.trim() || !selectedPatient}
@@ -928,6 +1095,27 @@ export default function QAInterface() {
                 )}
               </button>
             </form>
+
+            {/* Voice Status Indicator */}
+            {(isListening || isSpeaking) && (
+              <div className="flex items-center justify-center gap-2 mt-3">
+                {isListening && (
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-full text-xs font-medium">
+                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                    Écoute en cours...
+                  </div>
+                )}
+                {isSpeaking && (
+                  <button
+                    onClick={stopSpeaking}
+                    className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-full text-xs font-medium hover:bg-emerald-100 transition-colors"
+                  >
+                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                    Lecture vocale - Cliquer pour arrêter
+                  </button>
+                )}
+              </div>
+            )}
 
             <p className="text-center text-xs text-slate-400 dark:text-slate-500 mt-3">
               L'IA peut faire des erreurs. Vérifiez les informations

@@ -30,13 +30,13 @@ public class MedicalNERService {
     private static final Pattern MEDICAL_CONTEXT_NAME = Pattern.compile(
         "(?:patient[e]?|malade|sujet|hospitalisé[e]?|consulte|examiné[e]?|traité[e]?)\\s*:?\\s*" +
         "([A-ZÀÂÄÉÈÊËÏÎÔÙÛÜÇ][a-zàâäéèêëïîôùûüç]+(?:\\s+[A-ZÀÂÄÉÈÊËÏÎÔÙÛÜÇ][A-ZÀÂÄÉÈÊËÏÎÔÙÛÜÇ]+)?)",
-        Pattern.CASE_INSENSITIVE
+        Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE
     );
 
     // Patterns pour les titres médicaux
     private static final Pattern DOCTOR_NAME_PATTERN = Pattern.compile(
         "(?:Dr\\.?|Docteur|Pr\\.?|Professeur)\\s+([A-ZÀÂÄÉÈÊËÏÎÔÙÛÜÇ][a-zàâäéèêëïîôùûüç]+(?:\\s+[A-ZÀÂÄÉÈÊËÏÎÔÙÛÜÇ]+)?)",
-        Pattern.CASE_INSENSITIVE
+        Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE
     );
 
     /**

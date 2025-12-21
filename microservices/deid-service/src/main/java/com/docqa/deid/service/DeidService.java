@@ -46,12 +46,12 @@ public class DeidService {
     
     private static final Pattern ADDRESS_PATTERN = Pattern.compile(
         "\\b\\d{1,4}[,\\s]+(?:rue|avenue|boulevard|place|chemin|allée|impasse|passage)\\s+[A-Za-zÀ-ÿ\\s-]+(?:\\d{5})?\\s*[A-Za-zÀ-ÿ-]*\\b",
-        Pattern.CASE_INSENSITIVE
+        Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE
     );
     
     private static final Pattern IPP_PATTERN = Pattern.compile(
         "\\b(?:IPP|NIP|ID[:\\s]?)\\s*[A-Z0-9]{6,12}\\b",
-        Pattern.CASE_INSENSITIVE
+        Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE
     );
 
     @Autowired

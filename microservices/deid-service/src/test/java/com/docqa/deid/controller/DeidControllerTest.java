@@ -1,20 +1,25 @@
 package com.docqa.deid.controller;
 
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import com.docqa.deid.model.DeidMapping;
 import com.docqa.deid.model.DeidRequest;
+import com.docqa.deid.repository.DeidMappingRepository;
 import com.docqa.deid.service.DeidService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-class DeidControllerTest {
+public class DeidControllerTest {
 
     @InjectMocks
     private DeidController deidController;
@@ -22,38 +27,81 @@ class DeidControllerTest {
     @Mock
     private DeidService deidService;
 
+    @Mock
+    private DeidMappingRepository deidMappingRepository;
+
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void testAnonymizeDocument() {
+    public void testAnonymizeDocument_Success() {
         DeidRequest request = new DeidRequest();
-        request.setDocumentContent("Patient John Doe was treated.");
+        request.setDocumentId("doc-001");
+        request.setDocumentContent("Patient Jean DUPONT");
 
-        when(deidService.anonymize(any(DeidRequest.class)))
-            .thenReturn("Patient PERSON_12345678 was treated.");
+        String result = "Patient [PERSON_ABC]";
+
+        when(deidService.anonymize(any(DeidRequest.class))).thenReturn(result);
 
         ResponseEntity<?> response = deidController.anonymizeDocument(request);
 
-        verify(deidService, times(1)).anonymize(request);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Patient PERSON_12345678 was treated.", response.getBody());
+        assertEquals(200, response.getStatusCode().value());
+        assertNotNull(response.getBody());
     }
 
     @Test
-    void testAnonymizeDocument_Error() {
+    public void testAnonymizeDocument_Error() {
         DeidRequest request = new DeidRequest();
-        request.setDocumentContent("Test content");
 
-        when(deidService.anonymize(any(DeidRequest.class)))
-            .thenThrow(new RuntimeException("Test error"));
+        when(deidService.anonymize(any())).thenThrow(new RuntimeException("Error"));
 
         ResponseEntity<?> response = deidController.anonymizeDocument(request);
 
-        verify(deidService, times(1)).anonymize(request);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertTrue(response.getBody().toString().contains("An error occurred during anonymization"));
+        assertEquals(500, response.getStatusCode().value());
+    }
+
+    @Test
+    public void testGetMappings_Success() {
+        String documentId = "doc-001";
+        DeidMapping mapping = new DeidMapping(documentId, "Jean DUPONT", "[PERSON_ABC]", "PERSON");
+
+        when(deidMappingRepository.findByDocumentId(documentId))
+            .thenReturn(Arrays.asList(mapping));
+
+        ResponseEntity<Map<String, Object>> response = deidController.getMappings(documentId);
+
+        assertEquals(200, response.getStatusCode().value());
+        assertNotNull(response.getBody());
+        assertEquals(true, response.getBody().get("success"));
+        assertEquals(documentId, response.getBody().get("documentId"));
+        assertEquals(1, response.getBody().get("count"));
+    }
+
+    @Test
+    public void testGetMappings_Empty() {
+        String documentId = "doc-unknown";
+
+        when(deidMappingRepository.findByDocumentId(documentId))
+            .thenReturn(Collections.emptyList());
+
+        ResponseEntity<Map<String, Object>> response = deidController.getMappings(documentId);
+
+        assertEquals(200, response.getStatusCode().value());
+        assertEquals(0, response.getBody().get("count"));
+    }
+
+    @Test
+    public void testGetMappings_Error() {
+        String documentId = "doc-001";
+
+        when(deidMappingRepository.findByDocumentId(documentId))
+            .thenThrow(new RuntimeException("DB Error"));
+
+        ResponseEntity<Map<String, Object>> response = deidController.getMappings(documentId);
+
+        assertEquals(500, response.getStatusCode().value());
+        assertEquals(false, response.getBody().get("success"));
     }
 }

@@ -14,8 +14,18 @@ RUN mvn clean package -Dmaven.test.skip=true
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
+# Create non-root user for security
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -u 1001 -S appuser -G appgroup
+
 # Copy the built JAR from build stage
 COPY --from=build /app/target/docqa-deid-service-1.0-SNAPSHOT.jar /app/docqa-deid-service.jar
+
+# Set ownership to non-root user
+RUN chown -R appuser:appgroup /app
+
+# Switch to non-root user
+USER appuser
 
 # Expose the application port
 EXPOSE 8002

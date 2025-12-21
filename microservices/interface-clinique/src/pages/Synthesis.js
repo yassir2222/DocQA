@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from "../services/api";
+import jsPDF from "jspdf";
 
 const Icons = {
   compare: (
@@ -335,6 +336,92 @@ export default function Synthesis() {
   };
 
   const handleExport = () => {
+    if (!synthesis) return;
+
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    let yPos = 20;
+
+    // Titre principal
+    doc.setFontSize(24);
+    doc.setTextColor(79, 70, 229); // Indigo
+    doc.text("Synthèse Médicale", pageWidth / 2, yPos, { align: "center" });
+    yPos += 15;
+
+    // Sous-titre
+    doc.setFontSize(12);
+    doc.setTextColor(100, 116, 139); // Slate
+    doc.text(`Générée le ${new Date().toLocaleDateString("fr-FR")}`, pageWidth / 2, yPos, { align: "center" });
+    doc.text(`${selectedDocs.length} document(s) analysé(s)`, pageWidth / 2, yPos + 6, { align: "center" });
+    yPos += 20;
+
+    // Ligne de séparation
+    doc.setDrawColor(226, 232, 240);
+    doc.line(20, yPos, pageWidth - 20, yPos);
+    yPos += 15;
+
+    // Section Résumé
+    doc.setFontSize(16);
+    doc.setTextColor(30, 41, 59); // Slate-800
+    doc.text("Résumé", 20, yPos);
+    yPos += 10;
+
+    doc.setFontSize(11);
+    doc.setTextColor(71, 85, 105); // Slate-600
+    const summaryLines = doc.splitTextToSize(synthesis.summary || "Aucun résumé disponible", pageWidth - 40);
+    summaryLines.forEach((line) => {
+      if (yPos > 270) {
+        doc.addPage();
+        yPos = 20;
+      }
+      doc.text(line, 20, yPos);
+      yPos += 6;
+    });
+    yPos += 10;
+
+    // Section Points Clés
+    if (synthesis.keyPoints && synthesis.keyPoints.length > 0) {
+      if (yPos > 250) {
+        doc.addPage();
+        yPos = 20;
+      }
+
+      doc.setFontSize(16);
+      doc.setTextColor(30, 41, 59);
+      doc.text("Points Clés", 20, yPos);
+      yPos += 10;
+
+      doc.setFontSize(11);
+      doc.setTextColor(71, 85, 105);
+      synthesis.keyPoints.forEach((point, idx) => {
+        if (yPos > 270) {
+          doc.addPage();
+          yPos = 20;
+        }
+        const pointText = `• ${point}`;
+        const pointLines = doc.splitTextToSize(pointText, pageWidth - 45);
+        pointLines.forEach((line) => {
+          doc.text(line, 25, yPos);
+          yPos += 6;
+        });
+        yPos += 3;
+      });
+    }
+
+    // Footer
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(9);
+      doc.setTextColor(148, 163, 184);
+      doc.text(`DocQA Medical Suite - Page ${i}/${pageCount}`, pageWidth / 2, 285, { align: "center" });
+    }
+
+    // Télécharger le PDF
+    doc.save(`synthese-medicale-${new Date().toISOString().split('T')[0]}.pdf`);
+  };
+
+  const handleExportMarkdown = () => {
     if (!synthesis) return;
 
     const content = `# Synthèse Comparative\n\nGénéré le: ${new Date().toLocaleDateString(

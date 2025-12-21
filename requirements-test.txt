@@ -1,0 +1,41 @@
+# Test Dependencies for DocQA-MS
+# Install with: pip install -r requirements-test.txt
+
+# Testing frameworks
+pytest==8.0.0
+pytest-asyncio==0.23.3
+pytest-cov==4.1.0
+pytest-mock==3.12.0
+pytest-timeout==2.2.0
+pytest-xdist==3.5.0
+
+# HTTP client for integration tests
+httpx==0.26.0
+requests==2.31.0
+
+# Mocking
+responses==0.24.1
+aioresponses==0.7.6
+
+# Assertions
+assertpy==1.1
+
+# Code quality
+flake8==7.0.0
+black==24.1.0
+isort==5.13.2
+mypy==1.8.0
+pylint==3.0.3
+
+# Coverage
+coverage==7.4.0
+
+# Performance testing
+locust==2.20.1
+
+# Security testing
+bandit==1.7.7
+safety==2.3.5
+
+# Documentation
+sphinx==7.2.6

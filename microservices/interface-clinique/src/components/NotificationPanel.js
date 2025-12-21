@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import ReactDOM from "react-dom";
 import { useNotifications } from "../context/NotificationContext";
 
@@ -425,6 +426,19 @@ const NotificationPanel = () => {
     </div>,
     document.body
   );
+};
+
+NotificationItem.propTypes = {
+  notification: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    type: PropTypes.string,
+    title: PropTypes.string.isRequired,
+    message: PropTypes.string,
+    read: PropTypes.bool,
+    createdAt: PropTypes.string,
+  }).isRequired,
+  onRead: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
 };
 
 export default NotificationPanel;

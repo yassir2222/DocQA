@@ -248,24 +248,39 @@ const api = {
 
   getDashboardStats: async () => {
     try {
-      const response = await apiClient.get("/api/dashboard/stats");
-      const data = response.data;
-
+      // Fetch both dashboard stats and audit logs in parallel
+      const [dashboardResponse, auditResponse] = await Promise.all([
+        apiClient.get("/api/dashboard/stats"),
+        apiClient.get("/api/audit/logs")
+      ]);
+      
+      const data = dashboardResponse.data;
+      const auditData = auditResponse.data;
+      
       // Transform backend structure to frontend expected structure
       const docStats = data.documents?.statistics || {};
-      const auditStats = data.questions || {}; // Assuming gateway returns questions stats here or we need to fetch audit logs
+      
+      // Calculate questions from audit logs (count QUERY actions)
+      let logsArray = [];
+      if (auditData.content && Array.isArray(auditData.content)) {
+        logsArray = auditData.content;
+      } else if (auditData.logs && Array.isArray(auditData.logs)) {
+        logsArray = auditData.logs;
+      } else if (Array.isArray(auditData)) {
+        logsArray = auditData;
+      }
+      
+      const totalQueries = logsArray.filter(log => log.action === "QUERY" || log.action === "QA_QUERY").length;
+      const today = new Date().toDateString();
+      const todayQueries = logsArray.filter(log => {
+        if (log.action !== "QUERY" && log.action !== "QA_QUERY") return false;
+        const dateVal = log.timestamp || log.createdAt;
+        const dateObj = Array.isArray(dateVal)
+          ? new Date(dateVal[0], dateVal[1] - 1, dateVal[2], dateVal[3], dateVal[4], dateVal[5])
+          : new Date(dateVal);
+        return dateObj.toDateString() === today;
+      }).length;
 
-      // If gateway doesn't aggregate audit stats correctly, we might need to fetch them separately
-      // But let's assume gateway does its job or we use what we have.
-      // Actually, gateway implementation of /api/dashboard/stats returns:
-      // "questions": {"total": 0, "today": 0} (default)
-      // It doesn't seem to fetch real question stats in the gateway code I saw.
-
-      // Let's keep the separate audit fetch if we want real question stats,
-      // OR trust the gateway. The gateway code showed it returns default 0 for questions.
-      // So we should probably fetch audit stats here to be sure, or just return what gateway gives.
-
-      // Better approach: Use gateway response but map fields correctly.
       return {
         documents: {
           total: docStats.total_documents || 0,
@@ -273,8 +288,8 @@ const api = {
           pending: docStats.pending_documents || 0,
         },
         questions: {
-          total: data.questions?.total || 0,
-          today: data.questions?.today || 0,
+          total: totalQueries,
+          today: todayQueries,
         },
         services: data.services || [],
       };

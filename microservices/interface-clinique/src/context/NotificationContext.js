@@ -4,7 +4,9 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  useMemo,
 } from "react";
+import PropTypes from "prop-types";
 import api from "../services/api";
 
 const NotificationContext = createContext();
@@ -145,7 +147,7 @@ export const NotificationProvider = ({ children }) => {
     }
   }, [isOpen, fetchNotifications]);
 
-  const value = {
+  const value = useMemo(() => ({
     notifications,
     unreadCount,
     loading,
@@ -158,13 +160,17 @@ export const NotificationProvider = ({ children }) => {
     clearAll,
     togglePanel,
     closePanel,
-  };
+  }), [notifications, unreadCount, loading, isOpen, fetchNotifications, addLocalNotification, markAsRead, markAllAsRead, removeNotification, clearAll, togglePanel, closePanel]);
 
   return (
     <NotificationContext.Provider value={value}>
       {children}
     </NotificationContext.Provider>
   );
+};
+
+NotificationProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export default NotificationContext;

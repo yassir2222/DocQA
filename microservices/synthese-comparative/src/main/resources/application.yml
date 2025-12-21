@@ -4,7 +4,8 @@ spring:
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5433}/docqa_synthese
     username: ${DB_USER:docqa_user}
-    password: ${DB_PASSWORD:docqa_password}
+    # Password must be provided via environment variable DB_PASSWORD
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

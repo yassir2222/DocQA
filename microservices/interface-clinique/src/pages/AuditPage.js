@@ -267,36 +267,45 @@ const Icons = {
 };
 
 const actionLabels = {
-  DOCUMENT_UPLOAD: "Upload Document",
+  DOCUMENT_UPLOAD: "Upload",
   DOCUMENT_VIEW: "Consultation",
   DOCUMENT_DELETE: "Suppression",
-  QA_QUERY: "Question IA",
+  QA_QUERY: "Question",
+  QUERY: "Question",
   SYNTHESIS_GENERATE: "Synthèse",
+  GENERATE_SYNTHESIS: "Synthèse",
   USER_LOGIN: "Connexion",
   USER_LOGOUT: "Déconnexion",
   DEID_PROCESS: "Anonymisation",
+  UPLOAD: "Upload",
 };
 
 const actionColors = {
-  DOCUMENT_UPLOAD: "bg-emerald-100 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-700",
-  DOCUMENT_VIEW: "bg-blue-100 text-blue-700 border-blue-200",
-  DOCUMENT_DELETE: "bg-red-100 text-red-700 border-red-200",
-  QA_QUERY: "bg-indigo-100 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-700",
-  SYNTHESIS_GENERATE: "bg-amber-100 text-amber-700 border-amber-200",
-  USER_LOGIN: "bg-cyan-100 text-cyan-700 border-cyan-200",
+  DOCUMENT_UPLOAD: "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-700",
+  DOCUMENT_VIEW: "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700",
+  DOCUMENT_DELETE: "bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 border-red-200 dark:border-red-700",
+  QA_QUERY: "bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-700",
+  QUERY: "bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-700",
+  SYNTHESIS_GENERATE: "bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-700",
+  GENERATE_SYNTHESIS: "bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-700",
+  USER_LOGIN: "bg-cyan-100 dark:bg-cyan-900/50 text-cyan-700 dark:text-cyan-300 border-cyan-200 dark:border-cyan-700",
   USER_LOGOUT: "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700",
-  DEID_PROCESS: "bg-pink-100 text-pink-700 border-pink-200",
+  DEID_PROCESS: "bg-pink-100 dark:bg-pink-900/50 text-pink-700 dark:text-pink-300 border-pink-200 dark:border-pink-700",
+  UPLOAD: "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-700",
 };
 
 const actionIcons = {
   DOCUMENT_UPLOAD: "↑",
-  DOCUMENT_VIEW: "👁",
-  DOCUMENT_DELETE: "🗑",
-  QA_QUERY: "💬",
-  SYNTHESIS_GENERATE: "✨",
+  DOCUMENT_VIEW: "•",
+  DOCUMENT_DELETE: "×",
+  QA_QUERY: "•",
+  QUERY: "•",
+  SYNTHESIS_GENERATE: "•",
+  GENERATE_SYNTHESIS: "•",
   USER_LOGIN: "→",
   USER_LOGOUT: "←",
-  DEID_PROCESS: "🔒",
+  DEID_PROCESS: "•",
+  UPLOAD: "↑",
 };
 
 export default function AuditPage() {
@@ -391,18 +400,11 @@ export default function AuditPage() {
       bgGradient: "from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30",
     },
     {
-      label: "Utilisateurs",
-      value: [...new Set(logs.map((l) => l.userId || l.user))].length,
-      icon: Icons.users,
-      gradient: "from-cyan-500 to-blue-600",
-      bgGradient: "from-cyan-50 to-blue-50 dark:from-cyan-900/30 dark:to-blue-900/30",
-    },
-    {
       label: "Questions IA",
-      value: logs.filter((l) => l.action === "QA_QUERY").length,
+      value: logs.filter((l) => l.action === "QA_QUERY" || l.action === "QUERY").length,
       icon: Icons.chat,
-      gradient: "from-amber-500 to-orange-600",
-      bgGradient: "from-amber-50 to-orange-50 dark:from-amber-900/30 dark:to-orange-900/30",
+      gradient: "from-indigo-500 to-purple-600",
+      bgGradient: "from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30",
     },
   ];
 
@@ -443,7 +445,7 @@ export default function AuditPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {stats.map((stat, idx) => (
           <div
             key={idx}
@@ -541,15 +543,12 @@ export default function AuditPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 dark:from-slate-800 dark:to-slate-700 dark:to-slate-700">
+                <tr className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700">
                   <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
                     Date/Heure
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
-                    Action
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
-                    Utilisateur
+                    Type
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
                     Détails
@@ -602,23 +601,25 @@ export default function AuditPage() {
                         {actionLabels[log.action] || log.action}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
-                          {(log.userId || log.user || "U")
-                            .charAt(0)
-                            .toUpperCase()}
-                        </div>
-                        <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">
-                          {log.userId || log.user || "Inconnu"}
-                        </span>
-                      </div>
-                    </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 max-w-xs">
-                        <span className="text-slate-400 dark:text-slate-500">{Icons.document}</span>
+                      <div className="text-sm text-slate-600 dark:text-slate-300 max-w-md">
                         <span className="truncate" title={log.details}>
-                          {log.details || "—"}
+                          {(() => {
+                            const action = log.action;
+                            const details = log.details;
+                            switch (action) {
+                              case "QUERY":
+                                return details && details.length > 0 
+                                  ? `"${details.length > 60 ? details.substring(0, 60) + "..." : details}"`
+                                  : "Question posée à l'assistant IA";
+                              case "GENERATE_SYNTHESIS":
+                                return "Génération d'une synthèse de documents";
+                              case "UPLOAD":
+                                return details || "Document uploadé";
+                              default:
+                                return details || "—";
+                            }
+                          })()}
                         </span>
                       </div>
                     </td>
@@ -819,9 +820,39 @@ export default function AuditPage() {
                   </span>
                   <div className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-indigo-100 dark:border-indigo-800 shadow-inner">
                     <p className="text-sm text-slate-700 dark:text-slate-200 whitespace-pre-wrap leading-relaxed">
-                      {selectedLog.details ||
-                        selectedLog.content ||
-                        "Aucun détail disponible"}
+                      {(() => {
+                        const action = selectedLog.action;
+                        const details = selectedLog.details || selectedLog.content;
+                        
+                        if (details && details.length > 0) {
+                          return details;
+                        }
+                        
+                        // Descriptions contextuelles par défaut selon le type d'action
+                        switch (action) {
+                          case "QUERY":
+                          case "QA_QUERY":
+                            return "L'utilisateur a posé une question à l'assistant IA pour obtenir des informations sur les documents médicaux du patient.";
+                          case "GENERATE_SYNTHESIS":
+                          case "SYNTHESIS_GENERATE":
+                            return "Une synthèse comparative a été générée à partir des documents sélectionnés pour fournir un résumé consolidé des informations médicales.";
+                          case "UPLOAD":
+                          case "DOCUMENT_UPLOAD":
+                            return "Un nouveau document médical a été téléchargé et indexé dans le système pour analyse.";
+                          case "DOCUMENT_VIEW":
+                            return "Un document médical a été consulté par l'utilisateur.";
+                          case "DOCUMENT_DELETE":
+                            return "Un document médical a été supprimé du système.";
+                          case "DEID_PROCESS":
+                            return "Le document a été traité pour anonymiser les données sensibles du patient.";
+                          case "USER_LOGIN":
+                            return "L'utilisateur s'est connecté au système.";
+                          case "USER_LOGOUT":
+                            return "L'utilisateur s'est déconnecté du système.";
+                          default:
+                            return "Opération système effectuée avec succès.";
+                        }
+                      })()}
                     </p>
                   </div>
                 </div>

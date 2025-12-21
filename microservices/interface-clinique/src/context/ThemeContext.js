@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
+import PropTypes from "prop-types";
 
 const ThemeContext = createContext();
 
@@ -18,7 +19,7 @@ export const ThemeProvider = ({ children }) => {
       return savedTheme === "dark";
     }
     // Check system preference
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    return globalThis.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false;
   });
 
   useEffect(() => {
@@ -34,7 +35,9 @@ export const ThemeProvider = ({ children }) => {
 
   // Listen for system theme changes
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const mediaQuery = globalThis.matchMedia?.("(prefers-color-scheme: dark)");
+    if (!mediaQuery) return;
+    
     const handleChange = (e) => {
       const savedTheme = localStorage.getItem("docqa-theme");
       if (!savedTheme) {
@@ -46,26 +49,32 @@ export const ThemeProvider = ({ children }) => {
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
-  const toggleTheme = () => {
+  const toggleTheme = useCallback(() => {
     setIsDark((prev) => !prev);
-  };
+  }, []);
 
-  const setTheme = (theme) => {
+  const setTheme = useCallback((theme) => {
     if (theme === "dark") {
       setIsDark(true);
     } else if (theme === "light") {
       setIsDark(false);
     } else if (theme === "system") {
       localStorage.removeItem("docqa-theme");
-      setIsDark(window.matchMedia("(prefers-color-scheme: dark)").matches);
+      setIsDark(globalThis.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false);
     }
-  };
+  }, []);
+
+  const value = useMemo(() => ({ isDark, toggleTheme, setTheme }), [isDark, toggleTheme, setTheme]);
 
   return (
-    <ThemeContext.Provider value={{ isDark, toggleTheme, setTheme }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );
+};
+
+ThemeProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export default ThemeContext;

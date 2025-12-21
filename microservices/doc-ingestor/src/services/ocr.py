@@ -40,8 +40,9 @@ def perform_ocr(file_content: bytes, language: str = 'fra') -> Optional[str]:
                 fmt='jpeg'
             )
             logger.info(f"[PDF] PDF converti en {len(images)} images")
-        except:
+        except Exception as pdf_error:
             # Si c'est déjà une image
+            logger.debug(f"Not a PDF, trying as image: {pdf_error}")
             images = [Image.open(BytesIO(file_content))]
             logger.info("[IMAGE] Image chargee directement")
         
@@ -95,8 +96,8 @@ def check_ocr_availability() -> bool:
         
         logger.info("[OK] OCR disponible (Tesseract)")
         return True
-    except:
-        logger.warning("[WARN] OCR non disponible")
+    except (ImportError, OSError) as e:
+        logger.warning(f"[WARN] OCR non disponible: {e}")
         return False
 
 

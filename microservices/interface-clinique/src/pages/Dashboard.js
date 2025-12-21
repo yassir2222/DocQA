@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import api from "../services/api";
+import { useTheme } from "../context/ThemeContext";
+import { ActivityChart, TypesChart } from "../components/Charts";
 
 // Premium Icons with gradients
 const Icons = {
@@ -171,7 +174,155 @@ const Icons = {
   ),
 };
 
+// Slider Widget Component avec auto-scroll
+const SliderWidget = ({ isDark }) => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const slides = [
+    { id: 'activity', title: 'Activité (7 derniers jours)', type: 'chart-activity' },
+    { id: 'types', title: 'Répartition des opérations', type: 'chart-types' },
+    { id: 'actions', title: 'Actions rapides', type: 'quick-actions' },
+  ];
+
+  // Auto-scroll toutes les 5 secondes
+  useEffect(() => {
+    if (isPaused) return;
+    
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [isPaused, slides.length]);
+
+  return (
+    <div 
+      className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      {/* Header avec indicateurs */}
+      <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+        <h2 className="text-lg font-bold font-display text-slate-900 dark:text-white">
+          {slides[currentSlide].title}
+        </h2>
+        <div className="flex items-center gap-2">
+          {/* Indicateurs de slide */}
+          <div className="flex gap-1.5">
+            {slides.map((slide, idx) => (
+              <button
+                key={slide.id}
+                onClick={() => setCurrentSlide(idx)}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  idx === currentSlide 
+                    ? 'bg-indigo-600 w-6' 
+                    : 'bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500'
+                }`}
+                aria-label={slide.title}
+              />
+            ))}
+          </div>
+          {/* Boutons de navigation */}
+          <div className="flex gap-1 ml-2">
+            <button
+              onClick={() => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)}
+              className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button
+              onClick={() => setCurrentSlide((prev) => (prev + 1) % slides.length)}
+              className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Contenu du slider */}
+      <div className="p-6 min-h-[350px] flex items-center justify-center">
+        {slides[currentSlide].type === 'chart-activity' && (
+          <div className="w-full animate-fade-in">
+            <ActivityChart isDark={isDark} />
+          </div>
+        )}
+        {slides[currentSlide].type === 'chart-types' && (
+          <div className="w-full animate-fade-in">
+            <TypesChart isDark={isDark} />
+          </div>
+        )}
+        {slides[currentSlide].type === 'quick-actions' && (
+          <div className="w-full grid grid-cols-2 gap-4 animate-fade-in">
+            <Link to="/documents" className="group relative flex flex-col items-center p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-slate-200 dark:hover:border-slate-600 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-600 opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
+              <div className="relative p-4 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-200">
+                {Icons.upload}
+              </div>
+              <span className="relative mt-4 text-sm font-bold text-slate-800 dark:text-white">Uploader</span>
+              <span className="relative text-xs text-slate-500 dark:text-slate-400 mt-1 text-center">Nouveau document</span>
+            </Link>
+            <Link to="/qa" className="group relative flex flex-col items-center p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-slate-200 dark:hover:border-slate-600 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-blue-600 opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
+              <div className="relative p-4 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-200">
+                {Icons.question}
+              </div>
+              <span className="relative mt-4 text-sm font-bold text-slate-800 dark:text-white">Question</span>
+              <span className="relative text-xs text-slate-500 dark:text-slate-400 mt-1 text-center">Poser une question</span>
+            </Link>
+            <Link to="/synthesis" className="group relative flex flex-col items-center p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-slate-200 dark:hover:border-slate-600 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 to-teal-600 opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
+              <div className="relative p-4 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-200">
+                {Icons.clipboard}
+              </div>
+              <span className="relative mt-4 text-sm font-bold text-slate-800 dark:text-white">Synthèse</span>
+              <span className="relative text-xs text-slate-500 dark:text-slate-400 mt-1 text-center">Générer un résumé</span>
+            </Link>
+            <Link to="/audit" className="group relative flex flex-col items-center p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-slate-200 dark:hover:border-slate-600 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-500 to-orange-600 opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
+              <div className="relative p-4 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-200">
+                {Icons.audit}
+              </div>
+              <span className="relative mt-4 text-sm font-bold text-slate-800 dark:text-white">Audit</span>
+              <span className="relative text-xs text-slate-500 dark:text-slate-400 mt-1 text-center">Voir les logs</span>
+            </Link>
+          </div>
+        )}
+      </div>
+
+      {/* Barre de progression */}
+      <div className="h-1 bg-slate-100 dark:bg-slate-700">
+        <div 
+          className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-300"
+          style={{ 
+            width: isPaused ? `${((currentSlide + 1) / slides.length) * 100}%` : '0%',
+            animation: isPaused ? 'none' : 'progress 5s linear infinite'
+          }}
+        />
+      </div>
+      <style>{`
+        @keyframes progress {
+          from { width: 0%; }
+          to { width: 100%; }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+SliderWidget.propTypes = {
+  isDark: PropTypes.bool,
+};
+
+SliderWidget.defaultProps = {
+  isDark: false,
+};
 export default function Dashboard() {
+  const { isDark } = useTheme();
   const [stats, setStats] = useState({
     totalDocuments: 0,
     processedDocuments: 0,
@@ -244,33 +395,58 @@ export default function Dashboard() {
         (Array.isArray(auditLogs) ? auditLogs : []);
 
       if (Array.isArray(logsData)) {
-        const activity = logsData.map((log) => ({
-          id: log.id,
-          type:
-            log.action === "UPLOAD"
-              ? "upload"
-              : log.action === "QUERY"
-              ? "query"
-              : log.action === "GENERATE_SYNTHESIS"
-              ? "synthesis"
-              : "document",
-          message: log.details || log.action,
-          time: (() => {
-            const dateVal = log.timestamp || log.createdAt;
-            const dateObj = Array.isArray(dateVal)
-              ? new Date(
-                  dateVal[0],
-                  dateVal[1] - 1,
-                  dateVal[2],
-                  dateVal[3],
-                  dateVal[4],
-                  dateVal[5]
-                )
-              : new Date(dateVal);
-            return dateObj.toLocaleTimeString();
-          })(),
-          status: "success",
-        }));
+        const activity = logsData.map((log) => {
+          // Générer un titre descriptif selon le type d'action
+          const getActivityTitle = (action, details) => {
+            switch (action) {
+              case "QUERY":
+                // Extraire la question des détails si disponible
+                if (details && details.length > 0) {
+                  const question = details.length > 50 ? details.substring(0, 50) + "..." : details;
+                  return `Question: "${question}"`;
+                }
+                return "Question posée à l'assistant IA";
+              case "GENERATE_SYNTHESIS":
+                return "Synthèse de documents générée";
+              case "UPLOAD":
+                return "Nouveau document uploadé";
+              case "DOCUMENT_VIEW":
+                return "Consultation d'un document";
+              case "DOCUMENT_DELETE":
+                return "Document supprimé";
+              default:
+                return details || "Activité système";
+            }
+          };
+
+          return {
+            id: log.id,
+            type:
+              log.action === "UPLOAD"
+                ? "upload"
+                : log.action === "QUERY"
+                ? "query"
+                : log.action === "GENERATE_SYNTHESIS"
+                ? "synthesis"
+                : "document",
+            message: getActivityTitle(log.action, log.details),
+            time: (() => {
+              const dateVal = log.timestamp || log.createdAt;
+              const dateObj = Array.isArray(dateVal)
+                ? new Date(
+                    dateVal[0],
+                    dateVal[1] - 1,
+                    dateVal[2],
+                    dateVal[3],
+                    dateVal[4],
+                    dateVal[5]
+                  )
+                : new Date(dateVal);
+              return dateObj.toLocaleTimeString();
+            })(),
+            status: "success",
+          };
+        });
         setRecentActivity(activity);
       }
 
@@ -479,19 +655,19 @@ export default function Dashboard() {
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Activity */}
-        <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
-          <div className="p-6 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+        <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden flex flex-col max-h-[500px]">
+          <div className="p-6 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between flex-shrink-0">
             <div>
               <h2 className="text-lg font-bold font-display text-slate-900 dark:text-white">
                 Activité récente
               </h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-0.5">
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
                 Dernières actions sur le système
               </p>
             </div>
             <Link
               to="/audit"
-              className="flex items-center gap-1.5 text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:text-indigo-300 transition-colors group"
+              className="flex items-center gap-1.5 text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 transition-colors group"
             >
               Voir tout
               <span className="group-hover:translate-x-0.5 transition-transform">
@@ -499,8 +675,8 @@ export default function Dashboard() {
               </span>
             </Link>
           </div>
-          <div className="divide-y divide-slate-100 dark:divide-slate-700">
-            {recentActivity.map((activity, index) => (
+          <div className="divide-y divide-slate-100 dark:divide-slate-700 overflow-y-auto flex-1">
+            {recentActivity.slice(0, 6).map((activity, index) => (
               <ActivityItem
                 key={activity.id}
                 activity={activity}
@@ -515,7 +691,7 @@ export default function Dashboard() {
                 <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-200">
                   Aucune activité récente
                 </h3>
-                <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-1">
+                <p className="text-slate-500 dark:text-slate-400 mt-1">
                   Commencez par uploader un document
                 </p>
               </div>
@@ -523,46 +699,12 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Right Column */}
-        <div className="space-y-6">
-          {/* Quick Actions */}
-          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-6">
-            <h2 className="text-lg font-bold font-display text-slate-900 dark:text-white mb-5">
-              Actions rapides
-            </h2>
-            <div className="grid grid-cols-2 gap-4">
-              <QuickAction
-                href="/documents"
-                icon={Icons.upload}
-                title="Uploader"
-                description="Nouveau document"
-                gradient="from-indigo-500 to-purple-600"
-              />
-              <QuickAction
-                href="/qa"
-                icon={Icons.question}
-                title="Question"
-                description="Poser une question"
-                gradient="from-cyan-500 to-blue-600"
-              />
-              <QuickAction
-                href="/synthesis"
-                icon={Icons.clipboard}
-                title="Synthèse"
-                description="Générer un résumé"
-                gradient="from-emerald-500 to-teal-600"
-              />
-              <QuickAction
-                href="/audit"
-                icon={Icons.audit}
-                title="Audit"
-                description="Voir les logs"
-                gradient="from-amber-500 to-orange-600"
-              />
-            </div>
-          </div>
+        {/* Right Column - Auto Slider */}
+        <div className="relative">
+          <SliderWidget isDark={isDark} />
         </div>
       </div>
     </div>
   );
 }
+

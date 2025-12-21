@@ -136,8 +136,9 @@ def extract_text_with_ocr(file_content: bytes) -> str:
         # Convertir PDF en images si nécessaire
         try:
             images = pdf2image.convert_from_bytes(file_content)
-        except:
+        except Exception as pdf_error:
             # Si ce n'est pas un PDF, essayer de l'ouvrir comme image
+            logger.debug(f"Not a PDF, trying as image: {pdf_error}")
             images = [Image.open(BytesIO(file_content))]
         
         text_parts = []

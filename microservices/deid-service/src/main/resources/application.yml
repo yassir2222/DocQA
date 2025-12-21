@@ -2,9 +2,10 @@ spring:
   application:
     name: deid-service
   datasource:
-    url: jdbc:postgresql://localhost:5433/docqa_deid
-    username: docqa_user
-    password: docqa_password
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5433}/docqa_deid
+    username: ${DB_USER:docqa_user}
+    # Password must be provided via environment variable DB_PASSWORD
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -15,10 +16,11 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
   rabbitmq:
-    host: localhost
-    port: 5672
-    username: docqa_user
-    password: docqa_password
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    # Password must be provided via environment variable RABBITMQ_PASSWORD
+    password: ${RABBITMQ_PASSWORD}
 
 # Queues Configuration
 app:
