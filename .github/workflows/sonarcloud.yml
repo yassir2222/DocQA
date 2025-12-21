@@ -1,6 +1,10 @@
 # =============================================================================
-# DocQA-MS - SonarCloud Analysis
+# DocQA-MS - SonarCloud Analysis (Optional)
 # Code quality and security analysis
+# 
+# NOTE: This workflow requires SONAR_TOKEN secret to be configured.
+# To enable: Go to Settings > Secrets > Actions > Add SONAR_TOKEN
+# Get your token from: https://sonarcloud.io/account/security
 # =============================================================================
 
 name: SonarCloud Analysis
@@ -10,17 +14,20 @@ on:
     branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
+  workflow_dispatch:  # Allow manual trigger
 
 jobs:
   sonarcloud:
     name: 📊 SonarCloud Scan
     runs-on: ubuntu-latest
+    # Skip if SONAR_TOKEN is not configured
+    if: ${{ secrets.SONAR_TOKEN != '' }}
     
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for better analysis
+          fetch-depth: 0
 
       - name: ☕ Set up JDK 17
         uses: actions/setup-java@v4
@@ -35,13 +42,11 @@ jobs:
           python-version: '3.11'
 
       - name: 📦 Install Python dependencies
-        run: |
-          pip install pytest pytest-cov
+        run: pip install pytest pytest-cov
 
       - name: 🧪 Run Python tests with coverage
         working-directory: microservices/api-gateway
-        run: |
-          pytest --cov=. --cov-report=xml:coverage.xml || true
+        run: pytest --cov=. --cov-report=xml:coverage.xml || true
         continue-on-error: true
 
       - name: 🔨 Build Java services
@@ -67,3 +72,25 @@ jobs:
             -Dsonar.exclusions=**/node_modules/**,**/target/**,**/__pycache__/**,**/build/**
             -Dsonar.python.coverage.reportPaths=microservices/*/coverage.xml
         continue-on-error: true
+
+  # Fallback job when SONAR_TOKEN is not configured
+  sonarcloud-skip:
+    name: 📊 SonarCloud (Skipped)
+    runs-on: ubuntu-latest
+    if: ${{ secrets.SONAR_TOKEN == '' }}
+    steps:
+      - name: ⏭️ Skip SonarCloud
+        run: |
+          echo "=============================================="
+          echo "⏭️ SonarCloud analysis skipped"
+          echo "=============================================="
+          echo ""
+          echo "SONAR_TOKEN is not configured."
+          echo ""
+          echo "To enable SonarCloud analysis:"
+          echo "1. Go to https://sonarcloud.io and create an account"
+          echo "2. Generate a token at https://sonarcloud.io/account/security"
+          echo "3. Add SONAR_TOKEN secret in your repository:"
+          echo "   Settings > Secrets and variables > Actions > New repository secret"
+          echo ""
+          echo "=============================================="

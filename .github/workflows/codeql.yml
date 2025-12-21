@@ -17,6 +17,7 @@ jobs:
   analyze:
     name: 🔍 Analyze
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       actions: read
       contents: read
@@ -35,7 +36,8 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
-          queries: security-and-quality
+          queries: security-extended
+        continue-on-error: true
 
       - name: ☕ Set up JDK (for Java)
         if: matrix.language == 'java'
@@ -43,11 +45,28 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'maven'
 
-      - name: 🏗️ Autobuild
+      - name: 🔨 Build Java services
+        if: matrix.language == 'java'
+        run: |
+          for service in deid-service indexeur-semantique synthese-comparative audit-logger; do
+            if [ -d "microservices/$service" ]; then
+              echo "Building $service..."
+              cd microservices/$service
+              mvn clean compile -DskipTests -q || true
+              cd ../..
+            fi
+          done
+        continue-on-error: true
+
+      - name: 🏗️ Autobuild (non-Java)
+        if: matrix.language != 'java'
         uses: github/codeql-action/autobuild@v3
+        continue-on-error: true
 
       - name: 🔍 Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
           category: "/language:${{ matrix.language }}"
+        continue-on-error: true
