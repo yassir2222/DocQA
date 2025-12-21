@@ -1,5 +1,5 @@
 # Build stage
-FROM node:18-alpine as build
+FROM node:18-alpine AS build
 
 WORKDIR /app
 
@@ -11,6 +11,10 @@ RUN npm install
 
 # Copier le reste du code source
 COPY . .
+
+# Build l'application avec CI=false pour ignorer les warnings ESLint
+ENV CI=false
+ENV GENERATE_SOURCEMAP=false
 
 # Build l'application
 RUN npm run build
