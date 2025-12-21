@@ -1,398 +1,286 @@
-# DocQA-MS — Assistant Médical sur Documents Cliniques
+<p align="center">
+  <img src="microservices/interface-clinique/public/images/logo.png" alt="DocQA-MS Logo" width="120"/>
+</p>
 
-<!-- CI/CD Badges -->
-[![CI Pipeline](https://github.com/yassir2222/DocQA-MS/actions/workflows/ci.yml/badge.svg)](https://github.com/yassir2222/DocQA-MS/actions/workflows/ci.yml)
-[![CD Pipeline](https://github.com/yassir2222/DocQA-MS/actions/workflows/cd.yml/badge.svg)](https://github.com/yassir2222/DocQA-MS/actions/workflows/cd.yml)
-[![CodeQL](https://github.com/yassir2222/DocQA-MS/actions/workflows/codeql.yml/badge.svg)](https://github.com/yassir2222/DocQA-MS/actions/workflows/codeql.yml)
-[![Release](https://github.com/yassir2222/DocQA-MS/actions/workflows/release.yml/badge.svg)](https://github.com/yassir2222/DocQA-MS/releases)
+<h1 align="center">🏥 DocQA-MS</h1>
 
-<!-- Technology Badges -->
-![Architecture](https://img.shields.io/badge/Architecture-Microservices-blue)
-![Java](https://img.shields.io/badge/Java-17+-orange)
-![Python](https://img.shields.io/badge/Python-3.11+-green)
-![React](https://img.shields.io/badge/React-18-61DAFB)
-![Docker](https://img.shields.io/badge/Docker-Compose-2496ED)
-![License](https://img.shields.io/badge/License-Academic-lightgrey)
+<p align="center">
+  <strong>Système de Question-Réponse sur Documents Médicaux</strong><br>
+  <em>Architecture Microservices avec RAG et LLM Local</em>
+</p>
 
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white" alt="Python"/>
+  <img src="https://img.shields.io/badge/Java-17-orange?logo=openjdk&logoColor=white" alt="Java"/>
+  <img src="https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white" alt="React"/>
+  <img src="https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white" alt="Docker"/>
+  <img src="https://img.shields.io/badge/LLM-Llama_3.1-purple?logo=meta&logoColor=white" alt="LLM"/>
+</p>
 
-### ✨ Nouvelles Fonctionnalités
-- **Synthèse Intelligente fonctionnelle** : Affichage correct des résumés générés par IA avec structure résumé + points clés
-- **Migration vers Llama 3.1 8B** : Remplacement de Mistral Nemo 12B (7.1GB) par Llama 3.1 8B (4.9GB) pour une meilleure efficacité mémoire
+<p align="center">
+  <a href="#-fonctionnalités">Fonctionnalités</a> •
+  <a href="#-architecture">Architecture</a> •
+  <a href="#-installation">Installation</a> •
+  <a href="#-utilisation">Utilisation</a> •
+  <a href="#-api">API</a> •
+  <a href="#-équipe">Équipe</a>
+</p>
 
-### 🐛 Corrections
-- Correction du bug d'affichage des synthèses dans le frontend
-- Résolution du problème de transformation des données API entre backend et frontend
-- Amélioration de la gestion du cache Docker lors des rebuilds
+---
 
-### 🔧 Améliorations Techniques
-- Ajout de logs de débogage pour le suivi du flux de génération de synthèses
-- Optimisation de la configuration Docker pour forcer les rebuilds sans cache
-- Mise à jour de la documentation avec les nouveaux paramètres du modèle
+## 📋 À propos
 
-## 🏥 Contexte
+**DocQA-MS** est un système intelligent de Question-Réponse conçu pour les professionnels de santé. Il permet d'interroger naturellement des corpus de documents médicaux tout en garantissant la **confidentialité des données patients** grâce à une anonymisation automatique conforme au RGPD.
 
-Système intelligent de traitement et analyse de documents médicaux non structurés utilisant des LLM (Large Language Models) pour transformer les textes cliniques en réponses précises et contextualisées.
+### 🎯 Objectifs
 
-## 🎯 Objectifs
+- ✅ Permettre aux cliniciens de poser des questions en langage naturel
+- ✅ Fournir des réponses sourcées et vérifiables
+- ✅ Garantir l'anonymisation automatique des données sensibles
+- ✅ Assurer une traçabilité complète des actions (audit)
+- ✅ Fonctionner **100% en local** (aucune donnée envoyée vers le cloud)
 
-- ✅ Répondre à des questions en langage naturel à partir des documents internes
-- ✅ Extraire des informations précises : maladies, traitements, antécédents
-- ✅ Fournir des résumés ou comparaisons entre patients
-- ✅ Garantir confidentialité, anonymisation et traçabilité des données
+---
 
-## Architecture Microservices
+## ✨ Fonctionnalités
+
+| Module | Description | Technologie |
+|--------|-------------|-------------|
+| 📄 **Doc Ingestor** | Ingestion de documents PDF, TXT, DOCX | Python / FastAPI |
+| 🔒 **DeID Service** | Anonymisation via NER médical | Java / Spring Boot |
+| 🔍 **Indexeur Sémantique** | Indexation vectorielle et recherche | Java / Spring Boot |
+| 🤖 **LLM Q&A** | Pipeline RAG avec Llama 3.1 | Python / LangChain |
+| 📊 **Synthèse Comparative** | Génération de synthèses multi-documents | Java / Spring Boot |
+| 📝 **Audit Logger** | Journalisation et traçabilité | Java / Spring Boot |
+| 🖥️ **Interface Clinique** | Dashboard utilisateur moderne | React 18 |
+
+---
+
+## 🏗️ Architecture
 
 ```
-+---------------------------------------------------------------------------+
-|                        INTERFACE CLINIQUE (React)                         |
-|                              Port: 3000                                   |
-+---------------------------------------------------------------------------+
-                                     |
-                                     v
-+---------------------------------------------------------------------------+
-|                          API GATEWAY (Python)                              |
-|                              Port: 8000                                    |
-|              Point d'entree unique pour tous les microservices             |
-+---------------------------------------------------------------------------+
-                                     |
-        +----------------------------+----------------------------+
-        |              |             |              |             |
-        v              v             v              v             v
-+-------------+ +-------------+ +-------------+ +-------------+ +-------------+
-|Doc Ingestor | |DeID Service | |  Indexeur   | | LLM QA      | |  Synthese   |
-|  (Python)   | |   (Java)    | | Semantique  | |   Module    | | Comparative |
-| Port: 8001  | | Port: 8002  | | Port: 8003  | | Port: 8004  | | Port: 8005  |
-+-------------+ +-------------+ +-------------+ +-------------+ +-------------+
-        |              |             |              |             |
-        +-------+------+------+------+------+------+------+------+
-                |             |             |             |
-                v             v             v             v
-        +-------------+ +-------------+ +-------------+
-        |   RabbitMQ  | | PostgreSQL  | |Audit Logger |
-        |  Port: 5672 | |  Port: 5433 | | Port: 8006  |
-        +-------------+ +-------------+ +-------------+
-
-FLUX DE MESSAGES (RabbitMQ):
-  Doc Ingestor --> [documents.raw] --> DeID Service
-  DeID Service --> [documents.deid] --> Indexeur Semantique
-  Indexeur Semantique --> [documents.indexed]
-  All Services --> [audit.events] --> Audit Logger
+┌─────────────────────────────────────────────────────────────────┐
+│                     INTERFACE CLINIQUE (React)                   │
+│                          Port: 3000                              │
+└─────────────────────────────┬───────────────────────────────────┘
+                              │ HTTP/REST
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      API GATEWAY (FastAPI)                       │
+│                          Port: 8000                              │
+└──────┬──────────┬──────────┬──────────┬──────────┬──────────────┘
+       │          │          │          │          │
+       ▼          ▼          ▼          ▼          ▼
+┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐
+│   Doc    │ │   DeID   │ │ Indexeur │ │  LLM QA  │ │ Synthèse │
+│ Ingestor │ │ Service  │ │Sémantique│ │  Module  │ │Comparative│
+│  :8001   │ │  :8002   │ │  :8003   │ │  :8004   │ │  :8005   │
+└────┬─────┘ └────┬─────┘ └────┬─────┘ └────┬─────┘ └────┬─────┘
+     │            │            │            │            │
+     └────────────┴────────────┼────────────┴────────────┘
+                               │
+       ┌───────────────────────┼───────────────────────┐
+       ▼                       ▼                       ▼
+┌──────────────┐       ┌──────────────┐       ┌──────────────┐
+│  PostgreSQL  │       │   RabbitMQ   │       │    Ollama    │
+│    :5432     │       │    :5672     │       │   :11434     │
+└──────────────┘       └──────────────┘       └──────────────┘
 ```
 
-### Microservices
+### 📦 Microservices
 
-| Service                  | Port | Langage          | Description                            |
-| ------------------------ | ---- | ---------------- | -------------------------------------- |
-| **API Gateway**          | 8000 | Python/FastAPI   | Point d'entree unique, proxy           |
-| **Doc Ingestor**         | 8001 | Python/FastAPI   | Ingestion OCR, extraction de texte     |
-| **DeID Service**         | 8002 | Java/Spring Boot | Anonymisation des donnees personnelles |
-| **Indexeur Semantique**  | 8003 | Java/Spring Boot | Vectorisation et recherche semantique  |
-| **LLM QA Module**        | 8004 | Python/FastAPI   | Questions/Reponses avec LLM            |
-| **Synthese Comparative** | 8005 | Java/Spring Boot | Generation de resumes                  |
-| **Audit Logger**         | 8006 | Java/Spring Boot | Tracabilite et audit                   |
-| **Interface Clinique**   | 3000 | React            | Interface utilisateur                  |
+| Service | Port | Langage | Framework |
+|---------|------|---------|-----------|
+| API Gateway | 8000 | Python | FastAPI |
+| Doc Ingestor | 8001 | Python | FastAPI |
+| DeID Service | 8002 | Java | Spring Boot 3 |
+| Indexeur Sémantique | 8003 | Java | Spring Boot 3 |
+| LLM Q&A Module | 8004 | Python | FastAPI + LangChain |
+| Synthèse Comparative | 8005 | Java | Spring Boot 3 |
+| Audit Logger | 8006 | Java | Spring Boot 3 |
+| Interface Clinique | 3000 | JavaScript | React 18 |
 
-## 🚀 Démarrage Rapide
+---
+
+## 🚀 Installation
 
 ### Prérequis
 
-- Docker & Docker Compose
-- (Optionnel) Ollama pour LLM local
+- **Docker** 24+ et Docker Compose 2+
+- **Ollama** installé localement ([ollama.ai](https://ollama.ai))
+- **16 GB RAM** minimum (32 GB recommandé)
 
-### 1. Cloner le projet
+### Étapes d'installation
 
+1. **Cloner le dépôt**
 ```bash
-git clone <repository-url>
+git clone https://github.com/votre-username/DocQA-MS.git
 cd DocQA-MS
 ```
 
-### 2. Démarrer l'infrastructure
-
+2. **Configurer l'environnement**
 ```bash
-# Infrastructure seule (PostgreSQL + RabbitMQ)
-docker-compose up -d postgres rabbitmq
-
-# Vérifier le statut
-docker-compose ps
+cp .env.example .env
+# Modifier .env selon vos besoins
 ```
 
-### 3. Démarrer tous les services
-
+3. **Télécharger le modèle LLM**
 ```bash
-# Tous les microservices
+ollama pull llama3.1
+```
+
+4. **Lancer les services**
+```bash
 docker-compose up -d
-
-# Suivre les logs
-docker-compose logs -f
 ```
 
-### 4. Accéder aux interfaces
+5. **Accéder à l'application**
+- 🌐 **Interface** : http://localhost:3000
+- 📡 **API Gateway** : http://localhost:8000
+- 🐰 **RabbitMQ** : http://localhost:15672
 
-| Interface               | URL                    |
-| ----------------------- | ---------------------- |
-| **Application**         | http://localhost:3000  |
-| **RabbitMQ Management** | http://localhost:15672 |
-| **pgAdmin** (optionnel) | http://localhost:5050  |
+---
+
+## 💻 Utilisation
+
+### Interface Web
+
+1. **Dashboard** : Vue d'ensemble des statistiques et activités récentes
+2. **Documents** : Upload et gestion des documents médicaux
+3. **Q&A** : Posez vos questions en langage naturel
+4. **Synthèse** : Générez des synthèses comparatives
+5. **Audit** : Consultez les journaux d'activité
+
+### Exemple de Question-Réponse
+
+```
+Question : "Quels sont les traitements recommandés pour le diabète de type 2 ?"
+
+Réponse : "D'après les documents analysés, les traitements recommandés 
+incluent la metformine comme première ligne, suivie des inhibiteurs 
+SGLT2 ou des agonistes GLP-1 en cas d'insuffisance..."
+
+Sources : [doc-123, doc-456]
+```
+
+---
+
+## 📡 API
+
+### Endpoints principaux
+
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| `POST` | `/api/documents/upload` | Upload de document |
+| `POST` | `/api/deid/anonymize` | Anonymisation |
+| `POST` | `/api/qa/ask` | Poser une question |
+| `POST` | `/api/synthesis/compare` | Générer une synthèse |
+| `GET` | `/api/audit/logs` | Récupérer les logs |
+| `GET` | `/health` | Health check |
+
+### Exemple d'appel API
+
+```bash
+curl -X POST http://localhost:8000/api/qa/ask \
+  -H "Content-Type: application/json" \
+  -d '{"query": "Quels sont les effets secondaires du paracétamol ?"}'
+```
+
+---
+
+## 🧪 Tests
+
+### Lancer les tests
+
+```bash
+# Tests Python
+python -m pytest tests/ -v
+
+# Tests Java (Maven)
+cd microservices/audit-logger && mvn test
+
+# Tests de performance (JMeter)
+./run-jmeter-tests.bat
+```
+
+### Couverture de code
+
+```bash
+# Générer le rapport de couverture
+./generate-coverage.bat
+```
+
+---
 
 ## 📁 Structure du Projet
 
 ```
 DocQA-MS/
-├── docker-compose.yml              # Orchestration Docker
-├── README.md                       # Documentation
-├── config/
-│   └── application.properties      # Configuration partagée
-├── database/
-│   └── init-scripts/              # Scripts d'initialisation DB
-└── microservices/
-    ├── doc-ingestor/              # Python/FastAPI
-    ├── deid-service/              # Java/Spring Boot
-    ├── indexeur-semantique/       # Java/Spring Boot
-    ├── llm-qa-module/             # Python/FastAPI
-    ├── synthese-comparative/      # Java/Spring Boot
-    ├── audit-logger/              # Java/Spring Boot
-    └── interface-clinique/        # React/Tailwind
+├── 📂 microservices/
+│   ├── 📂 api-gateway/          # Python/FastAPI
+│   ├── 📂 doc-ingestor/         # Python/FastAPI
+│   ├── 📂 deid-service/         # Java/Spring Boot
+│   ├── 📂 indexeur-semantique/  # Java/Spring Boot
+│   ├── 📂 llm-qa-module/        # Python/LangChain
+│   ├── 📂 synthese-comparative/ # Java/Spring Boot
+│   ├── 📂 audit-logger/         # Java/Spring Boot
+│   └── 📂 interface-clinique/   # React
+├── 📂 database/                 # Scripts SQL
+├── 📂 tests/                    # Tests unitaires et intégration
+├── 📂 jmeter/                   # Tests de performance
+├── 📂 .github/workflows/        # CI/CD GitHub Actions
+├── 📄 docker-compose.yml        # Orchestration Docker
+├── 📄 .env.example              # Variables d'environnement
+└── 📄 README.md                 # Documentation
 ```
+
+---
 
 ## 🔧 Configuration
 
-### Variables d'environnement principales
+### Variables d'environnement
 
-| Variable          | Description     | Défaut                                                         |
-| ----------------- | --------------- | -------------------------------------------------------------- |
-| `DATABASE_URL`    | URL PostgreSQL  | `postgresql://docqa_user:docqa_password@postgres:5432/docqa_*` |
-| `RABBITMQ_HOST`   | Hôte RabbitMQ   | `rabbitmq`                                                     |
-| `LLM_PROVIDER`    | Fournisseur LLM | `ollama`                                                       |
-| `OLLAMA_BASE_URL` | URL Ollama      | `http://host.docker.internal:11434`                            |
+| Variable | Description | Défaut |
+|----------|-------------|--------|
+| `OLLAMA_BASE_URL` | URL du serveur Ollama | `http://ollama:11434` |
+| `OLLAMA_MODEL` | Modèle LLM à utiliser | `llama3.1` |
+| `POSTGRES_DB` | Nom de la base de données | `docqa` |
+| `POSTGRES_USER` | Utilisateur PostgreSQL | `docqa` |
+| `RABBITMQ_HOST` | Hôte RabbitMQ | `rabbitmq` |
 
-### Configuration LLM - Llama 3.1 8B avec RAG
+---
 
-Le système utilise **Llama 3.1 8B** via Ollama avec une architecture RAG (Retrieval-Augmented Generation) pour des réponses précises basées sur les documents médicaux. Ce modèle a été choisi pour son efficacité mémoire (4.9GB) tout en maintenant d'excellentes performances.
+## 🛡️ Sécurité
 
-#### Prérequis: Installer Ollama et Llama 3.1
+- ✅ **Exécution locale du LLM** : Aucune donnée envoyée vers le cloud
+- ✅ **Anonymisation automatique** : Conformité RGPD avant stockage
+- ✅ **Audit complet** : Traçabilité de toutes les opérations
+- ✅ **Isolation des services** : Conteneurisation Docker
 
-**Windows:**
+---
 
-```powershell
-# Télécharger et installer Ollama depuis https://ollama.com/download
-# Ou via winget:
-winget install Ollama.Ollama
+## 👥 Équipe
 
-# Télécharger le modèle Llama 3.1 8B (environ 4.9 Go)
-ollama pull llama3.1
+<table>
+  <tr>
+    <td align="center"><strong>Achraf EL HOUFI</strong></td>
+    <td align="center"><strong>Saad KARZOUZ</strong></td>
+    <td align="center"><strong>Yassir LAMBRASS</strong></td>
+    <td align="center"><strong>Anas EL MALYARI</strong></td>
+  </tr>
+</table>
 
-# Démarrer le serveur Ollama
-ollama serve
-```
+**École Marocaine des Sciences de l'Ingénieur (EMSI)**  
+📆 Année académique 2024-2025
 
-**Linux/Mac:**
-
-```bash
-# Installer Ollama
-curl -fsSL https://ollama.com/install.sh | sh
-
-# Télécharger Llama 3.1 8B
-ollama pull llama3.1
-
-# Démarrer le serveur
-ollama serve
-```
-
-#### Vérifier l'installation
-
-```bash
-# Vérifier que Ollama fonctionne
-curl http://localhost:11434/api/tags
-
-# Tester Llama 3.1
-ollama run llama3.1 "Bonjour, es-tu prêt?"
-```
-
-#### Configuration RAG
-
-Le module LLM QA utilise RAG avec les paramètres suivants (modifiables via `.env`):
-
-| Paramètre           | Valeur      | Description                             |
-| ------------------- | ----------- | --------------------------------------- |
-| `OLLAMA_MODEL`      | `llama3.1`  | Modèle Llama 3.1 8B (4.9GB)             |
-| `LLM_TEMPERATURE`   | `0.1`       | Réponses factuelles (basse température) |
-| `LLM_NUM_CTX`       | `8192`      | Fenêtre de contexte                     |
-| `RAG_TOP_K_RESULTS` | `5`         | Documents récupérés                     |
-| `USE_RERANKING`     | `true`      | Reranking pour meilleure précision      |
-| `RERANK_TOP_K`      | `3`         | Documents finaux après reranking        |
-
-**Note:** Llama 3.1 8B offre un excellent équilibre entre performance et consommation mémoire, le rendant idéal pour des environnements avec des ressources limitées.
-
-#### Alternative: OpenAI (Optionnel)
-
-```env
-USE_LOCAL_LLM=false
-OPENAI_API_KEY=sk-...
-OPENAI_MODEL=gpt-3.5-turbo
-```
-
-## 🧪 Tests
-
-### Exécuter les tests unitaires
-
-```bash
-# Java services
-cd microservices/deid-service
-./mvnw test
-
-# Python services
-cd microservices/llm-qa-module
-pytest
-```
-
-### Health Checks
-
-```bash
-# Vérifier tous les services
-curl http://localhost:8001/health
-curl http://localhost:8002/actuator/health
-curl http://localhost:8003/actuator/health
-curl http://localhost:8004/health
-curl http://localhost:8005/actuator/health
-curl http://localhost:8006/actuator/health
-```
-
-## 📊 Fonctionnalités
-
-### 1. Ingestion de Documents
-
-- Upload PDF, DOC, DOCX, TXT
-- OCR pour documents scannés
-- Extraction de métadonnées
-
-### 2. Anonymisation (DeID)
-
-- Détection des noms, prénoms
-- Anonymisation des dates
-- Masquage des numéros de sécurité sociale
-- Correspondance bidirectionnelle sécurisée
-
-### 3. Recherche Sémantique
-
-- Embeddings vectoriels
-- Recherche par similarité
-- Filtrage par patient/date
-
-### 4. Questions/Réponses
-
-- Interface conversationnelle avec Llama 3.1 8B
-- RAG (Retrieval-Augmented Generation) pour réponses précises
-- Contexte patient et historique de conversation
-- Sources citées avec numéros de documents
-- Score de confiance
-- Support multilingue (français par défaut)
-
-### 5. Synthèses Intelligentes ✨
-
-- **Résumé automatique** de dossiers patients via IA
-- **Génération de points clés** extraits des documents
-- **Comparaison multi-patients** pour analyses comparatives
-- Support de multiples documents simultanément
-- Affichage structuré avec résumé et points importants
-- Export Markdown pour archivage
-- Génération rapide (8-15 secondes avec Llama 3.1)
-
-### 6. Audit
-
-- Traçabilité complète de toutes les opérations
-- Journalisation des générations de synthèses
-- Filtrage avancé par type d'action et date
-- Export CSV pour analyses
-
-## 🔒 Sécurité
-
-- Anonymisation conforme RGPD
-- Audit trail complet
-- Authentification (à implémenter)
-- Chiffrement des données sensibles
+---
 
 ## 📝 Licence
 
-Projet de fin d'études - 2024
+Ce projet est développé dans un cadre académique. Tous droits réservés.
 
-## 👥 Contributeurs
+---
 
-- Achraf , Yassir , Saad , Anas
-
-### 7. InterfaceClinique (React)
-
-**Port:** 3000  
-**Rôle:** Interface utilisateur web  
-**Technologies:** React, Tailwind CSS, Auth0, Chart.js
-
-## 🔄 Workflow
-
-```
-DocIngestor → DeID → IndexeurSémantique → LLMQAModule → SyntheseComparative
-                                              ↓
-                                        AuditLogger
-                                              ↑
-                                      InterfaceClinique
-```
-
-## 📋 Prérequis
-
-- Java JDK 17+
-- Python 3.10+
-- Node.js 16+
-- PostgreSQL 18
-- RabbitMQ 3.12+
-- Maven 3.8+
-
-## 🚀 Démarrage
-
-### 1. Configuration des bases de données
-
-```bash
-# Voir database/init-scripts/
-psql -U postgres -f database/init-scripts/create-databases.sql
-```
-
-### 2. Démarrage de RabbitMQ
-
-```bash
-# Voir docs/rabbitmq-setup.md
-```
-
-### 3. Démarrage des microservices
-
-```bash
-# DocIngestor
-cd microservices/doc-ingestor
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-python app.py
-
-# DeID
-cd microservices/deid-service
-mvn clean install
-mvn spring-boot:run
-
-# ... autres services
-```
-
-## 📚 Documentation
-
-- [Architecture détaillée](docs/architecture.md)
-- [Guide de développement](docs/development-guide.md)
-- [API Documentation](docs/api-documentation.md)
-- [Guide de déploiement](docs/deployment-guide.md)
-
-## 🔒 Sécurité
-
-- Anonymisation automatique des données personnelles (PII)
-- Traçabilité complète des accès et requêtes
-- Authentification et autorisation (Auth0)
-- Conformité RGPD et réglementations médicales
-
-
-
-## 📄 License
-
-Academic Use Only
+<p align="center">
+  <sub>Développé avec ❤️ par l'équipe DocQA-MS</sub>
+</p>

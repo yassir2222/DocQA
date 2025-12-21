@@ -19,7 +19,7 @@ export const ThemeProvider = ({ children }) => {
       return savedTheme === "dark";
     }
     // Check system preference
-    return globalThis.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false;
+    return window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false;
   });
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export const ThemeProvider = ({ children }) => {
 
   // Listen for system theme changes
   useEffect(() => {
-    const mediaQuery = globalThis.matchMedia?.("(prefers-color-scheme: dark)");
+    const mediaQuery = window.matchMedia?.("(prefers-color-scheme: dark)");
     if (!mediaQuery) return;
     
     const handleChange = (e) => {
@@ -60,7 +60,7 @@ export const ThemeProvider = ({ children }) => {
       setIsDark(false);
     } else if (theme === "system") {
       localStorage.removeItem("docqa-theme");
-      setIsDark(globalThis.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false);
+      setIsDark(window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false);
     }
   }, []);
 
