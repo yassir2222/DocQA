@@ -43,7 +43,7 @@ jobs:
           - doc-ingestor
           - deid-service
           - indexeur-semantique
-          - llm-qa-module
+          # - llm-qa-module  # Excluded: takes too long to build with LLM model
           - synthese-comparative
           - audit-logger
           - interface-clinique
