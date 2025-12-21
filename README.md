@@ -14,7 +14,6 @@
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED)
 ![License](https://img.shields.io/badge/License-Academic-lightgrey)
 
-## 📋 Dernières Modifications (6 Décembre 2025)
 
 ### ✨ Nouvelles Fonctionnalités
 - **Synthèse Intelligente fonctionnelle** : Affichage correct des résumés générés par IA avec structure résumé + points clés
