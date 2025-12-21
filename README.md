@@ -1,10 +1,18 @@
 # DocQA-MS — Assistant Médical sur Documents Cliniques
 
+<!-- CI/CD Badges -->
+[![CI Pipeline](https://github.com/yassir2222/DocQA-MS/actions/workflows/ci.yml/badge.svg)](https://github.com/yassir2222/DocQA-MS/actions/workflows/ci.yml)
+[![CD Pipeline](https://github.com/yassir2222/DocQA-MS/actions/workflows/cd.yml/badge.svg)](https://github.com/yassir2222/DocQA-MS/actions/workflows/cd.yml)
+[![CodeQL](https://github.com/yassir2222/DocQA-MS/actions/workflows/codeql.yml/badge.svg)](https://github.com/yassir2222/DocQA-MS/actions/workflows/codeql.yml)
+[![Release](https://github.com/yassir2222/DocQA-MS/actions/workflows/release.yml/badge.svg)](https://github.com/yassir2222/DocQA-MS/releases)
+
+<!-- Technology Badges -->
 ![Architecture](https://img.shields.io/badge/Architecture-Microservices-blue)
 ![Java](https://img.shields.io/badge/Java-17+-orange)
 ![Python](https://img.shields.io/badge/Python-3.11+-green)
 ![React](https://img.shields.io/badge/React-18-61DAFB)
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED)
+![License](https://img.shields.io/badge/License-Academic-lightgrey)
 
 ## 📋 Dernières Modifications (6 Décembre 2025)
 

@@ -1,0 +1,114 @@
+# =============================================================================
+# DocQA-MS - Release Workflow
+# Create releases with changelog and assets
+# =============================================================================
+
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  release:
+    name: 📦 Create Release
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🏷️ Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: 📝 Generate changelog
+        id: changelog
+        run: |
+          echo "## What's Changed" > CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          git log $(git describe --tags --abbrev=0 HEAD^)..HEAD --pretty=format:"- %s (%an)" >> CHANGELOG.md || echo "- Initial release" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo 'initial')...${{ steps.get_version.outputs.VERSION }}" >> CHANGELOG.md
+
+      - name: 📦 Create release archive
+        run: |
+          mkdir -p release-assets
+          
+          # Create docker-compose production file
+          cp docker-compose.yml release-assets/docker-compose.production.yml
+          
+          # Create .env template
+          cp .env.example release-assets/.env.template
+          
+          # Create deployment guide
+          cat > release-assets/DEPLOYMENT.md << 'EOF'
+          # DocQA-MS Deployment Guide
+          
+          ## Quick Start
+          
+          1. Clone this release
+          2. Copy `.env.template` to `.env` and configure
+          3. Run `docker-compose -f docker-compose.production.yml up -d`
+          4. Access the application at http://localhost:3000
+          
+          ## Services
+          
+          | Service | Port | Description |
+          |---------|------|-------------|
+          | API Gateway | 8000 | Main API entry point |
+          | Frontend | 3000 | React web interface |
+          | Doc Ingestor | 8001 | Document upload service |
+          | DeID Service | 8002 | Anonymization service |
+          | Indexeur | 8003 | Semantic indexing |
+          | LLM QA | 8004 | Q&A with LLM |
+          | Synthèse | 8005 | Document synthesis |
+          | Audit | 8006 | Audit logging |
+          
+          ## Requirements
+          
+          - Docker 24+
+          - Docker Compose 2+
+          - 8GB RAM minimum
+          - Ollama (optional, for LLM features)
+          EOF
+          
+          # Create archive
+          tar -czvf release-assets/docqa-ms-${{ steps.get_version.outputs.VERSION }}.tar.gz \
+            docker-compose.yml \
+            .env.example \
+            database/ \
+            README.md
+
+      - name: 🚀 Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: DocQA-MS ${{ steps.get_version.outputs.VERSION }}
+          body_path: CHANGELOG.md
+          draft: false
+          prerelease: ${{ contains(steps.get_version.outputs.VERSION, '-') }}
+          files: |
+            release-assets/docqa-ms-${{ steps.get_version.outputs.VERSION }}.tar.gz
+            release-assets/docker-compose.production.yml
+            release-assets/.env.template
+            release-assets/DEPLOYMENT.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📊 Release Summary
+        run: |
+          echo "=================================="
+          echo "📦 RELEASE CREATED"
+          echo "=================================="
+          echo "Version: ${{ steps.get_version.outputs.VERSION }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "=================================="

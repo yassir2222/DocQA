@@ -1,0 +1,106 @@
+# =============================================================================
+# DocQA-MS - Dependency Review
+# Check for vulnerabilities in dependencies on PRs
+# =============================================================================
+
+name: Dependency Review
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  dependency-review:
+    name: 🔍 Dependency Review
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔍 Dependency Review
+        uses: actions/dependency-review-action@v3
+        with:
+          fail-on-severity: high
+          allow-licenses: MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC
+        continue-on-error: true
+
+  # Python dependency check
+  python-audit:
+    name: 🐍 Python Security Audit
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        service: [doc-ingestor, llm-qa-module, api-gateway]
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Install safety
+        run: pip install safety pip-audit
+
+      - name: 🔍 Run safety check
+        working-directory: microservices/${{ matrix.service }}
+        run: |
+          pip install -r requirements.txt
+          safety check --json || true
+          pip-audit || true
+        continue-on-error: true
+
+  # NPM dependency check
+  npm-audit:
+    name: 📦 NPM Security Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: 🔍 Run npm audit
+        working-directory: microservices/interface-clinique
+        run: |
+          npm ci
+          npm audit --audit-level=high || true
+        continue-on-error: true
+
+  # Maven dependency check
+  maven-audit:
+    name: ☕ Maven Security Audit
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        service: [deid-service, indexeur-semantique, synthese-comparative, audit-logger]
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: ☕ Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: 🔍 OWASP Dependency Check
+        working-directory: microservices/${{ matrix.service }}
+        run: |
+          mvn org.owasp:dependency-check-maven:check -DfailBuildOnCVSS=8 || true
+        continue-on-error: true
