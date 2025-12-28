@@ -26,6 +26,10 @@
   <a href="#-équipe">Équipe</a>
 </p>
 
+<p align="center">
+  <sub>📅 Dernière mise à jour : 28 Décembre 2024</sub>
+</p>
+
 ---
 
 ## 📋 À propos
