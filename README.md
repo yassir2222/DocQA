@@ -32,6 +32,12 @@
 
 **DocQA-MS** est un système intelligent de Question-Réponse conçu pour les professionnels de santé. Il permet d'interroger naturellement des corpus de documents médicaux tout en garantissant la **confidentialité des données patients** grâce à une anonymisation automatique conforme au RGPD.
 
+
+
+https://github.com/user-attachments/assets/26012024-a6ae-42cb-a915-a88864d0f8e2
+
+
+
 ### 🎯 Objectifs
 
 - ✅ Permettre aux cliniciens de poser des questions en langage naturel
