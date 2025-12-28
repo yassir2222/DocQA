@@ -1,0 +1,599 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                           RAPPORT PFE - DocQA-MS                            %
+%         Système de Question-Réponse sur Documents Médicaux                  %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[12pt,a4paper]{report}
+
+%==============================================================================
+%                              PACKAGES
+%==============================================================================
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{listings}
+
+\lstset{
+  backgroundcolor=\color{gray!5},
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{gray!30}
+}
+\usepackage[
+  top=2cm,
+  bottom=2cm,
+  left=2.5cm,
+  right=2cm,
+  headheight=14pt,
+  headsep=0.5cm,
+  footskip=1cm
+]{geometry}
+\usepackage{listings}
+
+\lstset{
+  backgroundcolor=\color{gray!5},
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{gray!30},
+  numbers=none,
+  tabsize=2
+}
+\usepackage{lmodern}
+\usepackage[table,xcdraw]{xcolor}
+
+% Palette de couleurs bleues (thème médical/technologique)
+\definecolor{bleuPrincipal}{RGB}{41, 128, 185}
+\definecolor{bleuFonce}{RGB}{23, 74, 117}
+\definecolor{bleuClair}{RGB}{133, 193, 233}
+\definecolor{bleuTresClair}{RGB}{235, 245, 251}
+\definecolor{bleuMarine}{RGB}{26, 82, 118}
+\definecolor{bleuTurquoise}{RGB}{72, 201, 176}
+\definecolor{bleuNuit}{RGB}{33, 47, 61}
+\definecolor{grisFonce}{RGB}{64, 64, 64}
+\definecolor{grisTexte}{RGB}{51, 51, 51}
+\definecolor{grisClair}{RGB}{245, 245, 245}
+\definecolor{blanc}{RGB}{255, 255, 255}
+\definecolor{vertSucces}{RGB}{39, 174, 96}
+\definecolor{orangeWarning}{RGB}{243, 156, 18}
+\definecolor{rougeAlert}{RGB}{231, 76, 60}
+
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{colortbl}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows, positioning, calc, shadows, decorations.pathmorphing, backgrounds, fit, patterns, fadings}
+
+\usepackage[most]{tcolorbox}
+\tcbuselibrary{skins, breakable}
+
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{titletoc}
+
+\usepackage[
+  colorlinks=true,
+  linkcolor=bleuFonce,
+  urlcolor=bleuPrincipal,
+  citecolor=bleuMarine,
+  bookmarks=true
+]{hyperref}
+
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage[solid]{fontawesome5}
+
+%==============================================================================
+%                        CONFIGURATION DES STYLES
+%==============================================================================
+
+\titleformat{\chapter}[display]
+{\normalfont\LARGE\bfseries\color{bleuFonce}}
+{\colorbox{bleuPrincipal}{\parbox{2.5cm}{\centering\textcolor{white}{\Large Chapitre}\\\textcolor{white}{\fontsize{40}{48}\selectfont\thechapter}}}}
+{1cm}
+{\titlerule[2pt]\vspace{0.3cm}}
+
+\titlespacing*{\chapter}{0pt}{-20pt}{20pt}
+
+\titleformat{\section}
+{\normalfont\Large\bfseries\color{bleuFonce}}
+{\colorbox{bleuPrincipal}{\parbox{0.8cm}{\centering\textcolor{white}{\thesection}}}}
+{0.4em}
+{}
+
+\titlespacing*{\section}{0pt}{15pt}{8pt}
+
+\titleformat{\subsection}
+{\normalfont\large\bfseries\color{bleuMarine}}
+{\thesubsection}
+{0.4em}
+{}
+
+\titlespacing*{\subsection}{0pt}{10pt}{5pt}
+
+%==============================================================================
+%                     EN-TÊTES ET PIEDS DE PAGE
+%==============================================================================
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textcolor{bleuPrincipal}{\textbf{DocQA-MS}}}
+\fancyhead[R]{\textcolor{bleuFonce}{\leftmark}}
+\fancyfoot[C]{\tikz{\fill[bleuPrincipal] (0,0) circle (0.3cm); \node[text=white, font=\small\bfseries] at (0,0) {\thepage};}}
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{bleuPrincipal}\leaders\hrule height \headrulewidth\hfill}}
+
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyfoot[C]{\tikz{\fill[bleuPrincipal] (0,0) circle (0.3cm); \node[text=white, font=\small\bfseries] at (0,0) {\thepage};}}
+  \renewcommand{\headrulewidth}{0pt}
+}
+
+%==============================================================================
+%                        BOÎTES PERSONNALISÉES
+%==============================================================================
+
+\newtcolorbox{resumebox}[1][]{
+  enhanced,
+  colback=bleuTresClair,
+  colframe=bleuPrincipal,
+  coltitle=white,
+  fonttitle=\bfseries,
+  title=#1,
+  arc=2mm,
+  boxrule=1pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  breakable
+}
+
+\newtcolorbox{keywordsbox}{
+  enhanced,
+  colback=grisClair,
+  colframe=bleuMarine,
+  boxrule=1pt,
+  arc=2mm,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  fontupper=\itshape
+}
+
+\newtcolorbox{infobox}[1][Information]{
+  enhanced,
+  colback=bleuTresClair,
+  colframe=bleuPrincipal,
+  coltitle=white,
+  fonttitle=\bfseries\small,
+  title=#1,
+  arc=2mm,
+  boxrule=1pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  attach boxed title to top left={yshift=-2mm, xshift=4mm},
+  boxed title style={arc=2mm, boxrule=0pt, colback=bleuPrincipal}
+}
+
+%==============================================================================
+%                     TABLE DES MATIÈRES STYLISÉE
+%==============================================================================
+
+\contentsmargin{0cm}
+
+\titlecontents{chapter}[0pc]
+{\addvspace{20pt}\color{bleuFonce}\large\bfseries}
+{\colorbox{bleuPrincipal}{\parbox{1.2cm}{\centering\textcolor{white}{\thecontentslabel}}}\hspace{0.3cm}}
+{}
+{\hfill\bfseries\thecontentspage}
+
+\titlecontents{section}[1.5pc]
+{\addvspace{2pt}}
+{\textcolor{bleuPrincipal}{\thecontentslabel}\hspace{0.3cm}}
+{}
+{\titlerule*[0.5pc]{.}\thecontentspage}
+
+\titlecontents{subsection}[3pc]
+{\small}
+{\textcolor{bleuMarine}{\thecontentslabel}\hspace{0.3cm}}
+{}
+{\titlerule*[0.5pc]{.}\small\thecontentspage}
+
+%==============================================================================
+%                       DÉBUT DU DOCUMENT
+%==============================================================================
+
+\begin{document}
+
+\pagenumbering{roman}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                     PAGE DE GARDE INNOVANTE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{titlepage}
+  \begin{tikzpicture}[remember picture, overlay]
+
+    %==========================================================================
+    % FOND AVEC DÉGRADÉ ET MOTIFS
+    %==========================================================================
+
+    % Fond blanc de base
+    \fill[white] (current page.south west) rectangle (current page.north east);
+
+    % Grande forme géométrique bleue (côté droit)
+    \fill[bleuPrincipal]
+    ([xshift=-6cm]current page.north east) --
+    (current page.north east) --
+    (current page.south east) --
+    ([xshift=-3cm]current page.south east) --
+    ([xshift=-8cm, yshift=8cm]current page.south east) -- cycle;
+
+    % Forme superposée plus claire
+    \fill[bleuTurquoise, opacity=0.6]
+    ([xshift=-4cm]current page.north east) --
+    (current page.north east) --
+    ([yshift=5cm]current page.south east) --
+    ([xshift=-6cm, yshift=10cm]current page.south east) -- cycle;
+
+    % Cercles décoratifs (réseau de microservices stylisé)
+    \foreach \x/\y/\r in {
+      -2/12/0.8, -1/10/0.5, 0/8/0.6, -1.5/6/0.4, -0.5/4/0.7,
+      0.5/11/0.3, 1/9/0.5, 0.5/7/0.4, 1.5/5/0.6, 0/2/0.5
+    } {
+      \fill[white, opacity=0.15] ([xshift=\x cm, yshift=\y cm]current page.east) circle (\r cm);
+    }
+
+    % Lignes de connexion (style microservices network)
+    \draw[white, opacity=0.2, line width=1pt]
+    ([xshift=-2cm, yshift=12cm]current page.east) --
+    ([xshift=-1cm, yshift=10cm]current page.east) --
+    ([xshift=0cm, yshift=8cm]current page.east) --
+    ([xshift=-1.5cm, yshift=6cm]current page.east) --
+    ([xshift=-0.5cm, yshift=4cm]current page.east);
+
+    \draw[white, opacity=0.2, line width=1pt]
+    ([xshift=0.5cm, yshift=11cm]current page.east) --
+    ([xshift=1cm, yshift=9cm]current page.east) --
+    ([xshift=0.5cm, yshift=7cm]current page.east);
+
+    %==========================================================================
+    % BANDE DÉCORATIVE INFÉRIEURE
+    %==========================================================================
+
+    \fill[bleuFonce]
+    (current page.south west) --
+    ([yshift=1.2cm]current page.south west) --
+    ([xshift=-5cm, yshift=1.2cm]current page.south east) --
+    ([xshift=-5cm, yshift=0cm]current page.south east) --
+    (current page.south east) -- cycle;
+
+    % Petits hexagones décoratifs (représentant les microservices)
+    \foreach \i in {0,1.5,3,4.5,6,7.5,9,10.5} {
+      \node[regular polygon, regular polygon sides=6, minimum size=0.5cm,
+      fill=bleuClair, opacity=0.3]
+      at ([xshift=\i cm, yshift=0.6cm]current page.south west) {};
+    }
+
+    %==========================================================================
+    % ÉLÉMENT DÉCORATIF GAUCHE (LIGNES FINES)
+    %==========================================================================
+
+    \foreach \y in {3,5,7,9,11,13,15,17,19,21} {
+      \draw[bleuClair, opacity=0.4, line width=0.5pt]
+      ([yshift=\y cm]current page.south west) --
+      ([xshift=2cm, yshift=\y cm]current page.south west);
+    }
+
+    %==========================================================================
+    % LOGO DOCQA-MS
+    %==========================================================================
+
+    \node at ([xshift=3.5cm, yshift=-3cm]current page.north west) {
+      \includegraphics[width=3cm]{images/logo-docqa.png}
+    };
+
+  \end{tikzpicture}
+
+  %==============================================================================
+  % CONTENU DE LA PAGE
+  %==============================================================================
+
+  \vspace*{0.5cm}
+
+  % En-tête université
+  \hspace{4cm}
+  \begin{minipage}{10cm}
+    {\large\color{grisFonce}\textbf{École Marocaine des Sciences de l'Ingénieur}}\\[0.1cm]
+    {\color{grisTexte}Département d'Informatique}\\[0.05cm]
+    {\small\color{bleuMarine}Filière : Ingénierie Informatique et Réseaux}
+  \end{minipage}
+
+  \vspace{1.5cm}
+
+  % Type de mémoire
+  \hspace{1cm}
+  \begin{tikzpicture}
+    \node[fill=bleuTresClair, rounded corners=3pt, inner sep=8pt] {
+      \color{bleuFonce}\scriptsize{Projet Académique}
+    };
+  \end{tikzpicture}
+
+  % Titre principal
+  \hspace{0.5cm}
+  \begin{minipage}{11cm}
+    % Ligne décorative
+    \begin{tikzpicture}
+      \fill[bleuPrincipal] (0,0) rectangle (8cm, 3pt);
+      \fill[bleuTurquoise] (0,-0.15) rectangle (5cm, 2pt);
+    \end{tikzpicture}
+
+    \vspace{0.4cm}
+
+    % Nom de l'application
+    {\fontsize{50}{60}\selectfont\color{bleuFonce}\textbf{Doc}\textcolor{bleuPrincipal}{\textbf{QA-MS}}}
+
+    \vspace{0.3cm}
+
+    % Sous-titre
+    {\LARGE\color{grisFonce}\textit{Système de Question-Réponse}}\\[0.2cm]
+    {\LARGE\color{grisFonce}\textit{sur Documents Médicaux}}\\[0.2cm]
+    {\Large\color{bleuMarine}\textit{Architecture Microservices}}
+
+    \vspace{0.5cm}
+
+    % Tags des fonctionnalités
+    \begin{tikzpicture}
+      \node[fill=bleuPrincipal, text=white, rounded corners=10pt,
+      inner xsep=8pt, inner ysep=4pt, font=\small] (tag1) {RAG LLM};
+      \node[fill=bleuTurquoise, text=white, rounded corners=10pt,
+      inner xsep=8pt, inner ysep=4pt, font=\small, right=0.2cm of tag1] (tag2) {Anonymisation};
+      \node[fill=bleuMarine, text=white, rounded corners=10pt,
+      inner xsep=8pt, inner ysep=4pt, font=\small, right=0.2cm of tag2] (tag3) {Indexation};
+      \node[fill=bleuFonce, text=white, rounded corners=10pt,
+      inner xsep=8pt, inner ysep=4pt, font=\small, right=0.2cm of tag3] (tag4) {Synthèse};
+    \end{tikzpicture}
+  \end{minipage}
+
+  \vspace{1.2cm}
+
+  % Section Réalisé par / Encadré par
+  \hspace{0.5cm}
+  \begin{minipage}[t]{6.5cm}
+    \begin{tikzpicture}
+      % Titre
+      \node[fill=bleuPrincipal, text=white, font=\bfseries,
+      inner xsep=15pt, inner ysep=6pt, rounded corners=2pt]
+      at (0,0) {Réalisé par};
+    \end{tikzpicture}
+
+    \vspace{0.4cm}
+
+    \hspace{0.3cm}
+    \begin{tabular}{@{}l@{}}
+      \textcolor{bleuFonce}{\faUser} \hspace{0.2cm} \textbf{Achraf EL HOUFI}\\[0.25cm]
+      \textcolor{bleuFonce}{\faUser} \hspace{0.2cm} \textbf{Saad KARZOUZ}\\[0.25cm]
+      \textcolor{bleuFonce}{\faUser} \hspace{0.2cm} \textbf{Yassir LAMBRASS}\\[0.25cm]
+      \textcolor{bleuFonce}{\faUser} \hspace{0.2cm} \textbf{Anas EL MALYARI}
+    \end{tabular}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{6.5cm}
+
+    \vspace{0.4cm}
+
+    \hspace{0.3cm}
+
+  \end{minipage}
+  \hspace{1cm}
+
+  \vfill
+
+  % Année universitaire
+  \begin{tikzpicture}
+    \node[inner sep=0] at (0,0) {
+      \hspace{1cm}
+      \begin{tikzpicture}
+        \draw[bleuPrincipal, line width=2pt] (0,0) -- (3,0);
+        \node[fill=white, text=bleuFonce, font=\Large\bfseries, inner xsep=15pt]
+        at (6.5,0) {2025 — 2026};
+        \draw[bleuPrincipal, line width=2pt] (10,0) -- (13,0);
+      \end{tikzpicture}
+    };
+  \end{tikzpicture}
+
+  \vspace{1cm}
+
+\end{titlepage}
+
+\newpage
+\chapter*{Remerciements}
+\addcontentsline{toc}{chapter}{Remerciements}
+
+\vspace{-0.5cm}
+
+\begin{center}
+  {\fontsize{30}{36}\selectfont\color{bleuPrincipal}\textit{"Merci"}}\\[0.2cm]
+  \begin{tikzpicture}
+    \draw[bleuClair, line width=1.5pt] (0,0) -- (4,0);
+  \end{tikzpicture}
+\end{center}
+
+\vspace{0.3cm}
+
+Au terme de ce projet de fin d'études, nous tenons à exprimer notre profonde gratitude envers toutes les personnes qui ont contribué, de près ou de loin, à la réalisation de ce travail. Ce mémoire représente l'aboutissement de plusieurs mois d'efforts, de recherches et de développement, et il n'aurait pas pu voir le jour sans le soutien précieux de nombreuses personnes.
+
+\begin{infobox}[À notre encadrant]
+  Nous adressons nos remerciements les plus sincères à \textbf{nos Professeurs}, nos encadrants académique, pour leur disponibilité constante, leur conseils avisés et leur accompagnement bienveillant tout au long de ce projet. leur rigueur scientifique, leur expertise technique en intelligence artificielle et en architecture distribuée, ainsi que leur patience ont été des atouts inestimables qui nous ont permis de mener à bien ce travail. leur orientations pertinentes nous ont guidés dans les moments de doute et nous ont aidés à surmonter les obstacles techniques rencontrés, notamment dans l'intégration des modèles de langage et la conception de l'architecture microservices.
+\end{infobox}
+
+\vspace{0.3cm}
+
+Nous exprimons également notre reconnaissance à l'ensemble du \textbf{corps professoral} du département d'informatique qui nous a transmis, au fil des années, les connaissances et compétences nécessaires pour aborder ce projet avec confiance. Leur dévouement à l'enseignement et leur passion pour l'informatique nous ont inspirés et motivés.
+
+Nous ne saurions oublier nos \textbf{familles} qui nous ont soutenus inconditionnellement durant toute notre formation. Leur amour, leurs encouragements et leurs sacrifices ont été le pilier de notre réussite. À nos parents, nos frères et sœurs, nous disons merci du fond du cœur.
+
+Enfin, nous remercions nos \textbf{amis et collègues} pour leur soutien moral, leurs conseils et les moments de partage qui ont rendu cette aventure plus agréable. La cohésion de notre équipe a été un facteur clé dans la réussite de ce projet.
+
+\begin{center}
+  \vspace{0.3cm}
+  \textit{\color{bleuMarine}À toutes et à tous, nous exprimons notre profonde gratitude.}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                           RÉSUMÉ
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+\chapter*{Résumé}
+\addcontentsline{toc}{chapter}{Résumé}
+
+\vspace{-0.5cm}
+
+\begin{resumebox}[Résumé en Français]
+
+  L'accès rapide et sécurisé à l'information médicale constitue aujourd'hui un enjeu majeur pour les professionnels de santé. Dans un contexte où le volume de données médicales croît exponentiellement, les cliniciens font face à un défi de taille : extraire rapidement les informations pertinentes tout en garantissant la confidentialité des données patients. Face à cette problématique, les avancées en intelligence artificielle, notamment les modèles de langage de grande taille (LLM) et les systèmes RAG (Retrieval-Augmented Generation), offrent des perspectives prometteuses.
+
+  \vspace{0.3cm}
+
+  C'est dans ce contexte que s'inscrit le projet \textbf{DocQA-MS}, un système de Question-Réponse sur Documents Médicaux basé sur une architecture microservices. Cette solution innovante permet aux professionnels de santé d'interroger naturellement des corpus de documents cliniques tout en garantissant l'anonymisation automatique des données sensibles conformément au RGPD. L'application propose une ingestion intelligente de documents, une anonymisation automatique via la reconnaissance d'entités nommées médicales (NER), une indexation sémantique vectorielle, un moteur de question-réponse propulsé par LLM (Llama 3.1 via Ollama), une synthèse comparative multi-documents, ainsi qu'un système complet d'audit et de traçabilité.
+
+  \vspace{0.3cm}
+
+  Le développement de DocQA-MS s'appuie sur une architecture technique moderne et distribuée. Le backend comprend sept microservices développés en Python (FastAPI) et Java (Spring Boot), orchestrés via Docker Compose. L'infrastructure intègre PostgreSQL pour la persistance, RabbitMQ pour la communication asynchrone, et Ollama pour l'exécution locale des modèles LLM. L'interface utilisateur a été développée en React. La méthodologie Scrum a été adoptée pour assurer une gestion agile du projet.
+
+  \vspace{0.3cm}
+
+  Les résultats obtenus démontrent la faisabilité et l'efficacité d'une telle approche. DocQA-MS offre une solution complète et conforme aux exigences de sécurité du domaine médical, permettant aux cliniciens d'accéder instantanément aux informations pertinentes sans compromettre la vie privée des patients.
+
+\end{resumebox}
+
+\vspace{0.4cm}
+
+\begin{keywordsbox}
+  \textbf{Mots-clés :} Documents Médicaux, Intelligence Artificielle, RAG, LLM, Microservices, Anonymisation, NER, RGPD, Docker, Spring Boot, FastAPI, React, PostgreSQL, RabbitMQ.
+\end{keywordsbox}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                           ABSTRACT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+\vspace{-0.5cm}
+
+\begin{resumebox}[English Abstract]
+
+  Fast and secure access to medical information is today a major challenge for healthcare professionals. In a context where the volume of medical data is growing exponentially, clinicians face a significant challenge: quickly extracting relevant information while ensuring patient data confidentiality. Faced with this problem, advances in artificial intelligence, particularly Large Language Models (LLM) and RAG (Retrieval-Augmented Generation) systems, offer promising perspectives.
+
+  \vspace{0.3cm}
+
+  It is within this context that the \textbf{DocQA-MS} project was developed, a Question-Answering System on Medical Documents based on a microservices architecture. This innovative solution allows healthcare professionals to naturally query clinical document corpora while ensuring automatic anonymization of sensitive data in compliance with GDPR. The application offers intelligent document ingestion, automatic anonymization via Medical Named Entity Recognition (NER), vector semantic indexing, a question-answering engine powered by LLM (Llama 3.1 via Ollama), multi-document comparative synthesis, as well as a complete audit and traceability system.
+
+  \vspace{0.3cm}
+
+  The development of DocQA-MS is based on a modern and distributed technical architecture. The backend comprises seven microservices developed in Python (FastAPI) and Java (Spring Boot), orchestrated via Docker Compose. The infrastructure integrates PostgreSQL for persistence, RabbitMQ for asynchronous communication, and Ollama for local LLM model execution. The user interface was developed in React. The Scrum methodology was adopted to ensure agile project management.
+
+  \vspace{0.3cm}
+
+  The results obtained demonstrate the feasibility and effectiveness of such an approach. DocQA-MS offers a complete solution compliant with the security requirements of the medical domain, allowing clinicians to instantly access relevant information without compromising patient privacy.
+
+\end{resumebox}
+
+\vspace{0.4cm}
+
+\begin{keywordsbox}
+  \textbf{Keywords:} Medical Documents, Artificial Intelligence, RAG, LLM, Microservices, Anonymization, NER, GDPR, Docker, Spring Boot, FastAPI, React, PostgreSQL, RabbitMQ.
+\end{keywordsbox}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                        TABLE DES MATIÈRES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tableofcontents
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                        LISTE DES FIGURES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\listoffigures
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                        LISTE DES TABLEAUX
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\listoftables
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                     LISTE DES ABRÉVIATIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+\chapter*{Liste des Abréviations}
+\addcontentsline{toc}{chapter}{Liste des Abréviations}
+
+\vspace{-0.5cm}
+
+\begin{center}
+  \begin{tikzpicture}
+    \node[fill=bleuPrincipal, text=white, rounded corners=3pt, inner sep=8pt, font=\large\bfseries] {Abréviations et Acronymes};
+  \end{tikzpicture}
+\end{center}
+
+\vspace{0.4cm}
+
+\renewcommand{\arraystretch}{1.3}
+\begin{center}
+  \begin{tabular}{>{\columncolor{bleuTresClair}\bfseries}p{2.5cm} p{11cm}}
+    \toprule
+    \rowcolor{bleuPrincipal}
+    \textcolor{white}{\textbf{Abrév.}} & \textcolor{white}{\textbf{Signification}} \\
+    \midrule
+    API & \textit{Application Programming Interface} – Interface de programmation applicative. \\
+    \rowcolor{white}
+    CRUD & \textit{Create, Read, Update, Delete} – Opérations de base pour la gestion des données. \\
+    DeID & \textit{De-Identification} – Processus d'anonymisation des données patients. \\
+    \rowcolor{white}
+    IA & \textit{Intelligence Artificielle} – Simulation de l'intelligence humaine par les machines. \\
+    JWT & \textit{JSON Web Token} – Standard pour les jetons d'accès sécurisés. \\
+    \rowcolor{white}
+    LLM & \textit{Large Language Model} – Modèle de langage de grande taille. \\
+    NER & \textit{Named Entity Recognition} – Reconnaissance d'entités nommées. \\
+    \rowcolor{white}
+    RAG & \textit{Retrieval-Augmented Generation} – Génération augmentée par recherche. \\
+    REST & \textit{Representational State Transfer} – Architecture pour les API web. \\
+    \rowcolor{white}
+    RGPD & \textit{Règlement Général sur la Protection des Données} – Réglementation européenne. \\
+    UML & \textit{Unified Modeling Language} – Langage de modélisation graphique. \\
+    \rowcolor{white}
+    CI/CD & \textit{Continuous Integration/Continuous Deployment} – Intégration et déploiement continus. \\
+    HTTP & \textit{HyperText Transfer Protocol} – Protocole de transfert web. \\
+    \rowcolor{white}
+    SQL & \textit{Structured Query Language} – Langage de requête pour BDD. \\
+    AMQP & \textit{Advanced Message Queuing Protocol} – Protocole de messagerie (RabbitMQ). \\
+    \rowcolor{white}
+    PHI & \textit{Protected Health Information} – Informations de santé protégées. \\
+    \bottomrule
+  \end{tabular}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                        INTRODUCTION GÉNÉRALE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{introduction}
+\input{chapitre1}
+\input{chapitre2}
+\input{chapitre3}
+\input{chapitre4}
+\input{evaluation}
+\input{conclusion}
+
+\end{document}

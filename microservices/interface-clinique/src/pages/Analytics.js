@@ -109,9 +109,8 @@ const KPICard = ({ title, value, change, changeType, icon, gradient, subtitle })
           <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{subtitle}</p>
         )}
         {change !== undefined && (
-          <div className={`flex items-center gap-1 mt-2 text-sm font-medium ${
-            changeType === "up" ? "text-emerald-600" : changeType === "down" ? "text-red-500" : "text-slate-500"
-          }`}>
+          <div className={`flex items-center gap-1 mt-2 text-sm font-medium ${changeType === "up" ? "text-emerald-600" : changeType === "down" ? "text-red-500" : "text-slate-500"
+            }`}>
             {changeType === "up" ? Icons.arrowUp : changeType === "down" ? Icons.arrowDown : null}
             <span>{change}% vs mois dernier</span>
           </div>
@@ -137,9 +136,9 @@ const InsightCard = ({ type, title, description, time }) => {
         return { bg: "bg-indigo-50 dark:bg-indigo-900/20", border: "border-indigo-200 dark:border-indigo-800", icon: Icons.lightning, iconColor: "text-indigo-600 dark:text-indigo-400" };
     }
   };
-  
+
   const styles = getTypeStyles();
-  
+
   return (
     <div className={`${styles.bg} ${styles.border} border rounded-xl p-4 transition-all hover:shadow-md`}>
       <div className="flex gap-3">
@@ -238,10 +237,10 @@ export default function Analytics() {
       const date = new Date();
       date.setDate(date.getDate() - i);
       labels.push(date.toLocaleDateString("fr-FR", { day: "2-digit", month: "short" }));
-      
+
       // Simuler des données réalistes basées sur les logs
       const dayLogs = auditData.filter(log => {
-        const logDate = Array.isArray(log.timestamp) 
+        const logDate = Array.isArray(log.timestamp)
           ? new Date(log.timestamp[0], log.timestamp[1] - 1, log.timestamp[2])
           : new Date(log.timestamp);
         return logDate.toDateString() === date.toDateString();
@@ -355,7 +354,7 @@ export default function Analytics() {
   const insights = useMemo(() => {
     const results = [];
     const totalOps = Object.values(operationsData).reduce((a, b) => a + b, 0);
-    
+
     if (operationsData.QUERY > operationsData.UPLOAD * 2) {
       results.push({
         type: "success",
@@ -364,7 +363,7 @@ export default function Analytics() {
         time: "Analyse automatique"
       });
     }
-    
+
     if (stats.avgResponseTime < 3) {
       results.push({
         type: "success",
@@ -429,11 +428,10 @@ export default function Analytics() {
               <button
                 key={p.value}
                 onClick={() => setPeriod(p.value)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  period === p.value
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${period === p.value
                     ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg"
                     : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
-                }`}
+                  }`}
               >
                 {p.label}
               </button>
@@ -508,19 +506,19 @@ export default function Analytics() {
             Répartition des opérations
           </h2>
           <div className="h-[250px] flex items-center justify-center">
-            <Doughnut 
-              data={doughnutData} 
+            <Doughnut
+              data={doughnutData}
               options={{
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                  legend: { 
-                    position: "bottom", 
+                  legend: {
+                    position: "bottom",
                     labels: { color: isDark ? "#94a3b8" : "#64748b", padding: 15, usePointStyle: true }
                   }
                 },
                 cutout: "65%",
-              }} 
+              }}
             />
           </div>
         </div>
@@ -577,10 +575,10 @@ export default function Analytics() {
             </div>
           </div>
           <div className="text-center p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50">
-            <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">92%</div>
+            <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">95%</div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">Précision des réponses</p>
             <div className="mt-3 h-2 bg-slate-200 dark:bg-slate-600 rounded-full overflow-hidden">
-              <div className="h-full w-[92%] bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full" />
+              <div className="h-full w-[95%] bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full" />
             </div>
           </div>
           <div className="text-center p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50">

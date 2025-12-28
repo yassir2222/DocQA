@@ -34,7 +34,7 @@ class Settings(BaseSettings):
     
     # Ollama Configuration - Llama 3.1 8B
     OLLAMA_BASE_URL: str = "http://localhost:11434"
-    OLLAMA_MODEL: str = "llama3.1:8b"  # Llama 3.1 8B (4.9GB - memory efficient)
+    OLLAMA_MODEL: str = "llama3.1:latest"  # Llama 3.1 8B (4.9GB - memory efficient)
     USE_LOCAL_LLM: bool = True
     
     # LLM Parameters for Mistral Nemo - Optimized for Medical Q&A
@@ -55,15 +55,15 @@ class Settings(BaseSettings):
     EMBEDDING_MODEL: str = "sentence-transformers/all-MiniLM-L6-v2"
     
     # RAG Query Settings - Optimized for Medical Documents
-    RAG_TOP_K_RESULTS: int = 5  # Number of documents to retrieve
+    RAG_TOP_K_RESULTS: int = 10  # Increased to retrieve more candidates
     RAG_CHUNK_SIZE: int = 1024  # Larger chunks for better context
-    RAG_CHUNK_OVERLAP: int = 100  # More overlap to avoid cutting important info
-    RAG_SIMILARITY_THRESHOLD: float = 0.25  # Lower threshold to include more relevant docs
-    MAX_CONTEXT_LENGTH: int = 12000  # Larger context with 16k context window
+    RAG_CHUNK_OVERLAP: int = 150  # More overlap to avoid cutting important info
+    RAG_SIMILARITY_THRESHOLD: float = 0.15  # Very low threshold to include more docs
+    MAX_CONTEXT_LENGTH: int = 14000  # Larger context with 16k context window
     
     # Reranking (optional)
     USE_RERANKING: bool = True
-    RERANK_TOP_K: int = 3  # Final number of documents after reranking
+    RERANK_TOP_K: int = 5  # Increased for better coverage after reranking
     
     class Config:
         env_file = ".env"

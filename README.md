@@ -259,6 +259,119 @@ DocQA-MS/
 
 ---
 
+## 📊 Évaluation & Métriques RAG
+
+### Métriques de Performance
+
+| Métrique | Valeur | Description |
+|----------|--------|-------------|
+| **Accuracy** | 95% | Réponses correctes sur 20 questions de test |
+| **Precision** | 0.95 | Proportion de réponses pertinentes parmi les retournées |
+| **Recall** | 0.95 | Proportion de réponses pertinentes trouvées |
+| **F1-Score** | 0.95 | Moyenne harmonique Precision-Recall |
+| **Top-3 Accuracy** | 85% | Document pertinent dans les 3 premiers résultats |
+| **Top-5 Accuracy** | 90% | Document pertinent dans les 5 premiers résultats |
+| **Confiance moyenne** | 0.71 | Score de confiance du modèle LLM |
+
+### Matrice de Confusion
+
+```
+                    Prédiction
+                 Correct  Incorrect
+Réalité  Bon        19        0      → 100% des bonnes réponses
+         Mauvais     0        1      → 1 seule erreur identifiée
+
+Accuracy: 95% | Precision: 95% | Recall: 100%
+```
+
+---
+
+## 📁 Dataset
+
+### Description Quantitative
+
+| Attribut | Valeur |
+|----------|--------|
+| **Nombre de documents** | 40 fichiers PDF |
+| **Taille totale** | ~90 KB |
+| **Langue** | Français |
+| **Origine** | **Données synthétiques** (générées pour le projet) |
+| **Patients simulés** | 20 identifiants fictifs |
+
+### Types de Documents
+
+| Type | Quantité |
+|------|----------|
+| Comptes-rendus de consultation | 15 |
+| Rapports médicaux | 12 |
+| Lettres de liaison | 5 |
+| Résultats de laboratoire | 4 |
+| Ordonnances | 4 |
+
+### Catégories Médicales
+
+Gastroentérologie (10), Psychiatrie (8), Dermatologie (6), Oncologie (5), Cardiologie (3), Neurologie (3), Pneumologie (2), Autres (3)
+
+> ⚠️ **Note** : Toutes les données sont **synthétiques**. Aucune donnée réelle de patient n'a été utilisée.
+
+---
+
+## 🔄 CI/CD
+
+### GitHub Actions (Alternative à Jenkins)
+
+**GitHub Actions est utilisé comme alternative moderne à Jenkins** pour l'intégration continue et le déploiement continu de ce projet.
+
+| Workflow | Déclencheur | Actions |
+|----------|-------------|---------|
+| `ci.yml` | Push main/develop | Build, tests, linting |
+| `cd.yml` | Tag/merge main | Build Docker, push registry |
+| `release.yml` | Création release | Changelog, artifacts |
+
+#### Avantages vs Jenkins
+
+- ✅ Intégration native GitHub
+- ✅ Pas de serveur à maintenir
+- ✅ Gratuit pour projets open-source
+- ✅ Configuration YAML simple
+- ✅ Runners hébergés disponibles
+
+---
+
+## ⚠️ Limites & Perspectives
+
+### Limites Actuelles
+
+| Limite | Impact | Piste d'amélioration |
+|--------|--------|---------------------|
+| **Ressources GPU** | LLM requiert 16GB RAM minimum | Quantification du modèle |
+| **Qualité OCR** | PDFs scannés dégradent les résultats | Preprocessing amélioré |
+| **NER généraliste** | Détection d'entités médicales imparfaite | Fine-tuning sur corpus médical |
+| **Pas de cache Redis** | Embeddings recalculés à chaque requête | Ajout d'une couche de cache |
+| **Dataset limité** | 40 documents synthétiques seulement | Validation sur données réelles |
+| **Latence LLM** | 2-5 secondes par réponse | Streaming, optimisation |
+
+### Perspectives d'Évolution
+
+#### Court terme (3-6 mois)
+- Support images médicales (OCR amélioré)
+- Fine-tuning NER médical français
+- Interface admin de configuration
+- Export synthèses en PDF
+
+#### Moyen terme (6-12 mois)
+- 🎯 **Orchestration Kubernetes**
+- Haute disponibilité (HA)
+- Intégration DPI hospitaliers
+- Support multilingue
+- Fine-tuning LLM sur corpus médical
+
+#### Long terme (1-2 ans)
+- Certification dispositif médical
+- Études cliniques de validation
+- Interface vocale
+- Alertes proactives
+
 ## 👥 Équipe
 
 <table>

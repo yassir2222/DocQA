@@ -1,0 +1,514 @@
+%==============================================================================
+%                     CONCLUSION GÉNÉRALE
+%==============================================================================
+
+\chapter*{Conclusion Générale}
+\addcontentsline{toc}{chapter}{Conclusion Générale}
+\markboth{Conclusion Générale}{Conclusion Générale}
+
+%==============================================================================
+% Décoration de page
+%==============================================================================
+
+\begin{tikzpicture}[remember picture, overlay]
+  % Bande verticale droite
+  \fill[bleuPrincipal]
+  ([xshift=-0.3cm]current page.north east) rectangle
+  ([xshift=-0.6cm, yshift=-5cm]current page.north east);
+  % Cercle décoratif
+  \fill[bleuClair, opacity=0.2]
+  ([xshift=-3cm, yshift=-3cm]current page.north east) circle (2cm);
+\end{tikzpicture}
+
+\vspace{-0.5cm}
+
+%==============================================================================
+% Citation de clôture
+%==============================================================================
+
+\begin{center}
+  \begin{tikzpicture}
+    \node[fill=bleuTresClair, rounded corners=5pt, inner sep=15pt,
+    text width=12cm, align=center] {
+      {\Large\color{bleuPrincipal}"}\hspace{0.1cm}
+      {\itshape\color{grisFonce}L'intelligence artificielle est probablement l'événement le plus important de l'histoire de l'humanité. Malheureusement, elle pourrait aussi être le dernier, à moins que nous n'apprenions à éviter les risques.}
+      \hspace{0.1cm}{\Large\color{bleuPrincipal}"}
+      \\[0.3cm]
+      {\small\color{bleuMarine}— Stephen Hawking, Physicien théoricien}
+    };
+  \end{tikzpicture}
+\end{center}
+
+\vspace{0.8cm}
+
+%==============================================================================
+% Synthèse du projet
+%==============================================================================
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuPrincipal,
+    boxrule=2pt,
+    arc=4mm,
+    left=12pt, right=12pt, top=12pt, bottom=12pt,
+    shadow={2mm}{-2mm}{0mm}{black!15}
+  ]
+
+  \begin{center}
+    {\Large\bfseries\textcolor{bleuFonce}{Synthèse du Projet DocQA-MS}}
+  \end{center}
+
+  \vspace{0.3cm}
+
+  Au terme de ce projet de fin d'études, nous avons conçu et développé \textbf{DocQA-MS}, un système de Question-Réponse sur Documents Médicaux basé sur une architecture microservices moderne. Ce projet ambitieux visait à répondre à un défi majeur du secteur de la santé : \textit{permettre aux professionnels de santé d'accéder rapidement à l'information médicale tout en garantissant la confidentialité absolue des données patients}.
+
+  \vspace{0.3cm}
+
+  Notre solution se distingue par plusieurs innovations techniques majeures :
+
+  \begin{itemize}[leftmargin=*, itemsep=4pt, label=\textcolor{bleuPrincipal}{\faCheck}]
+    \item \textbf{Un système RAG (Retrieval-Augmented Generation)} combinant la recherche sémantique vectorielle avec un modèle de langage local (Llama 3.1 via Ollama), garantissant que les données ne quittent jamais l'infrastructure locale
+    \item \textbf{Une anonymisation automatique} basée sur la reconnaissance d'entités nommées (NER), assurant la conformité RGPD avant tout traitement
+    \item \textbf{Une architecture microservices distribuée} avec 7 services spécialisés (Python/FastAPI et Java/Spring Boot), assurant scalabilité et maintenabilité
+    \item \textbf{Un système d'audit complet} traçant toutes les opérations pour répondre aux exigences de sécurité du domaine médical
+    \item \textbf{Une infrastructure conteneurisée} (Docker Compose) avec pipelines CI/CD (GitHub Actions) pour un déploiement reproductible
+  \end{itemize}
+
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+%==============================================================================
+% Objectifs atteints
+%==============================================================================
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=bleuTresClair,
+    colframe=bleuPrincipal,
+    boxrule=0pt,
+    borderline west={4pt}{0pt}{bleuPrincipal},
+    arc=0mm,
+    left=12pt, right=12pt, top=10pt, bottom=10pt
+  ]
+
+  {\large\bfseries\textcolor{bleuFonce}{\faBullseye~Objectifs Atteints}}
+
+  \vspace{0.3cm}
+
+  L'ensemble des objectifs définis en début de projet ont été atteints avec succès :
+
+  \vspace{0.2cm}
+
+  \begin{minipage}[t]{0.48\textwidth}
+    \textbf{\textcolor{bleuPrincipal}{Objectifs Fonctionnels}}
+    \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuPrincipal}{\faCheckCircle}]
+      \item Ingestion multi-formats (PDF, TXT, DOCX)
+      \item Anonymisation NER automatique
+      \item Indexation sémantique vectorielle
+      \item Q\&A en langage naturel (RAG)
+      \item Synthèse comparative multi-documents
+      \item Système d'audit et traçabilité
+      \item Interface React moderne
+    \end{itemize}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \textbf{\textcolor{bleuPrincipal}{Objectifs Techniques}}
+    \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuPrincipal}{\faCheckCircle}]
+      \item Architecture 7 microservices
+      \item Backend Python (FastAPI) + Java (Spring)
+      \item LLM local (Ollama/Llama 3.1)
+      \item Infrastructure Docker Compose
+      \item Message broker (RabbitMQ)
+      \item Base de données (PostgreSQL)
+      \item CI/CD GitHub Actions
+    \end{itemize}
+  \end{minipage}
+
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+%==============================================================================
+% Compétences acquises
+%==============================================================================
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuMarine,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=10pt, right=10pt, top=10pt, bottom=10pt,
+    title={\textcolor{white}{\faGraduationCap~Compétences Acquises}},
+    fonttitle=\bfseries\large,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=bleuMarine, arc=2mm}
+  ]
+
+  Ce projet nous a permis de développer et consolider de nombreuses compétences techniques et transversales :
+
+  \vspace{0.3cm}
+
+  \begin{minipage}[t]{0.48\textwidth}
+    \textbf{\textcolor{bleuMarine}{Compétences Techniques}}
+    \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuMarine}{\faCode}]
+      \item Architecture microservices distribuée
+      \item Développement Python (FastAPI, LangChain)
+      \item Développement Java (Spring Boot)
+      \item Intégration de LLM locaux (Ollama)
+      \item Systèmes RAG et embeddings vectoriels
+      \item Conteneurisation Docker
+      \item CI/CD avec GitHub Actions
+      \item Tests de performance (JMeter)
+    \end{itemize}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \textbf{\textcolor{bleuMarine}{Compétences Transversales}}
+    \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuMarine}{\faUsers}]
+      \item Gestion de projet agile (Scrum)
+      \item Travail collaboratif en équipe
+      \item Compréhension du domaine médical
+      \item Sensibilisation RGPD et sécurité
+      \item Résolution de problèmes complexes
+      \item Veille technologique IA
+      \item Rédaction technique
+      \item Communication et présentation
+    \end{itemize}
+  \end{minipage}
+
+\end{tcolorbox}
+
+\newpage
+
+%==============================================================================
+% Difficultés rencontrées
+%==============================================================================
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=orangeWarning,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=10pt, right=10pt, top=10pt, bottom=10pt,
+    title={\textcolor{white}{\faExclamationTriangle~Difficultés Rencontrées et Solutions}},
+    fonttitle=\bfseries\large,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=orangeWarning, arc=2mm}
+  ]
+
+  Le développement de DocQA-MS n'a pas été sans défis. Voici les principales difficultés rencontrées et les solutions apportées :
+
+  \vspace{0.3cm}
+
+  \renewcommand{\arraystretch}{1.4}
+  \begin{tabular}{|>{\columncolor{orangeWarning!10}}p{5cm}|p{7.5cm}|}
+    \hline
+    \rowcolor{orangeWarning}
+    \textcolor{white}{\textbf{Difficulté}} & \textcolor{white}{\textbf{Solution Apportée}} \\
+    \hline
+    \textbf{Intégration LLM local} : Configuration d'Ollama et gestion des ressources GPU/CPU & Optimisation des paramètres de contexte, utilisation de modèles quantifiés plus légers \\
+    \hline
+    \textbf{Communication inter-services} : Synchronisation et gestion des erreurs entre microservices & Architecture hybride sync (REST) et async (RabbitMQ), patterns de retry \\
+    \hline
+    \textbf{Temps de réponse LLM} : Latence de génération impactant l'UX & Affichage progressif (streaming), caching des embeddings, chunking optimisé \\
+    \hline
+    \textbf{Anonymisation précise} : Détection fiable des entités médicales spécifiques & Utilisation de modèles NER spécialisés, règles métier complémentaires \\
+    \hline
+    \textbf{CI/CD complexe} : Orchestration du build de 7 services différents & Workflows parallélisés, continue-on-error pour isolation des échecs \\
+    \hline
+  \end{tabular}
+
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+%==============================================================================
+% Perspectives d'évolution
+%==============================================================================
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuFonce,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=10pt, right=10pt, top=10pt, bottom=10pt,
+    title={\textcolor{white}{\faRocket~Perspectives d'Évolution}},
+    fonttitle=\bfseries\large,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=bleuFonce, arc=2mm}
+  ]
+
+  DocQA-MS constitue une base solide pour de nombreuses évolutions futures :
+
+  \vspace{0.3cm}
+
+  \begin{minipage}[t]{0.48\textwidth}
+    \textbf{\textcolor{bleuFonce}{Court terme (3-6 mois)}}
+    \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuFonce}{\faAngleRight}]
+      \item Support d'images médicales (OCR)
+      \item Amélioration du modèle NER médical
+      \item Interface de configuration admin
+      \item Export des synthèses en PDF
+      \item Authentification SSO
+    \end{itemize}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \textbf{\textcolor{bleuFonce}{Moyen terme (6-12 mois)}}
+    \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuFonce}{\faAngleRight}]
+      \item Orchestration Kubernetes
+      \item Haute disponibilité (HA)
+      \item Intégration avec DPI hospitaliers
+      \item Support multilingue
+      \item Fine-tuning du LLM sur corpus médical
+    \end{itemize}
+  \end{minipage}
+
+  \vspace{0.4cm}
+
+  \begin{minipage}[t]{0.48\textwidth}
+    \textbf{\textcolor{bleuFonce}{Long terme (1-2 ans)}}
+    \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuFonce}{\faAngleRight}]
+      \item Certification dispositif médical
+      \item Études cliniques de validation
+      \item Partenariats avec établissements
+      \item Interface vocale
+      \item Alertes et recommandations proactives
+    \end{itemize}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \textbf{\textcolor{bleuFonce}{Vision à long terme}}
+    \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuFonce}{\faAngleRight}]
+      \item Référence en IA médicale locale
+      \item Contribution à la souveraineté des données
+      \item Amélioration de la qualité des soins
+      \item Réduction du temps administratif
+      \item Open source pour la communauté
+    \end{itemize}
+  \end{minipage}
+
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+%==============================================================================
+% Mot de la fin
+%==============================================================================
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=bleuPrincipal!10,
+    colframe=bleuPrincipal,
+    boxrule=2pt,
+    arc=5mm,
+    left=15pt, right=15pt, top=15pt, bottom=15pt,
+    shadow={3mm}{-3mm}{0mm}{black!20}
+  ]
+
+  \begin{center}
+    {\Large\bfseries\textcolor{bleuFonce}{Mot de la Fin}}
+  \end{center}
+
+  \vspace{0.3cm}
+
+  Ce projet de fin d'études a été une expérience enrichissante à tous points de vue. Au-delà des compétences techniques acquises en intelligence artificielle et en architecture distribuée, il nous a permis de travailler sur un sujet porteur de sens : \textbf{l'amélioration de l'accès à l'information médicale}.
+
+  \vspace{0.3cm}
+
+  Dans un contexte où l'IA révolutionne tous les secteurs, le domaine de la santé requiert une attention particulière à la \textbf{confidentialité} et à la \textbf{fiabilité}. DocQA-MS démontre qu'il est possible de tirer parti des avancées en traitement du langage naturel tout en respectant les contraintes strictes de protection des données patients.
+
+  \vspace{0.3cm}
+
+  Nous espérons que ce projet pourra inspirer d'autres initiatives alliant innovation technologique et responsabilité éthique. L'intelligence artificielle au service de la santé représente un formidable potentiel, à condition qu'elle soit développée avec rigueur et dans le respect des individus.
+
+  \vspace{0.2cm}
+
+  \begin{center}
+    {\large\itshape\textcolor{bleuFonce}{"La technologie au service de l'humain, jamais l'inverse."}}
+  \end{center}
+
+  \vspace{0.3cm}
+
+  \begin{flushright}
+    {\itshape L'équipe DocQA-MS}\\
+    {\small\textcolor{grisTexte}{Achraf ELHOUFI, Saad KARZOUZ, Yassir LAMBRASS, Anas ELMALYARI}}
+  \end{flushright}
+
+\end{tcolorbox}
+
+%==============================================================================
+%                     PAGE FINALE DU RAPPORT
+%==============================================================================
+
+\newpage
+\thispagestyle{empty}
+
+\begin{tikzpicture}[remember picture, overlay]
+
+  %==========================================================================
+  % FOND AVEC DÉGRADÉ
+  %==========================================================================
+
+  % Fond blanc de base
+  \fill[white] (current page.south west) rectangle (current page.north east);
+
+  % Grande forme géométrique bleue (côté gauche)
+  \fill[bleuPrincipal]
+  ([xshift=6cm]current page.north west) --
+  (current page.north west) --
+  (current page.south west) --
+  ([xshift=3cm]current page.south west) --
+  ([xshift=8cm, yshift=8cm]current page.south west) -- cycle;
+
+  % Forme superposée plus claire
+  \fill[bleuTurquoise, opacity=0.6]
+  ([xshift=4cm]current page.north west) --
+  (current page.north west) --
+  ([yshift=5cm]current page.south west) --
+  ([xshift=6cm, yshift=10cm]current page.south west) -- cycle;
+
+  % Cercles décoratifs (réseau)
+  \foreach \x/\y/\r in {
+    2/12/0.8, 1/10/0.5, 0/8/0.6, 1.5/6/0.4, 0.5/4/0.7,
+    -0.5/11/0.3, -1/9/0.5, -0.5/7/0.4, -1.5/5/0.6, 0/2/0.5
+  } {
+    \fill[white, opacity=0.15] ([xshift=\x cm, yshift=\y cm]current page.west) circle (\r cm);
+  }
+
+  %==========================================================================
+  % BANDE DÉCORATIVE SUPÉRIEURE
+  %==========================================================================
+
+  \fill[bleuFonce]
+  (current page.north west) --
+  ([yshift=-1.2cm]current page.north west) --
+  ([xshift=5cm, yshift=-1.2cm]current page.north west) --
+  ([xshift=5cm, yshift=0cm]current page.north west) -- cycle;
+
+  \fill[bleuFonce]
+  (current page.north east) --
+  ([yshift=-1.2cm]current page.north east) --
+  ([xshift=-5cm, yshift=-1.2cm]current page.north east) --
+  ([xshift=-5cm, yshift=0cm]current page.north east) -- cycle;
+
+\end{tikzpicture}
+
+%==============================================================================
+% CONTENU DE LA PAGE FINALE
+%==============================================================================
+
+\vspace*{4cm}
+
+\begin{center}
+
+  % Logo stylisé
+  \begin{tikzpicture}[scale=1.2]
+    % Cercle extérieur
+    \draw[bleuPrincipal, line width=4pt] (0,0) circle (2cm);
+    \fill[white] (0,0) circle (1.6cm);
+    % Document stylisé
+    \fill[bleuPrincipal]
+    (-0.5,0.8) -- (0.5,0.8) -- (0.5,-0.8) -- (-0.5,-0.8) -- cycle;
+    % Lignes de texte
+    \draw[white, line width=1.5pt] (-0.3,0.5) -- (0.3,0.5);
+    \draw[white, line width=1.5pt] (-0.3,0.2) -- (0.3,0.2);
+    \draw[white, line width=1.5pt] (-0.3,-0.1) -- (0.2,-0.1);
+    % Point d'interrogation
+    \node[text=bleuTurquoise, font=\bfseries\large] at (0.7,0) {?};
+    % Points (microservices)
+    \fill[bleuFonce] (-0.8,-0.5) circle (0.08);
+    \fill[bleuFonce] (0.8,-0.5) circle (0.08);
+    \fill[bleuFonce] (0,-1.2) circle (0.08);
+    % Connexions
+    \draw[bleuFonce, line width=1pt] (-0.8,-0.5) -- (0,-1.2);
+    \draw[bleuFonce, line width=1pt] (0.8,-0.5) -- (0,-1.2);
+  \end{tikzpicture}
+
+  \vspace{1.5cm}
+
+  % Nom de l'application
+  {\fontsize{60}{72}\selectfont\textcolor{bleuFonce}{\textbf{Doc}}\textcolor{bleuPrincipal}{\textbf{QA-MS}}}
+
+  \vspace{0.8cm}
+
+  % Tagline
+  {\LARGE\itshape\textcolor{grisFonce}{Système de Question-Réponse sur Documents Médicaux}}
+
+  \vspace{0.5cm}
+
+  {\large\textcolor{grisTexte}{Architecture Microservices | RAG | LLM Local}}
+
+  \vspace{2cm}
+
+  % Séparateur
+  \begin{tikzpicture}
+    \draw[bleuPrincipal, line width=2pt] (-4,0) -- (4,0);
+    \fill[bleuPrincipal] (0,0) circle (0.15);
+  \end{tikzpicture}
+
+  \vspace{2cm}
+
+  % Informations du projet
+  \begin{tcolorbox}[
+      enhanced,
+      colback=bleuTresClair,
+      colframe=bleuPrincipal,
+      boxrule=1pt,
+      arc=5mm,
+      width=12cm,
+      halign=center,
+      left=15pt, right=15pt, top=15pt, bottom=15pt
+    ]
+
+    {\large\bfseries\textcolor{bleuFonce}{Projet Académique}}
+
+    \vspace{0.3cm}
+
+    {\normalsize\textcolor{grisTexte}{École Marocaine des Sciences de l'Ingénieur}}
+
+    \vspace{0.2cm}
+
+    {\normalsize\textcolor{grisTexte}{Département d'Informatique}}
+
+    \vspace{0.2cm}
+
+    {\normalsize\textcolor{grisTexte}{Filière : Ingénierie Informatique et Réseaux}}
+
+    \vspace{0.5cm}
+
+    {\large\bfseries\textcolor{bleuPrincipal}{Année Universitaire 2025 — 2026}}
+
+  \end{tcolorbox}
+
+  \vspace{2cm}
+
+  % Tags technologiques
+  \begin{tikzpicture}
+    \node[fill=bleuPrincipal, text=white, rounded corners=15pt,
+    inner xsep=12pt, inner ysep=6pt, font=\small] (github) {\faGithub~GitHub};
+    \node[fill=bleuTurquoise, text=white, rounded corners=15pt,
+    inner xsep=12pt, inner ysep=6pt, font=\small, right=0.3cm of github] (docker) {\faDocker~Docker};
+    \node[fill=bleuMarine, text=white, rounded corners=15pt,
+    inner xsep=12pt, inner ysep=6pt, font=\small, right=0.3cm of docker] (ai) {\faBrain~IA};
+  \end{tikzpicture}
+
+  \vspace{1.5cm}
+
+  % Message final
+  {\small\itshape\textcolor{grisTexte}{"L'intelligence artificielle au service de la santé, dans le respect de la vie privée."}}
+
+\end{center}
+
+%==============================================================================
+%                     FIN DU DOCUMENT
+%==============================================================================

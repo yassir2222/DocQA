@@ -1,0 +1,884 @@
+%==============================================================================
+%                           CHAPITRE 4
+%                          RÉALISATION
+%==============================================================================
+
+\chapter{Réalisation}
+
+\begin{tikzpicture}[remember picture, overlay]
+  % Décoration de page
+  \fill[bleuClair, opacity=0.1]
+  ([xshift=3cm, yshift=-2cm]current page.north west) circle (4cm);
+  \fill[bleuPrincipal, opacity=0.05]
+  ([xshift=-2cm, yshift=3cm]current page.south east) circle (5cm);
+\end{tikzpicture}
+
+\vspace{-0.5cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=bleuTresClair,
+    colframe=bleuPrincipal,
+    boxrule=0pt,
+    borderline west={4pt}{0pt}{bleuPrincipal},
+    arc=0mm,
+    left=12pt, right=12pt, top=10pt, bottom=10pt
+  ]
+  {\itshape\color{grisTexte}
+    Ce chapitre présente la phase de réalisation du projet DocQA-MS. Nous détaillerons l'environnement de développement, l'implémentation des microservices Python et Java, le développement de l'interface React, ainsi que les tests et l'assurance qualité incluant les pipelines CI/CD et les tests de performance JMeter.
+  }
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+%==============================================================================
+% SECTION 4.1 : ENVIRONNEMENT DE DÉVELOPPEMENT
+%==============================================================================
+
+\section{Environnement de Développement}
+
+Cette section présente l'environnement technique mis en place pour le développement du projet DocQA-MS.
+
+%------------------------------------------------------------------------------
+% 4.1.1 Configuration Matérielle
+%------------------------------------------------------------------------------
+
+\subsection{Configuration Matérielle}
+
+Le développement de DocQA-MS a été réalisé sur des postes de travail répondant aux spécifications suivantes :
+
+\vspace{0.4cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuPrincipal,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=10pt, right=10pt, top=10pt, bottom=10pt,
+    title={\textcolor{white}{\faDesktop~Configuration Matérielle}},
+    fonttitle=\bfseries\large,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=bleuPrincipal, arc=2mm}
+  ]
+
+  \renewcommand{\arraystretch}{1.4}
+  \begin{center}
+    \begin{tabular}{|>{\columncolor{bleuTresClair}}p{4cm}|p{8cm}|}
+      \hline
+      \rowcolor{bleuPrincipal}
+      \textcolor{white}{\textbf{Composant}} & \textcolor{white}{\textbf{Spécification}} \\
+      \hline
+      \textbf{Processeur} & Intel Core i5/i7 (10ème génération ou supérieur) \\
+      \hline
+      \textbf{Mémoire RAM} & 16 GB minimum (32 GB recommandé pour Ollama) \\
+      \hline
+      \textbf{Stockage} & SSD 512 GB (pour Docker images et modèle LLM) \\
+      \hline
+      \textbf{GPU (optionnel)} & NVIDIA avec 8GB+ VRAM pour accélération Ollama \\
+      \hline
+      \textbf{Système d'exploitation} & Windows 11 / Ubuntu 22.04 / macOS Ventura \\
+      \hline
+      \textbf{Connexion réseau} & Haut débit pour téléchargement modèles LLM \\
+      \hline
+    \end{tabular}
+  \end{center}
+
+\end{tcolorbox}
+
+%------------------------------------------------------------------------------
+% 4.1.2 Configuration Logicielle
+%------------------------------------------------------------------------------
+
+\subsection{Configuration Logicielle}
+
+L'ensemble des outils et frameworks utilisés pour le développement de DocQA-MS sont listés ci-dessous.
+
+\vspace{0.4cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuMarine,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=10pt, right=10pt, top=10pt, bottom=10pt,
+    title={\textcolor{white}{\faTools~Architecture \& Stack Technique}},
+    fonttitle=\bfseries\large,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=bleuMarine, arc=2mm}
+  ]
+
+  \renewcommand{\arraystretch}{1.2}
+  
+  \begin{minipage}[t]{0.48\textwidth}
+    \textbf{\textcolor{bleuFonce}{Backend Python}}
+    \begin{tabular}{|l|l|}
+      \hline
+      \rowcolor{bleuTresClair}
+      \textbf{Outil} & \textbf{Version} \\
+      \hline
+      Python & 3.11 \\
+      \hline
+      FastAPI & 0.109.0 \\
+      \hline
+      LangChain & 0.1.0 \\
+      \hline
+      Pydantic & 2.9+ \\
+      \hline
+      Uvicorn & 0.27.0 \\
+      \hline
+    \end{tabular}
+
+    \vspace{0.4cm}
+
+    \textbf{\textcolor{bleuFonce}{Backend Java}}
+    \begin{tabular}{|l|l|}
+      \hline
+      \rowcolor{bleuTresClair}
+      \textbf{Outil} & \textbf{Version} \\
+      \hline
+      Java JDK & 17 LTS \\
+      \hline
+      Spring Boot & 3.2.0 \\
+      \hline
+      Maven & 3.8+ \\
+      \hline
+      Lombok & 1.18+ \\
+      \hline
+    \end{tabular}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \textbf{\textcolor{bleuFonce}{Frontend}}
+    \begin{tabular}{|l|l|}
+      \hline
+      \rowcolor{bleuTresClair}
+      \textbf{Outil} & \textbf{Version} \\
+      \hline
+      Node.js & 18 LTS \\
+      \hline
+      React & 18.2.0 \\
+      \hline
+      Axios & 1.6.5 \\
+      \hline
+      React Router & 6.21.2 \\
+      \hline
+      TailwindCSS & 3.4.1 \\
+      \hline
+    \end{tabular}
+
+    \vspace{0.4cm}
+
+    \textbf{\textcolor{bleuFonce}{Infrastructure, CI/CD \& Testing}}
+    \begin{tabular}{|l|l|}
+      \hline
+      \rowcolor{bleuTresClair}
+      \textbf{Outil} & \textbf{Version} \\
+      \hline
+      Docker & 24+ \\
+      \hline
+      Docker Compose & 2+ \\
+      \hline
+      PostgreSQL & 16 \\
+      \hline
+      RabbitMQ & 3.12 \\
+      \hline
+      Ollama (Llama 3.1) & 8B \\
+      \hline
+      GitHub Actions & (CI/CD) \\
+      \hline
+      JMeter & 5.6.3 \\
+      \hline
+    \end{tabular}
+  \end{minipage}
+
+\end{tcolorbox}
+
+%------------------------------------------------------------------------------
+% 4.1.3 Configuration Docker Compose
+%------------------------------------------------------------------------------
+
+\newpage
+
+\subsection{Configuration Docker Compose}
+
+L'infrastructure de développement utilise Docker Compose pour orchestrer les 9 services.
+
+\vspace{0.4cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=gray!5,
+    colframe=bleuFonce,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=8pt, right=8pt, top=8pt, bottom=8pt,
+    title={\textcolor{white}{\faDocker~docker-compose.yml (extrait)}},
+    fonttitle=\bfseries,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=bleuFonce, arc=2mm}
+  ]
+
+\begin{lstlisting}[
+    language=bash,
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!60!black}\itshape,
+    showstringspaces=false,
+    breaklines=true
+]
+version: '3.8'
+services:
+  api-gateway:
+    build: ./microservices/api-gateway
+    ports: ["8000:8000"]
+    depends_on: [rabbitmq, postgres]
+    
+  doc-ingestor:
+    build: ./microservices/doc-ingestor
+    ports: ["8001:8001"]
+    
+  deid-service:
+    build: ./microservices/deid-service
+    ports: ["8002:8002"]
+    
+  indexeur-semantique:
+    build: ./microservices/indexeur-semantique
+    ports: ["8003:8003"]
+    
+  llm-qa-module:
+    build: ./microservices/llm-qa-module
+    ports: ["8004:8004"]
+    depends_on: [ollama]
+    
+  synthese-comparative:
+    build: ./microservices/synthese-comparative
+    ports: ["8005:8005"]
+    
+  audit-logger:
+    build: ./microservices/audit-logger
+    ports: ["8006:8006"]
+    
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: docqa
+      POSTGRES_USER: docqa
+      POSTGRES_PASSWORD: password
+    ports: ["5432:5432"]
+    
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    ports: ["5672:5672", "15672:15672"]
+    
+  ollama:
+    image: ollama/ollama:latest
+    ports: ["11434:11434"]
+    volumes: ["ollama_data:/root/.ollama"]
+\end{lstlisting}
+
+\end{tcolorbox}
+
+%==============================================================================
+% SECTION 4.2 : RÉALISATION BACKEND
+%==============================================================================
+
+\newpage
+
+\section{Réalisation Backend}
+
+Cette section présente l'implémentation des microservices backend, en mettant l'accent sur les composants clés du système.
+
+%------------------------------------------------------------------------------
+% 4.2.1 Implémentation LLM Q&A Module (RAG)
+%------------------------------------------------------------------------------
+
+\subsection{Implémentation du Module LLM Q\&A (RAG)}
+
+Le service RAG (Retrieval-Augmented Generation) constitue le cœur du système, combinant la recherche sémantique avec la génération de réponses par LLM.
+
+\vspace{0.4cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=gray!5,
+    colframe=bleuFonce,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=8pt, right=8pt, top=8pt, bottom=8pt,
+    title={\textcolor{white}{\faCode~rag\_service.py (LLM Q\&A Module)}},
+    fonttitle=\bfseries,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=bleuFonce, arc=2mm},
+    breakable
+  ]
+
+\begin{lstlisting}[
+    language=Python,
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!60!black}\itshape,
+    stringstyle=\color{orange},
+    showstringspaces=false,
+    breaklines=true
+]
+from langchain_community.llms import Ollama
+from langchain.prompts import PromptTemplate
+import httpx
+
+class RAGService:
+    def __init__(self):
+        self.llm = Ollama(
+            model="llama3.1",
+            base_url="http://ollama:11434"
+        )
+        self.indexer_url = "http://indexeur-semantique:8003"
+        
+    async def process_question(self, query: str) -> dict:
+        # 1. Recherche semantique dans l'indexeur
+        relevant_chunks = await self._search_similar(query)
+        
+        # 2. Construction du contexte RAG
+        context = self._build_context(relevant_chunks)
+        
+        # 3. Construction du prompt
+        prompt = self._build_prompt(context, query)
+        
+        # 4. Generation de la reponse via Ollama
+        response = self.llm.invoke(prompt)
+        
+        return {
+            "answer": response,
+            "sources": [c["document_id"] for c in relevant_chunks],
+            "chunks_used": len(relevant_chunks)
+        }
+    
+    async def _search_similar(self, query: str, k: int = 5):
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{self.indexer_url}/search",
+                json={"query": query, "top_k": k}
+            )
+            return response.json()["results"]
+    
+    def _build_context(self, chunks: list) -> str:
+        return "\n\n".join([
+            f"[Source: {c['document_id']}]\n{c['content']}" 
+            for c in chunks
+        ])
+    
+    def _build_prompt(self, context: str, query: str) -> str:
+        template = """Tu es un assistant medical expert.
+        
+Contexte des documents:
+{context}
+
+Question: {query}
+
+Reponds de maniere precise en citant les sources."""
+        
+        return template.format(context=context, query=query)
+\end{lstlisting}
+
+\end{tcolorbox}
+
+%------------------------------------------------------------------------------
+% 4.2.2 Implémentation DeID Service
+%------------------------------------------------------------------------------
+
+\newpage
+
+\subsection{Implémentation du DeID Service (Anonymisation)}
+
+Le service d'anonymisation utilise la reconnaissance d'entités nommées (NER) pour détecter et masquer les données personnelles.
+
+\vspace{0.4cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=gray!5,
+    colframe=bleuMarine,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=8pt, right=8pt, top=8pt, bottom=8pt,
+    title={\textcolor{white}{\faCode~DeIdService.java (Spring Boot)}},
+    fonttitle=\bfseries,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=bleuMarine, arc=2mm}
+  ]
+
+\begin{lstlisting}[
+    language=Java,
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!60!black}\itshape,
+    stringstyle=\color{orange},
+    showstringspaces=false,
+    breaklines=true
+]
+@Service
+@Slf4j
+public class DeIdService {
+
+    private final NERModel nerModel;
+    private final Map<EntityType, String> maskPatterns;
+
+    public DeIdService() {
+        this.nerModel = new NERModel();
+        this.maskPatterns = initMaskPatterns();
+    }
+
+    public AnonymizedResult anonymize(String text) {
+        log.info("Starting anonymization for text of length: {}", 
+                 text.length());
+        
+        // 1. Detection des entites nommees
+        List<Entity> entities = nerModel.predict(text);
+        
+        // 2. Tri par position (ordre inverse pour remplacement)
+        entities.sort((a, b) -> b.getStart() - a.getStart());
+        
+        // 3. Application du masquage
+        StringBuilder result = new StringBuilder(text);
+        List<MaskedEntity> maskedEntities = new ArrayList<>();
+        
+        for (Entity entity : entities) {
+            String mask = getMask(entity.getType());
+            result.replace(entity.getStart(), entity.getEnd(), mask);
+            maskedEntities.add(new MaskedEntity(
+                entity.getType(), 
+                entity.getValue(), 
+                mask
+            ));
+        }
+        
+        return new AnonymizedResult(
+            result.toString(), 
+            maskedEntities, 
+            entities.size()
+        );
+    }
+
+    private String getMask(EntityType type) {
+        return maskPatterns.getOrDefault(type, "[REDACTED]");
+    }
+
+    private Map<EntityType, String> initMaskPatterns() {
+        return Map.of(
+            EntityType.PERSON, "[PATIENT]",
+            EntityType.DATE, "[DATE]",
+            EntityType.ADDRESS, "[ADRESSE]",
+            EntityType.PHONE, "[TEL]",
+            EntityType.SSN, "[NSS]"
+        );
+    }
+}
+\end{lstlisting}
+
+\end{tcolorbox}
+
+%------------------------------------------------------------------------------
+% 4.2.3 Documentation API
+%------------------------------------------------------------------------------
+
+\subsection{Documentation API (Endpoints)}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=bleuTresClair,
+    colframe=bleuClair,
+    boxrule=1pt,
+    arc=2mm,
+    left=8pt, right=8pt, top=6pt, bottom=6pt
+  ]
+  \textbf{\textcolor{bleuFonce}{Endpoints API principaux :}}
+
+  \renewcommand{\arraystretch}{1.2}
+  \begin{center}
+    \begin{tabular}{|l|l|p{5.5cm}|}
+      \hline
+      \rowcolor{bleuPrincipal}
+      \textcolor{white}{\textbf{Méthode}} & \textcolor{white}{\textbf{Endpoint}} & \textcolor{white}{\textbf{Description}} \\
+      \hline
+      POST & /api/documents/upload & Upload d'un document \\
+      \hline
+      POST & /api/deid/anonymize & Anonymisation d'un texte \\
+      \hline
+      POST & /api/index/embed & Indexation d'un document \\
+      \hline
+      GET & /api/index/search & Recherche sémantique \\
+      \hline
+      POST & /api/qa/ask & Question au système RAG \\
+      \hline
+      POST & /api/synthesis/compare & Synthèse comparative \\
+      \hline
+      GET & /api/audit/logs & Récupération des audits \\
+      \hline
+      GET & /health & Health check (tous services) \\
+      \hline
+    \end{tabular}
+  \end{center}
+\end{tcolorbox}
+
+%==============================================================================
+% SECTION 4.3 : RÉALISATION FRONTEND
+%==============================================================================
+
+\section{Réalisation Frontend (React)}
+
+L'interface utilisateur a été développée avec React, offrant une expérience moderne et réactive aux cliniciens.
+
+\subsection{Structure du Projet React}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=vertSucces,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=10pt, right=10pt, top=10pt, bottom=10pt,
+    title={\textcolor{white}{\faFolderOpen~Structure du Projet React}},
+    fonttitle=\bfseries,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=vertSucces, arc=2mm}
+  ]
+
+  \begin{minipage}[t]{0.48\textwidth}
+    \textbf{\textcolor{vertSucces}{src/}}
+    \begin{itemize}[leftmargin=*, itemsep=1pt, label=\textcolor{gray}{\faFolder}]
+      \item \textbf{components/}
+        \begin{itemize}[leftmargin=*, itemsep=0pt, label=\textcolor{gray}{\faFile}]
+          \item Navbar.jsx
+          \item Sidebar.jsx
+          \item FileUpload.jsx
+          \item ChatInterface.jsx
+        \end{itemize}
+      \item \textbf{pages/}
+        \begin{itemize}[leftmargin=*, itemsep=0pt, label=\textcolor{gray}{\faFile}]
+          \item Dashboard.jsx
+          \item Documents.jsx
+          \item QAPage.jsx
+          \item AuditLogs.jsx
+        \end{itemize}
+    \end{itemize}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \textbf{\textcolor{vertSucces}{src/ (suite)}}
+    \begin{itemize}[leftmargin=*, itemsep=1pt, label=\textcolor{gray}{\faFolder}]
+      \item \textbf{services/}
+        \begin{itemize}[leftmargin=*, itemsep=0pt, label=\textcolor{gray}{\faFile}]
+          \item api.js
+          \item documentService.js
+          \item qaService.js
+        \end{itemize}
+      \item \textbf{hooks/}
+        \begin{itemize}[leftmargin=*, itemsep=0pt, label=\textcolor{gray}{\faFile}]
+          \item useDocuments.js
+          \item useQA.js
+        \end{itemize}
+      \item \textbf{styles/}
+        \begin{itemize}[leftmargin=*, itemsep=0pt, label=\textcolor{gray}{\faFile}]
+          \item global.css
+          \item components.css
+        \end{itemize}
+    \end{itemize}
+  \end{minipage}
+
+\end{tcolorbox}
+
+\subsection{Captures d'Écran de l'Interface}
+
+Les captures d'écran suivantes présentent les principaux écrans de l'application DocQA-MS.
+
+\vspace{0.3cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=bleuTresClair,
+    colframe=bleuPrincipal,
+    boxrule=1pt,
+    arc=2mm,
+    left=8pt, right=8pt, top=6pt, bottom=6pt
+  ]
+  \textbf{\textcolor{bleuFonce}{Écrans disponibles :}}
+  \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuPrincipal}{\faCheck}]
+    \item \textbf{Dashboard} : Vue d'ensemble avec statistiques, documents récents et activité
+    \item \textbf{Upload Documents} : Interface drag-and-drop avec option d'anonymisation
+    \item \textbf{Interface Q\&A} : Chat avec le système RAG, réponses avec sources
+    \item \textbf{Journal d'Audit} : Liste des événements avec filtres et export
+    \item \textbf{Synthèse} : Génération de synthèses comparatives multi-documents
+  \end{itemize}
+\end{tcolorbox}
+
+\newpage
+
+\subsection{Captures d'Écran Détaillées}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{images/ui-dashboard.png}
+  \caption{Interface Dashboard -- Vue d'ensemble du système DocQA-MS}
+  \label{fig:ui-dashboard}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{images/ui-documents.png}
+  \caption{Interface Documents -- Gestion des documents médicaux}
+  \label{fig:ui-documents}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{images/ui-chatbot.png}
+  \caption{Interface Chatbot -- Assistant IA pour questions médicales}
+  \label{fig:ui-chatbot}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{images/ui-synthese.png}
+  \caption{Interface Synthèse -- Génération de synthèses comparatives}
+  \label{fig:ui-synthese}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{images/journal-audit.png}
+  \caption{Interface Journal d'Audit -- Traçabilité des actions}
+  \label{fig:ui-audit}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{images/ui-analytics.png}
+  \caption{Interface Analytics -- Tableau de bord analytique et statistiques}
+  \label{fig:ui-analytics}
+\end{figure}
+
+%==============================================================================
+% SECTION 4.4 : CI/CD ET TESTS
+%==============================================================================
+
+\newpage
+
+\section{CI/CD et Tests}
+
+Cette section présente les pipelines d'intégration continue et les tests de performance réalisés sur DocQA-MS.
+
+%------------------------------------------------------------------------------
+% 4.4.1 Pipeline CI/CD GitHub Actions
+%------------------------------------------------------------------------------
+
+\subsection{Pipeline CI/CD GitHub Actions}
+
+Le projet utilise GitHub Actions pour l'intégration et le déploiement continus.
+
+\vspace{0.4cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuPrincipal,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=10pt, right=10pt, top=10pt, bottom=10pt,
+    title={\textcolor{white}{\faGithub~Workflows GitHub Actions}},
+    fonttitle=\bfseries\large,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=bleuPrincipal, arc=2mm}
+  ]
+
+  \renewcommand{\arraystretch}{1.3}
+  \begin{center}
+    \begin{tabular}{|l|p{7cm}|c|}
+      \hline
+      \rowcolor{bleuPrincipal}
+      \textcolor{white}{\textbf{Workflow}} & \textcolor{white}{\textbf{Description}} & \textcolor{white}{\textbf{Trigger}} \\
+      \hline
+      \textbf{ci.yml} & Build et tests des services Python, Java et React & Push/PR \\
+      \hline
+      \textbf{cd.yml} & Build et push des images Docker vers GHCR & Push main \\
+      \hline
+      \textbf{release.yml} & Création de releases avec changelog & Tag v* \\
+      \hline
+    \end{tabular}
+  \end{center}
+
+  \vspace{0.3cm}
+
+  \textbf{\textcolor{bleuFonce}{Jobs du workflow CI :}}
+  \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuPrincipal}{\faAngleRight}]
+    \item \textbf{build-python} : Lint (flake8), tests unitaires, build des services FastAPI
+    \item \textbf{build-java} : Compilation Maven, tests JUnit, packaging des JARs
+    \item \textbf{build-frontend} : Lint ESLint, tests React, build production
+    \item \textbf{docker-build} : Construction des images Docker pour chaque service
+  \end{itemize}
+
+\end{tcolorbox}
+
+%------------------------------------------------------------------------------
+% 4.4.2 Tests de Performance JMeter
+%------------------------------------------------------------------------------
+
+\subsection{Tests de Performance JMeter}
+
+Les tests de performance ont été réalisés avec Apache JMeter pour évaluer les temps de réponse et la capacité de charge de l'API.
+
+\vspace{0.4cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=rougeAlert,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=10pt, right=10pt, top=10pt, bottom=10pt,
+    title={\textcolor{white}{\faTachometerAlt~Résultats des Tests JMeter}},
+    fonttitle=\bfseries\large,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=rougeAlert, arc=2mm}
+  ]
+
+  \renewcommand{\arraystretch}{1.4}
+  \begin{center}
+    \begin{tabular}{|p{4cm}|c|c|c|c|}
+      \hline
+      \rowcolor{rougeAlert}
+      \textcolor{white}{\textbf{Endpoint}} & \textcolor{white}{\textbf{Avg (ms)}} & \textcolor{white}{\textbf{Max (ms)}} & \textcolor{white}{\textbf{Throughput}} & \textcolor{white}{\textbf{Statut}} \\
+      \hline
+      API Gateway - Health & 45 & 120 & 200 req/s & \textcolor{vertSucces}{\faCheck} \\
+      \hline
+      Doc Ingestor - Health & 38 & 95 & 180 req/s & \textcolor{vertSucces}{\faCheck} \\
+      \hline
+      DeID - Anonymize & 250 & 800 & 50 req/s & \textcolor{vertSucces}{\faCheck} \\
+      \hline
+      Indexer - Search & 180 & 500 & 80 req/s & \textcolor{vertSucces}{\faCheck} \\
+      \hline
+      LLM Q\&A - Ask & 3500 & 8000 & 15 req/s & \textcolor{orangeWarning}{\faExclamationTriangle} \\
+      \hline
+      Audit Logger - Logs & 120 & 350 & 100 req/s & \textcolor{vertSucces}{\faCheck} \\
+      \hline
+      Synthèse - Generate & 5200 & 12000 & 10 req/s & \textcolor{orangeWarning}{\faExclamationTriangle} \\
+      \hline
+    \end{tabular}
+  \end{center}
+
+  \vspace{0.3cm}
+
+  \begin{tcolorbox}[
+      enhanced,
+      colback=orangeWarning!10,
+      colframe=orangeWarning,
+      boxrule=1pt,
+      arc=2mm,
+      left=6pt, right=6pt, top=4pt, bottom=4pt
+    ]
+    \textbf{\textcolor{orangeWarning}{\faInfoCircle~Note :}} Les temps de réponse du Q\&A LLM (3.5s) et de la Synthèse (5.2s) sont principalement dus au temps d'inférence du modèle Llama 3.1 via Ollama. Ces temps sont acceptables pour une utilisation interactive et restent sous les seuils définis dans les exigences non fonctionnelles.
+  \end{tcolorbox}
+
+\end{tcolorbox}
+
+\vspace{0.4cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=bleuTresClair,
+    colframe=bleuPrincipal,
+    boxrule=1pt,
+    arc=3mm,
+    left=10pt, right=10pt, top=8pt, bottom=8pt
+  ]
+  \textbf{\textcolor{bleuFonce}{Configuration des Tests JMeter :}}
+
+  \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuPrincipal}{\faCheck}]
+    \item \textbf{Utilisateurs virtuels :} 10 threads simultanés
+    \item \textbf{Durée du test :} 60 secondes par endpoint
+    \item \textbf{Ramp-up :} 5 secondes
+    \item \textbf{Rapport généré :} HTML Dashboard avec graphiques
+  \end{itemize}
+\end{tcolorbox}
+
+\newpage
+
+\subsection{Captures d'écran CI/CD et Tests}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{images/sonarqube-report.png}
+  \caption{SonarQube -- Analyse de qualité et métriques du code}
+  \label{fig:sonarqube-report}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{images/ci-github-actions.png}
+  \caption{GitHub Actions -- Pipeline d'Intégration Continue (CI)}
+  \label{fig:ci-github-actions}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{images/cd-github-actions.png}
+  \caption{GitHub Actions -- Pipeline de Déploiement Continu (CD)}
+  \label{fig:cd-github-actions}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{images/notifications.png}
+  \caption{Centre de notifications -- Alertes et événements système}
+  \label{fig:notifications}
+\end{figure}
+
+\subsection{Résultats JMeter Détaillés}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{images/jmeter-response-time.png}
+  \caption{JMeter -- Temps de réponse des endpoints API}
+  \label{fig:jmeter-response-time}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{images/jmeter-dashboard-test.png}
+  \caption{JMeter -- Dashboard de test avec métriques de performance}
+  \label{fig:jmeter-dashboard-test}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{images/jmeter-response-time-over.png}
+  \caption{JMeter -- Évolution des temps de réponse dans le temps}
+  \label{fig:jmeter-response-time-over}
+\end{figure}
+
+\vspace{0.5cm}
+
+%--- Conclusion du chapitre ---
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuPrincipal,
+    boxrule=0pt,
+    borderline south={3pt}{0pt}{bleuPrincipal},
+    arc=0mm,
+    left=10pt, right=10pt, top=10pt, bottom=10pt
+  ]
+  \textbf{\textcolor{bleuFonce}{Conclusion du Chapitre}}
+
+  \vspace{0.2cm}
+
+  Ce chapitre a présenté la phase de réalisation du projet DocQA-MS. Nous avons détaillé l'environnement de développement avec Docker Compose orchestrant 9 conteneurs, l'implémentation des microservices clés (RAG avec LangChain/Ollama, DeID avec NER), ainsi que l'interface React. Les pipelines CI/CD GitHub Actions assurent l'intégration continue, et les tests JMeter démontrent des performances satisfaisantes pour tous les endpoints, avec des temps de réponse acceptables même pour les opérations LLM intensives.
+\end{tcolorbox}

@@ -1,0 +1,474 @@
+%==============================================================================
+% CHAPITRE 1 : CADRE GÉNÉRAL DU PROJET
+%==============================================================================
+
+\chapter{Cadre Général du Projet}
+
+\begin{tikzpicture}[remember picture, overlay]
+    % Décoration de page
+    \fill[bleuClair, opacity=0.1] 
+        ([xshift=-3cm, yshift=-2cm]current page.north east) circle (4cm);
+    \fill[bleuPrincipal, opacity=0.05] 
+        ([xshift=2cm, yshift=3cm]current page.south west) circle (5cm);
+\end{tikzpicture}
+
+\vspace{-0.5cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=bleuTresClair,
+    colframe=bleuPrincipal,
+    boxrule=0pt,
+    borderline west={4pt}{0pt}{bleuPrincipal},
+    arc=0mm,
+    left=12pt, right=12pt, top=10pt, bottom=10pt
+]
+{\itshape\color{grisTexte}
+Ce premier chapitre pose les fondations du projet DocQA-MS en présentant le cadre dans lequel il s'inscrit. Nous commencerons par une présentation de l'organisme d'accueil, avant d'analyser les solutions existantes sur le marché des systèmes de question-réponse documentaires. Nous décrirons ensuite l'architecture microservices proposée, la méthodologie de travail adoptée, ainsi que les outils et technologies utilisés pour le développement.
+}
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+% --- SECTION 1.1 ---
+\section{Présentation de l'Organisme d'Accueil}
+
+Cette section présente l'environnement institutionnel dans lequel s'est déroulé notre projet de fin d'études.
+
+\subsection{Historique}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuPrincipal,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=10pt, right=10pt, top=10pt, bottom=10pt,
+    shadow={2mm}{-2mm}{0mm}{black!15},
+    title={\textcolor{white}{\faUniversity\hspace{0.2cm}EMSI Marrakech}},
+    fonttitle=\bfseries\large,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=bleuPrincipal, arc=2mm}
+]
+
+\textbf{EMSI} (École Marocaine des Sciences de l'Ingénieur) est un établissement d'enseignement supérieur fondé en \textbf{1986}. Située à \textbf{Marrakech, Maroc}, cette institution a su s'imposer comme un acteur majeur de la formation en ingénierie au Maroc et en Afrique.
+
+\vspace{0.3cm}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.85, transform shape]
+    % Timeline horizontale
+    \draw[bleuPrincipal, line width=2pt] (0,0) -- (13,0);
+    
+    % Points de la timeline
+    \foreach \x/\year/\event in {
+        0/1986/Fondation,
+        4/1996/Dpt. Info,
+        8.5/2010/Accréditation,
+        13/2025/Leader
+    } {
+        \fill[bleuPrincipal] (\x,0) circle (0.15cm);
+        \node[above, font=\small\bfseries, text=bleuFonce] at (\x,0.3) {\year};
+        \node[below, font=\scriptsize, text=grisTexte, text width=2.5cm, align=center] at (\x,-0.3) {\event};
+    }
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.3cm}
+
+Le département d'informatique forme aujourd'hui des ingénieurs spécialisés dans les domaines du génie logiciel, de l'intelligence artificielle, du cloud computing et des systèmes distribués. L'accent mis sur les projets pratiques et l'innovation technologique prépare les étudiants aux défis de l'industrie numérique moderne.
+
+\end{tcolorbox}
+
+\subsection{Organigramme}
+
+L'organisation hiérarchique de l'établissement reflète une structure claire orientée vers l'excellence académique.
+
+\vspace{0.4cm}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    node distance=0.8cm and 0.5cm,
+    box/.style={
+        rectangle, rounded corners=3pt, draw=bleuPrincipal, fill=white,
+        line width=1pt, minimum width=3cm, minimum height=0.9cm,
+        text=grisTexte, font=\small, align=center
+    },
+    boxhead/.style={
+        rectangle, rounded corners=3pt, draw=bleuFonce, fill=bleuPrincipal,
+        line width=1.5pt, minimum width=4cm, minimum height=1cm,
+        text=white, font=\small\bfseries, align=center
+    },
+    arrow/.style={->, >=stealth, bleuPrincipal, line width=1pt}
+]
+
+% Niveau 1
+\node[boxhead] (dir) {Direction Générale};
+
+% Niveau 2
+\node[box, below left=1cm and 1cm of dir] (vadm) {Vice-Direction\\Admin.};
+\node[box, below right=1cm and 1cm of dir] (vped) {Vice-Direction\\Pédagogique};
+
+% Niveau 3
+\node[box, below=1cm of vped] (dinfo) {\faLaptopCode\ Dpt. Informatique};
+
+% Flèches
+\draw[arrow] (dir) -- (vadm);
+\draw[arrow] (dir) -- (vped);
+\draw[arrow] (vped) -- (dinfo);
+
+\end{tikzpicture}
+\caption{Organigramme simplifié de l'EMSI}
+\end{figure}
+
+% --- SECTION 1.2 ---
+\section{Étude de l'Existant}
+
+Avant de concevoir notre solution, nous avons analysé les principales solutions existantes dans le domaine des systèmes de question-réponse sur documents et de l'IA appliquée au secteur médical.
+
+\subsection{Analyse Comparative}
+
+\begin{table}[H]
+\centering
+\caption{Comparatif des solutions existantes}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{3cm}|c|c|c|c|}
+\hline
+\rowcolor{bleuPrincipal} \textcolor{white}{\textbf{Fonctionnalité}} & \textcolor{white}{\textbf{ChatGPT}} & \textcolor{white}{\textbf{Azure AI}} & \textcolor{white}{\textbf{AWS Kendra}} & \textcolor{white}{\textbf{DocQA-MS}} \\
+\hline
+Q\&A sur documents & \textcolor{bleuPrincipal}{\faCheck} & \textcolor{bleuPrincipal}{\faCheck} & \textcolor{bleuPrincipal}{\faCheck} & \textcolor{bleuPrincipal}{\faCheck\faCheck} \\
+\hline
+Exécution locale LLM & \textcolor{rougeAlert}{\faTimes} & \textcolor{rougeAlert}{\faTimes} & \textcolor{rougeAlert}{\faTimes} & \textcolor{bleuPrincipal}{\faCheck} (Ollama) \\
+\hline
+Anonymisation intégrée & \textcolor{rougeAlert}{\faTimes} & \textcolor{orangeWarning}{\faCircle} & \textcolor{rougeAlert}{\faTimes} & \textcolor{bleuPrincipal}{\faCheck} (NER) \\
+\hline
+Architecture microservices & \textcolor{rougeAlert}{\faTimes} & \textcolor{bleuPrincipal}{\faCheck} & \textcolor{bleuPrincipal}{\faCheck} & \textcolor{bleuPrincipal}{\faCheck} \\
+\hline
+Open Source & \textcolor{rougeAlert}{\faTimes} & \textcolor{rougeAlert}{\faTimes} & \textcolor{rougeAlert}{\faTimes} & \textcolor{bleuPrincipal}{\faCheck} \\
+\hline
+Audit complet & \textcolor{orangeWarning}{\faCircle} & \textcolor{bleuPrincipal}{\faCheck} & \textcolor{bleuPrincipal}{\faCheck} & \textcolor{bleuPrincipal}{\faCheck} \\
+\hline
+Données on-premise & \textcolor{rougeAlert}{\faTimes} & \textcolor{orangeWarning}{\faCircle} & \textcolor{rougeAlert}{\faTimes} & \textcolor{bleuPrincipal}{\faCheck} \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=bleuTresClair,
+    colframe=bleuClair,
+    boxrule=1pt,
+    arc=2mm,
+    left=8pt, right=8pt, top=6pt, bottom=6pt
+]
+\textbf{\textcolor{bleuFonce}{Analyse des lacunes identifiées :}}
+
+\begin{itemize}[leftmargin=*, itemsep=3pt, label=\textcolor{bleuPrincipal}{\faAngleRight}]
+    \item \textbf{ChatGPT/Claude} : Puissants mais nécessitent l'envoi de données vers des serveurs externes, incompatible avec les exigences de confidentialité médicale.
+    \item \textbf{Azure AI / AWS Kendra} : Solutions cloud coûteuses, avec des problématiques de souveraineté des données.
+    \item \textbf{Solutions open source} : Fragmentées, nécessitant une intégration complexe de multiples composants.
+\end{itemize}
+
+\textbf{DocQA-MS} se positionne comme une alternative \textbf{open source}, \textbf{on-premise}, avec \textbf{anonymisation intégrée} et exécution \textbf{locale du LLM}.
+\end{tcolorbox}
+
+% --- SECTION 1.3 ---
+\section{Solution Proposée : DocQA-MS}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuPrincipal,
+    boxrule=2pt,
+    arc=5mm,
+    left=15pt, right=15pt, top=15pt, bottom=15pt,
+    shadow={3mm}{-3mm}{0mm}{black!20}
+]
+\begin{center}
+{\fontsize{28}{34}\selectfont\textcolor{bleuFonce}{\textbf{Doc}}\textcolor{bleuPrincipal}{\textbf{QA-MS}}}
+
+\vspace{0.2cm}
+{\large\itshape\textcolor{grisTexte}{Système de Question-Réponse sur Documents Médicaux}}\\[0.1cm]
+{\normalsize\textcolor{bleuMarine}{Architecture Microservices | LLM Local | Anonymisation RGPD}}
+\end{center}
+
+\vspace{0.3cm}
+DocQA-MS est une plateforme complète permettant aux professionnels de santé d'interroger des corpus de documents médicaux en langage naturel, tout en garantissant la confidentialité des données patients grâce à une anonymisation automatique et une exécution locale des modèles d'IA.
+\end{tcolorbox}
+
+\subsection{Architecture Microservices}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    scale=0.7,
+    transform shape,
+    service/.style={
+        rectangle, rounded corners=5pt, draw=#1, fill=#1!10,
+        line width=1.5pt, minimum width=2.8cm, minimum height=1.2cm,
+        font=\small\bfseries, align=center
+    },
+    infra/.style={
+        rectangle, rounded corners=3pt, draw=gray!60, fill=gray!10,
+        line width=1pt, minimum width=2.5cm, minimum height=1cm,
+        font=\small, align=center
+    },
+    myarrow/.style={->, >=stealth, line width=1pt, #1}
+]
+
+% API Gateway (centre haut)
+\node[service=bleuPrincipal] (gateway) at (0,4) {\faServer\\API Gateway};
+
+% Services Python (gauche)
+\node[service=bleuTurquoise] (ingestor) at (-5,1) {\faFileAlt\\Doc Ingestor};
+\node[service=bleuTurquoise] (llm) at (-5,-2) {\faRobot\\LLM Q\&A};
+
+% Services Java (droite)
+\node[service=bleuMarine] (deid) at (5,2) {\faUserSecret\\DeID Service};
+\node[service=bleuMarine] (indexer) at (5,0) {\faSearch\\Indexeur};
+\node[service=bleuMarine] (synthese) at (5,-2) {\faLayerGroup\\Synthèse};
+\node[service=bleuMarine] (audit) at (0,-2) {\faClipboardList\\Audit Logger};
+
+% Infrastructure
+\node[infra] (postgres) at (-3,-4.5) {\faDatabase~PostgreSQL};
+\node[infra] (rabbitmq) at (0,-4.5) {\faEnvelope~RabbitMQ};
+\node[infra] (ollama) at (3,-4.5) {\faBrain~Ollama};
+
+% Frontend
+\node[service=vertSucces] (react) at (0,6.5) {\faReact\\React Frontend};
+
+% Flèches
+\draw[myarrow=bleuPrincipal] (react) -- (gateway);
+\draw[myarrow=bleuPrincipal] (gateway) -- (ingestor);
+\draw[myarrow=bleuPrincipal] (gateway) -- (deid);
+\draw[myarrow=bleuPrincipal] (gateway) -- (indexer);
+\draw[myarrow=bleuPrincipal] (gateway) -- (llm);
+\draw[myarrow=bleuPrincipal] (gateway) -- (synthese);
+\draw[myarrow=bleuPrincipal] (gateway) -- (audit);
+
+% Connexions infrastructure
+\draw[myarrow=gray!60, dashed] (audit) -- (postgres);
+\draw[myarrow=gray!60, dashed] (ingestor) -- (rabbitmq);
+\draw[myarrow=gray!60, dashed] (llm) -- (ollama);
+
+\end{tikzpicture}
+\caption{Architecture microservices de DocQA-MS}
+\label{fig:archi-microservices}
+\end{figure}
+
+\subsection{Description des Microservices}
+
+\begin{table}[H]
+\centering
+\caption{Description des microservices DocQA-MS}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|>{\columncolor{bleuTresClair}}p{3.5cm}|p{2cm}|p{7cm}|}
+\hline
+\rowcolor{bleuPrincipal}
+\textcolor{white}{\textbf{Service}} & \textcolor{white}{\textbf{Techno}} & \textcolor{white}{\textbf{Responsabilité}} \\
+\hline
+\textbf{API Gateway} & FastAPI & Point d'entrée unique, routage, authentification \\
+\hline
+\textbf{Doc Ingestor} & FastAPI & Ingestion de documents, extraction de texte, chunking \\
+\hline
+\textbf{DeID Service} & Spring Boot & Anonymisation NER, masquage des données personnelles \\
+\hline
+\textbf{Indexeur Sémantique} & Spring Boot & Génération d'embeddings, indexation vectorielle \\
+\hline
+\textbf{LLM Q\&A Module} & FastAPI & Orchestration RAG, appel Ollama, génération réponses \\
+\hline
+\textbf{Synthèse Comparative} & Spring Boot & Analyse multi-documents, génération de synthèses \\
+\hline
+\textbf{Audit Logger} & Spring Boot & Journalisation, traçabilité, statistiques d'utilisation \\
+\hline
+\end{tabular}
+\end{table}
+
+% --- SECTION 1.4 ---
+\section{Méthodologie de Travail : Scrum}
+
+Pour mener à bien ce projet, nous avons adopté la méthodologie agile \textbf{Scrum}, particulièrement adaptée au développement itératif de systèmes complexes comme une architecture microservices.
+
+\vspace{0.4cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuPrincipal,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=10pt, right=10pt, top=10pt, bottom=10pt,
+    title={\textcolor{white}{\faSync\hspace{0.2cm}Cycle Scrum Adopté}},
+    fonttitle=\bfseries\large,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=bleuPrincipal, arc=2mm}
+]
+
+\begin{center}
+\begin{tikzpicture}[scale=0.8, transform shape]
+    % Cercle central
+    \fill[bleuTresClair] (0,0) circle (2.5cm);
+    \node[font=\bfseries, text=bleuFonce] at (0,0) {Sprint\\1 semaine};
+    
+    % Éléments autour
+    \node[fill=bleuPrincipal, text=white, rounded corners=3pt, 
+          inner sep=6pt, font=\small] at (-4,2) {Product Backlog};
+    \node[fill=bleuTurquoise, text=white, rounded corners=3pt, 
+          inner sep=6pt, font=\small] at (4,2) {Sprint Backlog};
+    \node[fill=bleuMarine, text=white, rounded corners=3pt, 
+          inner sep=6pt, font=\small] at (-4,-2) {Daily Scrum};
+    \node[fill=bleuFonce, text=white, rounded corners=3pt, 
+          inner sep=6pt, font=\small] at (4,-2) {Incrément};
+    
+    % Flèches circulaires
+    \draw[->, bleuPrincipal, line width=1.5pt] (-3.5,1.5) arc (135:45:4);
+    \draw[->, bleuPrincipal, line width=1.5pt] (3.5,-1.5) arc (-45:-135:4);
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.3cm}
+
+\renewcommand{\arraystretch}{1.3}
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\rowcolor{bleuPrincipal}
+\textcolor{white}{\textbf{Paramètre}} & \textcolor{white}{\textbf{Valeur}} \\
+\hline
+Durée des sprints & 1 semaine \\
+\hline
+Nombre de sprints & 5 sprints \\
+\hline
+Réunions Daily & 15 minutes/jour \\
+\hline
+Revue de sprint & Fin de chaque sprint \\
+\hline
+Outil de gestion & GitHub Projects \\
+\hline
+\end{tabular}
+\end{center}
+
+\end{tcolorbox}
+
+% --- SECTION 1.5 ---
+\section{Stack Technologique}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuPrincipal,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=10pt, right=10pt, top=10pt, bottom=10pt,
+    title={\textcolor{white}{\faLayerGroup\hspace{0.2cm}Technologies Utilisées}},
+    fonttitle=\bfseries\large,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=bleuPrincipal, arc=2mm}
+]
+
+\begin{minipage}[t]{0.48\textwidth}
+    \textbf{\textcolor{bleuFonce}{Backend Python}}
+    \begin{tabular}{|l|l|}
+    \hline
+    \rowcolor{bleuTresClair}
+    \textbf{Outil} & \textbf{Version} \\
+    \hline
+    Python & 3.11 \\
+    \hline
+    FastAPI & 0.104+ \\
+    \hline
+    LangChain & 0.1+ \\
+    \hline
+    Ollama (Llama 3.1) & Latest \\
+    \hline
+    \end{tabular}
+    
+    \vspace{0.3cm}
+    
+    \textbf{\textcolor{bleuFonce}{Backend Java}}
+    \begin{tabular}{|l|l|}
+    \hline
+    \rowcolor{bleuTresClair}
+    \textbf{Outil} & \textbf{Version} \\
+    \hline
+    Java JDK & 17 LTS \\
+    \hline
+    Spring Boot & 3.2+ \\
+    \hline
+    Maven & 3.9 \\
+    \hline
+    \end{tabular}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+    \textbf{\textcolor{bleuFonce}{Frontend}}
+    \begin{tabular}{|l|l|}
+    \hline
+    \rowcolor{bleuTresClair}
+    \textbf{Outil} & \textbf{Version} \\
+    \hline
+    Node.js & 18 LTS \\
+    \hline
+    React & 18 \\
+    \hline
+    Axios & Latest \\
+    \hline
+    \end{tabular}
+    
+    \vspace{0.3cm}
+    
+    \textbf{\textcolor{bleuFonce}{Infrastructure}}
+    \begin{tabular}{|l|l|}
+    \hline
+    \rowcolor{bleuTresClair}
+    \textbf{Outil} & \textbf{Version} \\
+    \hline
+    Docker & 24+ \\
+    \hline
+    Docker Compose & 2+ \\
+    \hline
+    PostgreSQL & 16 \\
+    \hline
+    RabbitMQ & 3.12 \\
+    \hline
+    \end{tabular}
+    
+    \vspace{0.3cm}
+    
+    \textbf{\textcolor{bleuFonce}{CI/CD}}
+    \begin{tabular}{|l|l|}
+    \hline
+    \rowcolor{bleuTresClair}
+    \textbf{Outil} & \textbf{Version} \\
+    \hline
+    GitHub Actions & Latest \\
+    \hline
+    JMeter & 5.6 \\
+    \hline
+    \end{tabular}
+\end{minipage}
+
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+%--- Conclusion du chapitre ---
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuPrincipal,
+    boxrule=0pt,
+    borderline south={3pt}{0pt}{bleuPrincipal},
+    arc=0mm,
+    left=10pt, right=10pt, top=10pt, bottom=10pt
+]
+\textbf{\textcolor{bleuFonce}{Conclusion du Chapitre}}
+
+\vspace{0.2cm}
+
+Ce chapitre a présenté le cadre général du projet DocQA-MS. Nous avons introduit l'organisme d'accueil, analysé les solutions existantes et leurs limitations, puis décrit l'architecture microservices proposée. La méthodologie Scrum adoptée et le stack technologique choisi constituent les fondations solides sur lesquelles repose le développement du système. Le chapitre suivant détaillera l'analyse et la spécification des besoins fonctionnels et non fonctionnels.
+\end{tcolorbox}

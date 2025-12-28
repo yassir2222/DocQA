@@ -1,0 +1,679 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                        INTRODUCTION GÉNÉRALE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter*{Introduction Générale}
+\addcontentsline{toc}{chapter}{Introduction Générale}
+\markboth{Introduction Générale}{Introduction Générale}
+
+%==============================================================================
+% Décoration de page pour l'introduction
+%==============================================================================
+
+\begin{tikzpicture}[remember picture, overlay]
+  % Bande verticale gauche
+  \fill[bleuPrincipal]
+  ([xshift=0.3cm]current page.north west) rectangle
+  ([xshift=0.6cm, yshift=-5cm]current page.north west);
+  % Cercle décoratif
+  \fill[bleuClair, opacity=0.2]
+  ([xshift=3cm, yshift=-3cm]current page.north west) circle (2cm);
+\end{tikzpicture}
+
+\vspace{-0.5cm}
+
+%==============================================================================
+% Citation d'ouverture
+%==============================================================================
+
+\begin{center}
+  \begin{tikzpicture}
+    \node[fill=bleuTresClair, rounded corners=5pt, inner sep=15pt,
+    text width=12cm, align=center] {
+      {\Large\color{bleuPrincipal}"}\hspace{0.1cm}
+      {\itshape\color{grisFonce}Les données sont le nouveau pétrole. Mais comme le pétrole,
+      les données sont précieuses, et si elles ne sont pas raffinées, elles ne peuvent pas vraiment être utilisées.}
+      \hspace{0.1cm}{\Large\color{bleuPrincipal}"}
+      \\[0.3cm]
+      {\small\color{bleuMarine}— Clive Humby, Mathématicien britannique}
+    };
+  \end{tikzpicture}
+\end{center}
+
+\vspace{0.5cm}
+
+%==============================================================================
+% SECTION 1 : CONTEXTE GÉNÉRAL
+%==============================================================================
+
+\section*{\textcolor{bleuFonce}{\faGlobeAfrica\hspace{0.3cm}Contexte Général}}
+\addcontentsline{toc}{section}{Contexte Général}
+
+La transformation numérique du secteur de la santé représente aujourd'hui l'un des enjeux majeurs du XXI\textsuperscript{e} siècle. Dans un monde où le volume de données médicales croît de manière exponentielle, les professionnels de santé sont confrontés à un défi de taille : exploiter efficacement cette masse d'informations pour améliorer la prise en charge des patients. Les dossiers médicaux électroniques, les comptes-rendus d'examens, les protocoles de soins et les publications scientifiques constituent un patrimoine informationnel considérable, mais souvent difficile d'accès et sous-exploité.
+
+\vspace{0.3cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuPrincipal,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=10pt, right=10pt, top=10pt, bottom=10pt,
+    shadow={2mm}{-2mm}{0mm}{black!20},
+    title={\textcolor{white}{\faDatabase\hspace{0.2cm}L'Explosion des Données Médicales}},
+    fonttitle=\bfseries,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=bleuPrincipal, arc=2mm}
+  ]
+
+  Les chiffres sont éloquents et illustrent l'ampleur du défi que représente la gestion des données médicales à l'échelle mondiale :
+
+  \vspace{0.3cm}
+
+  \begin{minipage}[t]{0.48\textwidth}
+    \begin{tikzpicture}
+      \fill[bleuPrincipal] (0,0) circle (0.8cm);
+      \node[text=white, font=\large\bfseries] at (0,0) {30\%};
+    \end{tikzpicture}
+    \hspace{0.3cm}
+    \begin{minipage}[t]{5cm}
+      \textbf{30\% des données mondiales} sont générées par le secteur de la santé, faisant de lui le plus grand producteur de données.
+    \end{minipage}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \begin{tikzpicture}
+      \fill[bleuTurquoise] (0,0) circle (0.8cm);
+      \node[text=white, font=\large\bfseries] at (0,0) {2.3};
+    \end{tikzpicture}
+    \hspace{0.3cm}
+    \begin{minipage}[t]{5cm}
+      \textbf{2.3 exaoctets} de données médicales sont générés chaque année, soit plus que tous les livres jamais écrits.
+    \end{minipage}
+  \end{minipage}
+
+  \vspace{0.4cm}
+
+  \begin{minipage}[t]{0.48\textwidth}
+    \begin{tikzpicture}
+      \fill[bleuMarine] (0,0) circle (0.8cm);
+      \node[text=white, font=\large\bfseries] at (0,0) {80\%};
+    \end{tikzpicture}
+    \hspace{0.3cm}
+    \begin{minipage}[t]{5cm}
+      \textbf{80\% des données médicales} sont non structurées (textes, images, audio), rendant leur exploitation complexe.
+    \end{minipage}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \begin{tikzpicture}
+      \fill[bleuFonce] (0,0) circle (0.8cm);
+      \node[text=white, font=\large\bfseries] at (0,0) {97\%};
+    \end{tikzpicture}
+    \hspace{0.3cm}
+    \begin{minipage}[t]{5cm}
+      \textbf{97\% des données collectées} restent inexploitées, représentant un potentiel considérable pour l'amélioration des soins.
+    \end{minipage}
+  \end{minipage}
+
+\end{tcolorbox}
+
+\vspace{0.4cm}
+
+Ces chiffres révèlent un paradoxe fondamental : alors que les établissements de santé accumulent des quantités massives d'informations, les cliniciens peinent à accéder rapidement aux données pertinentes lors de la prise en charge des patients. Un médecin hospitalier consacre en moyenne \textbf{deux heures par jour} à la recherche d'informations dans les dossiers patients, temps qui pourrait être dédié aux soins directs.
+
+\vspace{0.3cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=bleuTresClair,
+    colframe=bleuClair,
+    boxrule=1pt,
+    arc=2mm,
+    left=8pt, right=8pt, top=8pt, bottom=8pt
+  ]
+  \textbf{\textcolor{bleuFonce}{\faBrain\hspace{0.2cm}L'Avènement de l'Intelligence Artificielle en Santé}}
+
+  \vspace{0.2cm}
+
+  L'émergence des technologies d'intelligence artificielle, et notamment des \textbf{grands modèles de langage (LLM)}, ouvre des perspectives révolutionnaires pour le traitement automatisé des documents médicaux. Ces modèles, capables de comprendre et de générer du langage naturel avec une précision remarquable, permettent d'envisager des systèmes de question-réponse intelligents sur des corpus documentaires volumineux.
+
+  \vspace{0.2cm}
+
+  La technologie \textbf{RAG (Retrieval-Augmented Generation)} combine la puissance des LLM avec des systèmes de recherche vectorielle, permettant de générer des réponses contextualisées et sourcées à partir de documents spécifiques. Cette approche est particulièrement adaptée au domaine médical, où la précision et la traçabilité des informations sont critiques.
+
+  \vspace{0.2cm}
+
+  Cependant, l'utilisation de l'IA en santé soulève des questions cruciales de \textbf{confidentialité} et de \textbf{protection des données}. Le Règlement Général sur la Protection des Données (RGPD) impose des contraintes strictes sur le traitement des données de santé, classées comme sensibles. Toute solution technique doit donc intégrer des mécanismes robustes d'anonymisation pour garantir la vie privée des patients.
+\end{tcolorbox}
+
+\vspace{0.3cm}
+
+L'architecture microservices s'impose aujourd'hui comme le paradigme de choix pour le développement d'applications complexes et évolutives. En décomposant le système en services indépendants et faiblement couplés, cette approche permet une meilleure scalabilité, une maintenance simplifiée et une résilience accrue face aux pannes. Pour un système de traitement de documents médicaux manipulant des données sensibles, cette architecture offre également l'avantage d'isoler les composants critiques liés à la sécurité.
+
+%==============================================================================
+% SECTION 2 : PROBLÉMATIQUE
+%==============================================================================
+
+\newpage
+
+\section*{\textcolor{bleuFonce}{\faQuestionCircle\hspace{0.3cm}Problématique}}
+\addcontentsline{toc}{section}{Problématique}
+
+Face au contexte décrit précédemment, les professionnels de santé font face à plusieurs obstacles majeurs qui entravent l'exploitation efficace des documents médicaux. Ces barrières constituent le cœur de la problématique à laquelle notre projet tente d'apporter une réponse technologique innovante.
+
+\vspace{0.4cm}
+
+\begin{tikzpicture}
+  % Titre central
+  \node[fill=bleuPrincipal, text=white, rounded corners=5pt,
+  inner sep=12pt, font=\large\bfseries] (center)
+  {Obstacles à l'Exploitation des Documents Médicaux};
+\end{tikzpicture}
+
+\vspace{0.4cm}
+
+%--- Obstacle 1 ---
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuPrincipal,
+    boxrule=0pt,
+    borderline west={4pt}{0pt}{bleuPrincipal},
+    arc=0mm,
+    left=10pt, right=10pt, top=8pt, bottom=8pt,
+    shadow={1mm}{-1mm}{0mm}{black!15}
+  ]
+  \begin{minipage}[c]{0.08\textwidth}
+    \begin{tikzpicture}
+      \node[fill=bleuPrincipal, text=white, circle, minimum size=1cm,
+      font=\large\bfseries] {1};
+    \end{tikzpicture}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[c]{0.88\textwidth}
+    \textbf{\large\textcolor{bleuFonce}{Volume et Hétérogénéité des Documents}}
+
+    \vspace{0.2cm}
+
+    Les établissements de santé accumulent des milliers de documents aux formats variés : comptes-rendus d'hospitalisation, résultats d'examens biologiques, notes de consultations, protocoles thérapeutiques, courriers médicaux. Cette masse documentaire hétérogène rend la recherche d'information extrêmement chronophage. Un médecin peut devoir consulter des dizaines de documents pour reconstituer l'historique complet d'un patient, avec un risque non négligeable de manquer une information cruciale. Les systèmes de recherche traditionnels, basés sur des mots-clés, s'avèrent insuffisants face à la richesse sémantique du langage médical.
+  \end{minipage}
+\end{tcolorbox}
+
+\vspace{0.3cm}
+
+%--- Obstacle 2 ---
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuTurquoise,
+    boxrule=0pt,
+    borderline west={4pt}{0pt}{bleuTurquoise},
+    arc=0mm,
+    left=10pt, right=10pt, top=8pt, bottom=8pt,
+    shadow={1mm}{-1mm}{0mm}{black!15}
+  ]
+  \begin{minipage}[c]{0.08\textwidth}
+    \begin{tikzpicture}
+      \node[fill=bleuTurquoise, text=white, circle, minimum size=1cm,
+      font=\large\bfseries] {2};
+    \end{tikzpicture}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[c]{0.88\textwidth}
+    \textbf{\large\textcolor{bleuFonce}{Confidentialité et Conformité Réglementaire}}
+
+    \vspace{0.2cm}
+
+    Les données de santé sont parmi les plus sensibles qui existent. Le RGPD les classe comme données à caractère personnel sensible, imposant des mesures de protection renforcées. Toute exploitation automatisée de documents médicaux doit garantir l'anonymisation des informations identifiantes (noms, dates de naissance, numéros de sécurité sociale, adresses). Les solutions existantes proposent rarement une anonymisation intégrée et certifiée, obligeant les établissements à des traitements manuels coûteux ou à renoncer à l'exploitation de leurs données. Ce dilemme entre utilité des données et protection de la vie privée freine considérablement l'innovation en santé numérique.
+  \end{minipage}
+\end{tcolorbox}
+
+\vspace{0.3cm}
+
+%--- Obstacle 3 ---
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuMarine,
+    boxrule=0pt,
+    borderline west={4pt}{0pt}{bleuMarine},
+    arc=0mm,
+    left=10pt, right=10pt, top=8pt, bottom=8pt,
+    shadow={1mm}{-1mm}{0mm}{black!15}
+  ]
+  \begin{minipage}[c]{0.08\textwidth}
+    \begin{tikzpicture}
+      \node[fill=bleuMarine, text=white, circle, minimum size=1cm,
+      font=\large\bfseries] {3};
+    \end{tikzpicture}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[c]{0.88\textwidth}
+    \textbf{\large\textcolor{bleuFonce}{Absence de Systèmes Q\&A Intelligents Adaptés}}
+
+    \vspace{0.2cm}
+
+    Les moteurs de recherche classiques déployés dans les systèmes d'information hospitaliers ne permettent pas d'interroger les documents en langage naturel. Un clinicien ne peut pas demander : "Quels sont les antécédents cardiaques de ce patient ?" ou "Y a-t-il eu des interactions médicamenteuses signalées ?". Les réponses à ces questions nécessitent une lecture manuelle et une synthèse par le praticien. Les solutions de chatbot génériques (ChatGPT, Claude) ne peuvent pas être utilisées directement car elles nécessitent l'envoi de données confidentielles vers des serveurs externes, ce qui est incompatible avec les exigences de sécurité du domaine médical.
+  \end{minipage}
+\end{tcolorbox}
+
+\vspace{0.3cm}
+
+%--- Obstacle 4 ---
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuFonce,
+    boxrule=0pt,
+    borderline west={4pt}{0pt}{bleuFonce},
+    arc=0mm,
+    left=10pt, right=10pt, top=8pt, bottom=8pt,
+    shadow={1mm}{-1mm}{0mm}{black!15}
+  ]
+  \begin{minipage}[c]{0.08\textwidth}
+    \begin{tikzpicture}
+      \node[fill=bleuFonce, text=white, circle, minimum size=1cm,
+      font=\large\bfseries] {4};
+    \end{tikzpicture}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[c]{0.88\textwidth}
+    \textbf{\large\textcolor{bleuFonce}{Traçabilité et Audit des Accès}}
+
+    \vspace{0.2cm}
+
+    Dans le domaine médical, la traçabilité des accès aux données est une obligation légale et une nécessité clinique. Qui a consulté quel document ? Quelles requêtes ont été effectuées ? Ces informations sont cruciales pour la sécurité des données et l'investigation en cas d'incident. Les systèmes actuels offrent rarement une granularité suffisante dans leurs journaux d'audit, et l'intégration de cette fonctionnalité dans une architecture distribuée représente un défi technique significatif. Sans traçabilité complète, les établissements s'exposent à des risques juridiques et à des sanctions en cas de violation de données.
+  \end{minipage}
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+\begin{center}
+  \begin{tikzpicture}
+    \node[fill=bleuTresClair, draw=bleuPrincipal, line width=1.5pt,
+    rounded corners=8pt, inner sep=15pt, text width=14cm, align=center] {
+      {\large\color{bleuFonce}\textbf{Question Centrale}}\\[0.3cm]
+      {\itshape\color{grisTexte}Comment concevoir un système de question-réponse intelligent sur documents médicaux, basé sur une architecture microservices, qui permette aux professionnels de santé d'interroger naturellement leurs corpus documentaires tout en garantissant l'anonymisation automatique des données sensibles, la traçabilité complète des accès, et l'exécution locale des modèles d'IA pour préserver la confidentialité ?}
+    };
+  \end{tikzpicture}
+\end{center}
+
+%==============================================================================
+% SECTION 3 : OBJECTIFS DU PROJET
+%==============================================================================
+
+\newpage
+
+\section*{\textcolor{bleuFonce}{\faBullseye\hspace{0.3cm}Objectifs du Projet}}
+\addcontentsline{toc}{section}{Objectifs du Projet}
+
+Pour répondre à la problématique identifiée, le projet DocQA-MS a été conçu avec des objectifs clairement définis, articulés autour d'une vision ambitieuse : offrir aux professionnels de santé un outil intelligent et sécurisé pour exploiter leurs documents médicaux.
+
+\vspace{0.4cm}
+
+%--- Objectif Principal ---
+\begin{tcolorbox}[
+    enhanced,
+    colback=bleuPrincipal,
+    colframe=bleuFonce,
+    boxrule=0pt,
+    arc=4mm,
+    left=15pt, right=15pt, top=12pt, bottom=12pt,
+    shadow={3mm}{-3mm}{0mm}{black!30}
+  ]
+  \begin{center}
+    {\Large\color{white}\faStar\hspace{0.3cm}\textbf{Objectif Principal}\hspace{0.3cm}\faStar}
+  \end{center}
+
+  \vspace{0.2cm}
+
+  {\color{white}
+    Développer \textbf{DocQA-MS}, un système de Question-Réponse sur Documents Médicaux basé sur une architecture microservices. Ce système intègre un moteur de recherche sémantique propulsé par la technologie RAG (Retrieval-Augmented Generation) et un modèle de langage local (Llama 3.1 via Ollama), permettant aux cliniciens d'interroger naturellement leurs corpus documentaires en langage naturel. L'objectif est de fournir une solution complète incluant l'ingestion de documents, l'anonymisation automatique conforme au RGPD, l'indexation sémantique, la génération de réponses contextualisées, la synthèse comparative multi-documents, et un système robuste d'audit et de traçabilité.
+  }
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+%--- Objectifs Spécifiques ---
+\begin{center}
+  \begin{tikzpicture}
+    \node[fill=bleuFonce, text=white, rounded corners=3pt,
+    inner sep=10pt, font=\large\bfseries]
+    {\faListUl\hspace{0.3cm}Objectifs Spécifiques};
+  \end{tikzpicture}
+\end{center}
+
+\vspace{0.4cm}
+
+\begin{minipage}[t]{0.48\textwidth}
+  \begin{tcolorbox}[
+      enhanced,
+      colback=white,
+      colframe=bleuPrincipal,
+      boxrule=1pt,
+      arc=3mm,
+      left=8pt, right=8pt, top=8pt, bottom=8pt,
+      title={\textcolor{white}{\faFileAlt\hspace{0.2cm}Ingestion de Documents}},
+      fonttitle=\bfseries\small,
+      coltitle=white,
+      attach boxed title to top center={yshift=-2mm},
+      boxed title style={colback=bleuPrincipal, arc=2mm}
+    ]
+    \begin{itemize}[leftmargin=*, itemsep=3pt]
+      \item Support multi-formats (PDF, TXT, DOCX)
+      \item Extraction de texte intelligente
+      \item Chunking sémantique optimisé
+      \item Gestion des métadonnées
+    \end{itemize}
+  \end{tcolorbox}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+  \begin{tcolorbox}[
+      enhanced,
+      colback=white,
+      colframe=bleuTurquoise,
+      boxrule=1pt,
+      arc=3mm,
+      left=8pt, right=8pt, top=8pt, bottom=8pt,
+      title={\textcolor{white}{\faUserSecret\hspace{0.2cm}Anonymisation (DeID)}},
+      fonttitle=\bfseries\small,
+      coltitle=white,
+      attach boxed title to top center={yshift=-2mm},
+      boxed title style={colback=bleuTurquoise, arc=2mm}
+    ]
+    \begin{itemize}[leftmargin=*, itemsep=3pt]
+      \item Détection NER d'entités médicales
+      \item Masquage des données personnelles
+      \item Conformité RGPD automatisée
+      \item Traçabilité des anonymisations
+    \end{itemize}
+  \end{tcolorbox}
+\end{minipage}
+
+\vspace{0.4cm}
+
+\begin{minipage}[t]{0.48\textwidth}
+  \begin{tcolorbox}[
+      enhanced,
+      colback=white,
+      colframe=bleuMarine,
+      boxrule=1pt,
+      arc=3mm,
+      left=8pt, right=8pt, top=8pt, bottom=8pt,
+      title={\textcolor{white}{\faSearch\hspace{0.2cm}Indexation Sémantique}},
+      fonttitle=\bfseries\small,
+      coltitle=white,
+      attach boxed title to top center={yshift=-2mm},
+      boxed title style={colback=bleuMarine, arc=2mm}
+    ]
+    \begin{itemize}[leftmargin=*, itemsep=3pt]
+      \item Génération d'embeddings vectoriels
+      \item Indexation dans base vectorielle
+      \item Recherche par similarité sémantique
+      \item Support multi-documents
+    \end{itemize}
+  \end{tcolorbox}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+  \begin{tcolorbox}[
+      enhanced,
+      colback=white,
+      colframe=bleuFonce,
+      boxrule=1pt,
+      arc=3mm,
+      left=8pt, right=8pt, top=8pt, bottom=8pt,
+      title={\textcolor{white}{\faRobot\hspace{0.2cm}Q\&A par LLM (RAG)}},
+      fonttitle=\bfseries\small,
+      coltitle=white,
+      attach boxed title to top center={yshift=-2mm},
+      boxed title style={colback=bleuFonce, arc=2mm}
+    ]
+    \begin{itemize}[leftmargin=*, itemsep=3pt]
+      \item Modèle Llama 3.1 local (Ollama)
+      \item Génération de réponses contextualisées
+      \item Sources citées et vérifiables
+      \item Historique des conversations
+    \end{itemize}
+  \end{tcolorbox}
+\end{minipage}
+
+\vspace{0.4cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=bleuTresClair,
+    colframe=bleuClair,
+    boxrule=1pt,
+    arc=3mm,
+    left=10pt, right=10pt, top=8pt, bottom=8pt
+  ]
+  \begin{center}
+    {\bfseries\color{bleuFonce}\faLaptopCode\hspace{0.3cm}Objectifs Techniques Transversaux}
+  \end{center}
+
+  \vspace{0.2cm}
+
+  \begin{minipage}[t]{0.48\textwidth}
+    \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuPrincipal}{\faCheck}]
+      \item Architecture microservices (7 services)
+      \item API Gateway centralisée (Python/FastAPI)
+      \item Services Java (Spring Boot) et Python
+      \item Communication asynchrone (RabbitMQ)
+    \end{itemize}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuPrincipal}{\faCheck}]
+      \item Conteneurisation Docker Compose
+      \item Pipeline CI/CD GitHub Actions
+      \item Interface React moderne
+      \item Système d'audit complet
+    \end{itemize}
+  \end{minipage}
+\end{tcolorbox}
+
+%==============================================================================
+% SECTION 4 : PÉRIMÈTRE DU PROJET
+%==============================================================================
+
+\newpage
+
+\section*{\textcolor{bleuFonce}{\faProjectDiagram\hspace{0.3cm}Périmètre du Projet}}
+\addcontentsline{toc}{section}{Périmètre du Projet}
+
+La délimitation précise du périmètre d'un projet est essentielle pour garantir sa réussite dans les délais et avec les ressources impartis. Cette section définit clairement ce que le projet DocQA-MS couvre, ainsi que les éléments volontairement exclus de son champ d'application.
+
+\vspace{0.4cm}
+
+\begin{minipage}[t]{0.48\textwidth}
+  \begin{tcolorbox}[
+      enhanced,
+      colback=white,
+      colframe=bleuPrincipal,
+      boxrule=2pt,
+      arc=4mm,
+      left=10pt, right=10pt, top=10pt, bottom=10pt,
+      title={\textcolor{white}{\large\faCheckCircle\hspace{0.2cm}Inclus dans le Projet}},
+      fonttitle=\bfseries,
+      coltitle=white,
+      attach boxed title to top center={yshift=-3mm},
+      boxed title style={colback=bleuPrincipal, arc=3mm}
+    ]
+
+    \vspace{0.2cm}
+
+    \textbf{\textcolor{bleuFonce}{Microservices Développés}}
+    \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuPrincipal}{\faCheck}]
+      \item API Gateway (FastAPI)
+      \item Doc Ingestor (FastAPI)
+      \item DeID Service (Spring Boot)
+      \item Indexeur Sémantique (Spring Boot)
+      \item LLM Q\&A Module (FastAPI)
+      \item Synthèse Comparative (Spring Boot)
+      \item Audit Logger (Spring Boot)
+    \end{itemize}
+
+    \vspace{0.3cm}
+
+    \textbf{\textcolor{bleuFonce}{Fonctionnalités}}
+    \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuPrincipal}{\faCheck}]
+      \item Ingestion multi-formats
+      \item Anonymisation automatique NER
+      \item Recherche sémantique vectorielle
+      \item Q\&A en langage naturel
+      \item Synthèse comparative
+      \item Audit et traçabilité
+      \item Interface utilisateur React
+    \end{itemize}
+
+  \end{tcolorbox}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+  \begin{tcolorbox}[
+      enhanced,
+      colback=white,
+      colframe=rougeAlert,
+      boxrule=2pt,
+      arc=4mm,
+      left=10pt, right=10pt, top=10pt, bottom=10pt,
+      title={\textcolor{white}{\large\faTimesCircle\hspace{0.2cm}Exclus du Projet}},
+      fonttitle=\bfseries,
+      coltitle=white,
+      attach boxed title to top center={yshift=-3mm},
+      boxed title style={colback=rougeAlert, arc=3mm}
+    ]
+
+    \vspace{0.2cm}
+
+    \textbf{\textcolor{rougeAlert}{Limitations Fonctionnelles}}
+    \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{rougeAlert}{\faTimes}]
+      \item Intégration avec DPI hospitaliers
+      \item Support d'images médicales (DICOM)
+      \item Reconnaissance vocale
+      \item Multi-langues (français uniquement)
+      \item Génération de rapports PDF
+      \item Alertes en temps réel
+      \item Gestion des utilisateurs avancée
+    \end{itemize}
+
+    \vspace{0.3cm}
+
+    \textbf{\textcolor{rougeAlert}{Limitations Techniques}}
+    \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{rougeAlert}{\faTimes}]
+      \item Déploiement cloud production
+      \item Haute disponibilité (HA)
+      \item Kubernetes orchestration
+      \item Monitoring avancé (Prometheus)
+      \item Sauvegarde automatisée
+      \item Authentification SSO
+      \item Tests de charge massifs
+    \end{itemize}
+
+  \end{tcolorbox}
+\end{minipage}
+
+\vspace{0.5cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=bleuTresClair,
+    colframe=bleuMarine,
+    boxrule=1pt,
+    arc=3mm,
+    left=10pt, right=10pt, top=8pt, bottom=8pt
+  ]
+  \textbf{\textcolor{bleuFonce}{\faExclamationTriangle\hspace{0.2cm}Avertissement Important}}
+
+  \vspace{0.2cm}
+
+  DocQA-MS est conçu comme un \textbf{prototype fonctionnel} à vocation académique et ne constitue pas un dispositif médical certifié. Les réponses générées par le système ne doivent en aucun cas se substituer à l'expertise d'un professionnel de santé qualifié. L'anonymisation proposée, bien qu'inspirée des bonnes pratiques du domaine, n'a pas fait l'objet d'une certification formelle de conformité RGPD. En environnement de production réel, une validation juridique et technique approfondie serait nécessaire avant tout déploiement.
+\end{tcolorbox}
+
+%==============================================================================
+% SECTION 5 : ORGANISATION DU RAPPORT
+%==============================================================================
+
+\section*{\textcolor{bleuFonce}{\faBookOpen\hspace{0.3cm}Organisation du Rapport}}
+\addcontentsline{toc}{section}{Organisation du Rapport}
+
+Le présent mémoire est structuré en quatre chapitres, chacun abordant un aspect spécifique du projet DocQA-MS. Cette organisation permet une progression logique depuis la présentation du contexte jusqu'au bilan final, en passant par les phases d'analyse, de conception et de réalisation.
+
+\vspace{0.4cm}
+
+\begin{tikzpicture}[
+    node distance=0.4cm,
+    chapter/.style={
+      rectangle,
+      rounded corners=3pt,
+      minimum width=14.5cm,
+      minimum height=1.8cm,
+      text width=14cm,
+      align=left,
+      fill=white,
+      draw=bleuPrincipal,
+      line width=1pt
+    },
+    num/.style={
+      circle,
+      fill=bleuPrincipal,
+      text=white,
+      font=\bfseries\large,
+      minimum size=0.9cm
+    }
+  ]
+
+  % Chapitre 1
+  \node[chapter] (ch1) {
+    \hspace{1.2cm}\textbf{\textcolor{bleuFonce}{\large Chapitre 1 : Cadre Général du Projet}}\\[0.1cm]
+    \hspace{1.2cm}{\small\color{grisTexte}Présentation de l'organisme d'accueil, étude des solutions existantes, description de l'architecture microservices proposée, méthodologie Scrum et technologies utilisées.}
+  };
+  \node[num, left=0.2cm of ch1.west, anchor=east] {1};
+
+  % Chapitre 2
+  \node[chapter, below=of ch1] (ch2) {
+    \hspace{1.2cm}\textbf{\textcolor{bleuFonce}{\large Chapitre 2 : Analyse et Spécification des Besoins}}\\[0.1cm]
+    \hspace{1.2cm}{\small\color{grisTexte}Identification des acteurs, besoins fonctionnels et non fonctionnels par microservice, diagrammes de cas d'utilisation et backlog produit Scrum.}
+  };
+  \node[num, left=0.2cm of ch2.west, anchor=east] {2};
+
+  % Chapitre 3
+  \node[chapter, below=of ch2] (ch3) {
+    \hspace{1.2cm}\textbf{\textcolor{bleuFonce}{\large Chapitre 3 : Conception}}\\[0.1cm]
+    \hspace{1.2cm}{\small\color{grisTexte}Architecture microservices détaillée, diagrammes de classes par service, diagrammes de séquence, modèle de données et conception des interfaces utilisateur.}
+  };
+  \node[num, left=0.2cm of ch3.west, anchor=east] {3};
+
+  % Chapitre 4
+  \node[chapter, below=of ch3] (ch4) {
+    \hspace{1.2cm}\textbf{\textcolor{bleuFonce}{\large Chapitre 4 : Réalisation}}\\[0.1cm]
+    \hspace{1.2cm}{\small\color{grisTexte}Environnement de développement, implémentation des microservices Python et Java, interface React, tests, CI/CD GitHub Actions et résultats JMeter.}
+  };
+  \node[num, left=0.2cm of ch4.west, anchor=east] {4};
+
+  % Flèches de connexion
+  \draw[->, bleuClair, line width=2pt] (ch1.south) -- (ch2.north);
+  \draw[->, bleuClair, line width=2pt] (ch2.south) -- (ch3.north);
+  \draw[->, bleuClair, line width=2pt] (ch3.south) -- (ch4.north);
+
+\end{tikzpicture}
+
+\vspace{0.5cm}
+
+\begin{center}
+  \begin{tikzpicture}
+    \node[fill=bleuTresClair, draw=bleuPrincipal, line width=1pt,
+    rounded corners=5pt, inner sep=12pt, text width=14cm, align=center] {
+      {\color{grisTexte}Le rapport se conclut par une \textbf{conclusion générale} synthétisant les apports du projet, les difficultés rencontrées, les compétences acquises et les perspectives d'évolution future du système DocQA-MS.}
+    };
+  \end{tikzpicture}
+\end{center}
+
+\newpage
+\pagenumbering{arabic}
+\setcounter{page}{1}

@@ -1,0 +1,872 @@
+%==============================================================================
+%                           CHAPITRE 2
+%                   ANALYSE ET SPÉCIFICATION DES BESOINS
+%==============================================================================
+
+\chapter{Analyse et Spécification des Besoins}
+
+\begin{tikzpicture}[remember picture, overlay]
+  % Décoration de page
+  \fill[bleuClair, opacity=0.1]
+  ([xshift=3cm, yshift=-2cm]current page.north west) circle (4cm);
+  \fill[bleuPrincipal, opacity=0.05]
+  ([xshift=-2cm, yshift=3cm]current page.south east) circle (5cm);
+\end{tikzpicture}
+
+\vspace{-0.5cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=bleuTresClair,
+    colframe=bleuPrincipal,
+    boxrule=0pt,
+    borderline west={4pt}{0pt}{bleuPrincipal},
+    arc=0mm,
+    left=12pt, right=12pt, top=10pt, bottom=10pt
+  ]
+  {\itshape\color{grisTexte}
+    Ce chapitre présente l'analyse détaillée des besoins du projet DocQA-MS. Nous commencerons par identifier les différents acteurs du système, puis nous spécifierons les besoins fonctionnels et non fonctionnels pour chaque microservice. Enfin, nous modéliserons ces besoins à travers des diagrammes de cas d'utilisation UML et présenterons le backlog produit selon la méthodologie Scrum.
+  }
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+%==============================================================================
+% SECTION 2.1 : IDENTIFICATION DES ACTEURS
+%==============================================================================
+
+\section{Identification des Acteurs}
+
+L'identification des acteurs constitue une étape fondamentale dans l'analyse des besoins. Un acteur représente une entité externe qui interagit avec le système. Dans le cadre de DocQA-MS, nous distinguons un acteur principal et plusieurs acteurs secondaires.
+
+%------------------------------------------------------------------------------
+% 2.1.1 Acteur Principal
+%------------------------------------------------------------------------------
+
+\subsection{Acteur Principal : Clinicien}
+
+Le clinicien (médecin, infirmier, personnel de santé) représente l'utilisateur principal du système DocQA-MS. Cet acteur est au cœur de notre système et bénéficie de l'ensemble des fonctionnalités proposées.
+
+\vspace{0.4cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuPrincipal,
+    boxrule=2pt,
+    arc=4mm,
+    left=10pt, right=10pt, top=10pt, bottom=10pt,
+    shadow={2mm}{-2mm}{0mm}{black!15}
+  ]
+
+  \begin{center}
+    \begin{tikzpicture}
+      % Icône utilisateur
+      \fill[bleuPrincipal] (0,0) circle (1cm);
+      \node[text=white, font=\Huge] at (0,0) {\faUserMd};
+    \end{tikzpicture}
+
+    \vspace{0.2cm}
+
+    {\Large\bfseries\textcolor{bleuFonce}{Clinicien (Personnel de Santé)}}
+  \end{center}
+
+  \vspace{0.3cm}
+
+  \begin{minipage}[t]{0.48\textwidth}
+    \begin{tcolorbox}[
+        enhanced,
+        colback=bleuTresClair,
+        colframe=bleuClair,
+        boxrule=1pt,
+        arc=2mm,
+        left=6pt, right=6pt, top=6pt, bottom=6pt,
+        title={\textcolor{bleuFonce}{\faIdCard~Profil}},
+        fonttitle=\bfseries\small,
+        coltitle=bleuFonce,
+        attach boxed title to top left={yshift=-2mm, xshift=3mm},
+        boxed title style={colback=bleuTresClair, arc=1mm, boxrule=0pt}
+      ]
+      \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuPrincipal}{\faAngleRight}]
+        \item Médecin, infirmier, interne
+        \item Accès aux dossiers patients
+        \item Besoin d'informations rapides
+        \item Contraintes de temps fortes
+      \end{itemize}
+    \end{tcolorbox}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \begin{tcolorbox}[
+        enhanced,
+        colback=bleuTresClair,
+        colframe=bleuClair,
+        boxrule=1pt,
+        arc=2mm,
+        left=6pt, right=6pt, top=6pt, bottom=6pt,
+        title={\textcolor{bleuFonce}{\faHeart~Besoins}},
+        fonttitle=\bfseries\small,
+        coltitle=bleuFonce,
+        attach boxed title to top left={yshift=-2mm, xshift=3mm},
+        boxed title style={colback=bleuTresClair, arc=1mm, boxrule=0pt}
+      ]
+      \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuPrincipal}{\faAngleRight}]
+        \item Requêtes en langage naturel
+        \item Réponses sourcées et vérifiables
+        \item Synthèses multi-documents
+        \item Confidentialité garantie
+      \end{itemize}
+    \end{tcolorbox}
+  \end{minipage}
+
+  \vspace{0.3cm}
+
+  \begin{tcolorbox}[
+      enhanced,
+      colback=bleuPrincipal!10,
+      colframe=bleuPrincipal!50,
+      boxrule=1pt,
+      arc=2mm,
+      left=6pt, right=6pt, top=6pt, bottom=6pt,
+      title={\textcolor{bleuFonce}{\faTasks~Actions Principales}},
+      fonttitle=\bfseries\small,
+      coltitle=bleuFonce,
+      attach boxed title to top left={yshift=-2mm, xshift=3mm},
+      boxed title style={colback=bleuPrincipal!10, arc=1mm, boxrule=0pt}
+    ]
+    \begin{center}
+      \begin{tikzpicture}[scale=0.9]
+        \foreach \x/\icon/\label in {
+          0/\faUpload/Ingérer docs,
+          2.8/\faUserSecret/Anonymiser,
+          5.6/\faSearch/Rechercher,
+          8.4/\faRobot/Q\&A IA,
+          11.2/\faLayerGroup/Synthétiser
+        } {
+          \node[fill=bleuPrincipal!20, rounded corners=3pt, minimum width=2.3cm,
+          minimum height=1.2cm, align=center, font=\scriptsize] at (\x,0)
+          {\textcolor{bleuFonce}{\large\icon}\\\label};
+        }
+      \end{tikzpicture}
+    \end{center}
+  \end{tcolorbox}
+
+\end{tcolorbox}
+
+%------------------------------------------------------------------------------
+% 2.1.2 Acteurs Secondaires
+%------------------------------------------------------------------------------
+
+\subsection{Acteurs Secondaires}
+
+En complément du clinicien, plusieurs acteurs secondaires interagissent avec le système DocQA-MS pour assurer son bon fonctionnement.
+
+\vspace{0.4cm}
+
+\begin{minipage}[t]{0.32\textwidth}
+  \begin{tcolorbox}[
+      enhanced,
+      colback=white,
+      colframe=orangeWarning,
+      boxrule=1.5pt,
+      arc=3mm,
+      left=6pt, right=6pt, top=8pt, bottom=8pt,
+      height=7.5cm
+    ]
+    \begin{center}
+      \begin{tikzpicture}
+        \fill[orangeWarning] (0,0) circle (0.7cm);
+        \node[text=white, font=\large] at (0,0) {\faCogs};
+      \end{tikzpicture}
+
+      \vspace{0.2cm}
+
+      {\bfseries\textcolor{orangeWarning}{Système}}
+    \end{center}
+
+    \vspace{0.2cm}
+
+    {\small
+      \textbf{Rôle :} Gestion automatisée des tâches internes.
+
+      \vspace{0.2cm}
+
+      \textbf{Responsabilités :}
+      \begin{itemize}[leftmargin=*, itemsep=1pt, label=\textcolor{orangeWarning}{\faAngleRight}]
+        \item Routage des requêtes
+        \item Messages RabbitMQ
+        \item Journalisation audit
+        \item Health checks
+      \end{itemize}
+    }
+  \end{tcolorbox}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.32\textwidth}
+  \begin{tcolorbox}[
+      enhanced,
+      colback=white,
+      colframe=bleuMarine,
+      boxrule=1.5pt,
+      arc=3mm,
+      left=6pt, right=6pt, top=8pt, bottom=8pt,
+      height=7.5cm
+    ]
+    \begin{center}
+      \begin{tikzpicture}
+        \fill[bleuMarine] (0,0) circle (0.7cm);
+        \node[text=white, font=\large] at (0,0) {\faBrain};
+      \end{tikzpicture}
+
+      \vspace{0.2cm}
+
+      {\bfseries\textcolor{bleuMarine}{Ollama (LLM)}}
+    \end{center}
+
+    \vspace{0.2cm}
+
+    {\small
+      \textbf{Rôle :} Exécution locale du modèle Llama 3.1.
+
+      \vspace{0.2cm}
+
+      \textbf{Responsabilités :}
+      \begin{itemize}[leftmargin=*, itemsep=1pt, label=\textcolor{bleuMarine}{\faAngleRight}]
+        \item Génération de réponses
+        \item Traitement RAG
+        \item Embeddings textuels
+        \item Inférence locale
+      \end{itemize}
+    }
+  \end{tcolorbox}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.32\textwidth}
+  \begin{tcolorbox}[
+      enhanced,
+      colback=white,
+      colframe=rougeAlert,
+      boxrule=1.5pt,
+      arc=3mm,
+      left=6pt, right=6pt, top=8pt, bottom=8pt,
+      height=7.5cm
+    ]
+    \begin{center}
+      \begin{tikzpicture}
+        \fill[rougeAlert] (0,0) circle (0.7cm);
+        \node[text=white, font=\large] at (0,0) {\faUserShield};
+      \end{tikzpicture}
+
+      \vspace{0.2cm}
+
+      {\bfseries\textcolor{rougeAlert}{Administrateur}}
+    \end{center}
+
+    \vspace{0.2cm}
+
+    {\small
+      \textbf{Rôle :} Supervision et maintenance du système.
+
+      \vspace{0.2cm}
+
+      \textbf{Responsabilités :}
+      \begin{itemize}[leftmargin=*, itemsep=1pt, label=\textcolor{rougeAlert}{\faAngleRight}]
+        \item Consultation des audits
+        \item Supervision services
+        \item Gestion des logs
+        \item Statistiques d'usage
+      \end{itemize}
+    }
+  \end{tcolorbox}
+\end{minipage}
+
+\vspace{0.5cm}
+
+%--- Schéma des interactions entre acteurs ---
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+      scale=0.85,
+      actornode/.style={
+        circle,
+        draw=#1,
+        fill=#1!20,
+        line width=1.5pt,
+        minimum size=1.5cm,
+        font=\small\bfseries,
+        align=center
+      },
+      systemnode/.style={
+        rectangle,
+        rounded corners=5pt,
+        draw=bleuPrincipal,
+        fill=bleuTresClair,
+        line width=2pt,
+        minimum width=5cm,
+        minimum height=3cm,
+        font=\large\bfseries
+      },
+      myarrow/.style={
+        ->,
+        >=stealth,
+        line width=1.2pt,
+        #1
+      }
+    ]
+
+    % Système central
+    \node[systemnode] (sys) at (0,0) {DocQA-MS};
+
+    % Acteurs
+    \node[actornode=bleuPrincipal] (user) at (-6,0) {\faUserMd\\Clinicien};
+    \node[actornode=orangeWarning] (syst) at (0,-4) {\faCogs\\Système};
+    \node[actornode=bleuMarine] (api) at (6,0) {\faBrain\\Ollama};
+    \node[actornode=rougeAlert] (admin) at (0,4) {\faUserShield\\Admin};
+
+    % Flèches
+    \draw[myarrow=bleuPrincipal] (user) -- (sys) node[midway, above, font=\scriptsize] {Requêtes Q\&A};
+    \draw[myarrow=bleuMarine] (sys) -- (api) node[midway, above, font=\scriptsize] {Inférence LLM};
+    \draw[myarrow=orangeWarning] (syst) -- (sys) node[midway, right, font=\scriptsize] {Orchestration};
+    \draw[myarrow=rougeAlert] (admin) -- (sys) node[midway, right, font=\scriptsize] {Supervision};
+
+    % Flèche retour
+    \draw[myarrow=bleuMarine, dashed] (api) to[bend right=20] node[midway, below, font=\scriptsize] {Réponses} (sys);
+
+  \end{tikzpicture}
+  \caption{Interactions entre les acteurs et le système DocQA-MS}
+  \label{fig:acteurs}
+\end{figure}
+
+%==============================================================================
+% SECTION 2.2 : SPÉCIFICATION DES BESOINS FONCTIONNELS
+%==============================================================================
+
+\newpage
+
+\section{Spécification des Besoins Fonctionnels}
+
+Les besoins fonctionnels décrivent les fonctionnalités que le système doit offrir. Ils sont organisés par microservice pour une meilleure traçabilité.
+
+%------------------------------------------------------------------------------
+% 2.2.1 Module Doc Ingestor
+%------------------------------------------------------------------------------
+
+\subsection{Module Doc Ingestor}
+
+Ce module gère l'ingestion et le prétraitement des documents médicaux.
+
+\vspace{0.3cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuTurquoise,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=8pt, right=8pt, top=8pt, bottom=8pt,
+    title={\textcolor{white}{\faFileAlt~Module Doc Ingestor}},
+    fonttitle=\bfseries\large,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=bleuTurquoise, arc=2mm}
+  ]
+
+  \renewcommand{\arraystretch}{1.4}
+  \begin{tabular}{|>{\columncolor{bleuTurquoise!10}\bfseries}c|p{7.5cm}|c|c|}
+    \hline
+    \rowcolor{bleuTurquoise}
+    \textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Besoin Fonctionnel}} & \textcolor{white}{\textbf{Priorité}} & \textcolor{white}{\textbf{Sprint}} \\
+    \hline
+    BF-01 & Uploader des documents PDF, TXT, DOCX & \cellcolor{rougeAlert!20}Haute & 1 \\
+    \hline
+    BF-02 & Extraire le texte brut des documents & \cellcolor{rougeAlert!20}Haute & 1 \\
+    \hline
+    BF-03 & Découper le texte en chunks sémantiques & \cellcolor{rougeAlert!20}Haute & 1 \\
+    \hline
+    BF-04 & Stocker les métadonnées des documents & \cellcolor{orangeWarning!30}Moyenne & 2 \\
+    \hline
+  \end{tabular}
+
+\end{tcolorbox}
+
+%------------------------------------------------------------------------------
+% 2.2.2 Module DeID Service
+%------------------------------------------------------------------------------
+
+\subsection{Module DeID Service (Anonymisation)}
+
+Ce module assure l'anonymisation automatique des données personnelles de santé.
+
+\vspace{0.3cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuMarine,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=8pt, right=8pt, top=8pt, bottom=8pt,
+    title={\textcolor{white}{\faUserSecret~Module DeID Service}},
+    fonttitle=\bfseries\large,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=bleuMarine, arc=2mm}
+  ]
+
+  \renewcommand{\arraystretch}{1.4}
+  \begin{tabular}{|>{\columncolor{bleuMarine!10}\bfseries}c|p{7.5cm}|c|c|}
+    \hline
+    \rowcolor{bleuMarine}
+    \textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Besoin Fonctionnel}} & \textcolor{white}{\textbf{Priorité}} & \textcolor{white}{\textbf{Sprint}} \\
+    \hline
+    BF-05 & Détecter les entités nommées (NER médical) & \cellcolor{rougeAlert!20}Haute & 2 \\
+    \hline
+    BF-06 & Masquer les noms de patients & \cellcolor{rougeAlert!20}Haute & 2 \\
+    \hline
+    BF-07 & Anonymiser dates, adresses, numéros & \cellcolor{rougeAlert!20}Haute & 2 \\
+    \hline
+    BF-08 & Conserver la structure du texte original & \cellcolor{orangeWarning!30}Moyenne & 2 \\
+    \hline
+  \end{tabular}
+
+\end{tcolorbox}
+
+%------------------------------------------------------------------------------
+% 2.2.3 Module Indexeur Sémantique
+%------------------------------------------------------------------------------
+
+\subsection{Module Indexeur Sémantique}
+
+Ce module génère les embeddings et gère l'indexation vectorielle pour la recherche sémantique.
+
+\vspace{0.3cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuPrincipal,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=8pt, right=8pt, top=8pt, bottom=8pt,
+    title={\textcolor{white}{\faSearch~Module Indexeur Sémantique}},
+    fonttitle=\bfseries\large,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=bleuPrincipal, arc=2mm}
+  ]
+
+  \renewcommand{\arraystretch}{1.4}
+  \begin{tabular}{|>{\columncolor{bleuPrincipal!10}\bfseries}c|p{7.5cm}|c|c|}
+    \hline
+    \rowcolor{bleuPrincipal}
+    \textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Besoin Fonctionnel}} & \textcolor{white}{\textbf{Priorité}} & \textcolor{white}{\textbf{Sprint}} \\
+    \hline
+    BF-09 & Générer des embeddings vectoriels par chunk & \cellcolor{rougeAlert!20}Haute & 3 \\
+    \hline
+    BF-10 & Indexer les vecteurs dans une base vectorielle & \cellcolor{rougeAlert!20}Haute & 3 \\
+    \hline
+    BF-11 & Rechercher par similarité sémantique & \cellcolor{rougeAlert!20}Haute & 3 \\
+    \hline
+    BF-12 & Retourner les chunks les plus pertinents & \cellcolor{rougeAlert!20}Haute & 3 \\
+    \hline
+  \end{tabular}
+
+\end{tcolorbox}
+
+%------------------------------------------------------------------------------
+% 2.2.4 Module LLM Q&A
+%------------------------------------------------------------------------------
+
+\subsection{Module LLM Q\&A (RAG)}
+
+Ce module constitue le cœur du système, orchestrant le pipeline RAG pour générer des réponses.
+
+\vspace{0.3cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuFonce,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=8pt, right=8pt, top=8pt, bottom=8pt,
+    title={\textcolor{white}{\faRobot~Module LLM Q\&A (RAG)}},
+    fonttitle=\bfseries\large,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=bleuFonce, arc=2mm}
+  ]
+
+  \renewcommand{\arraystretch}{1.4}
+  \begin{tabular}{|>{\columncolor{bleuFonce!10}\bfseries}c|p{7.5cm}|c|c|}
+    \hline
+    \rowcolor{bleuFonce}
+    \textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Besoin Fonctionnel}} & \textcolor{white}{\textbf{Priorité}} & \textcolor{white}{\textbf{Sprint}} \\
+    \hline
+    BF-13 & Recevoir une question en langage naturel & \cellcolor{rougeAlert!20}Haute & 4 \\
+    \hline
+    BF-14 & Orchestrer la recherche sémantique (RAG) & \cellcolor{rougeAlert!20}Haute & 4 \\
+    \hline
+    BF-15 & Appeler Ollama (Llama 3.1) pour génération & \cellcolor{rougeAlert!20}Haute & 4 \\
+    \hline
+    BF-16 & Retourner réponse avec sources citées & \cellcolor{rougeAlert!20}Haute & 4 \\
+    \hline
+  \end{tabular}
+
+\end{tcolorbox}
+
+%------------------------------------------------------------------------------
+% 2.2.5 Module Synthèse Comparative
+%------------------------------------------------------------------------------
+
+\subsection{Module Synthèse Comparative}
+
+Ce module génère des synthèses à partir de plusieurs documents.
+
+\vspace{0.3cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=vertSucces,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=8pt, right=8pt, top=8pt, bottom=8pt,
+    title={\textcolor{white}{\faLayerGroup~Module Synthèse Comparative}},
+    fonttitle=\bfseries\large,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=vertSucces, arc=2mm}
+  ]
+
+  \renewcommand{\arraystretch}{1.4}
+  \begin{tabular}{|>{\columncolor{vertSucces!10}\bfseries}c|p{7.5cm}|c|c|}
+    \hline
+    \rowcolor{vertSucces}
+    \textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Besoin Fonctionnel}} & \textcolor{white}{\textbf{Priorité}} & \textcolor{white}{\textbf{Sprint}} \\
+    \hline
+    BF-17 & Sélectionner plusieurs documents à comparer & \cellcolor{orangeWarning!30}Moyenne & 5 \\
+    \hline
+    BF-18 & Générer une synthèse comparative & \cellcolor{orangeWarning!30}Moyenne & 5 \\
+    \hline
+    BF-19 & Identifier les points communs et divergences & \cellcolor{orangeWarning!30}Moyenne & 5 \\
+    \hline
+  \end{tabular}
+
+\end{tcolorbox}
+
+%------------------------------------------------------------------------------
+% 2.2.6 Module Audit Logger
+%------------------------------------------------------------------------------
+
+\subsection{Module Audit Logger}
+
+Ce module assure la traçabilité complète des actions effectuées sur le système.
+
+\vspace{0.3cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=rougeAlert,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=8pt, right=8pt, top=8pt, bottom=8pt,
+    title={\textcolor{white}{\faClipboardList~Module Audit Logger}},
+    fonttitle=\bfseries\large,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=rougeAlert, arc=2mm}
+  ]
+
+  \renewcommand{\arraystretch}{1.4}
+  \begin{tabular}{|>{\columncolor{rougeAlert!10}\bfseries}c|p{7.5cm}|c|c|}
+    \hline
+    \rowcolor{rougeAlert}
+    \textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Besoin Fonctionnel}} & \textcolor{white}{\textbf{Priorité}} & \textcolor{white}{\textbf{Sprint}} \\
+    \hline
+    BF-20 & Journaliser toutes les requêtes utilisateur & \cellcolor{rougeAlert!20}Haute & 1 \\
+    \hline
+    BF-21 & Enregistrer les accès aux documents & \cellcolor{rougeAlert!20}Haute & 1 \\
+    \hline
+    BF-22 & Fournir des statistiques d'utilisation & \cellcolor{orangeWarning!30}Moyenne & 5 \\
+    \hline
+    BF-23 & Permettre l'export des logs d'audit & \cellcolor{vertSucces!30}Basse & 5 \\
+    \hline
+  \end{tabular}
+
+\end{tcolorbox}
+
+%==============================================================================
+% SECTION 2.3 : SPÉCIFICATION DES BESOINS NON FONCTIONNELS
+%==============================================================================
+
+\newpage
+
+\section{Spécification des Besoins Non Fonctionnels}
+
+Les besoins non fonctionnels définissent les critères de qualité du système.
+
+%------------------------------------------------------------------------------
+% 2.3.1 Performance
+%------------------------------------------------------------------------------
+
+\subsection{Performance}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuPrincipal,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=8pt, right=8pt, top=8pt, bottom=8pt,
+    title={\textcolor{white}{\faTachometerAlt~Exigences de Performance}},
+    fonttitle=\bfseries\large,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=bleuPrincipal, arc=2mm}
+  ]
+
+  \renewcommand{\arraystretch}{1.4}
+  \begin{tabular}{|>{\columncolor{bleuTresClair}\bfseries}c|p{5.5cm}|p{4.5cm}|c|}
+    \hline
+    \rowcolor{bleuPrincipal}
+    \textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Besoin}} & \textcolor{white}{\textbf{Mesure/Critère}} & \textcolor{white}{\textbf{Priorité}} \\
+    \hline
+    BNF-01 & Temps de réponse API Gateway & < 200 ms & \cellcolor{rougeAlert!20}Haute \\
+    \hline
+    BNF-02 & Temps de réponse Q\&A LLM & < 10 secondes & \cellcolor{rougeAlert!20}Haute \\
+    \hline
+    BNF-03 & Ingestion d'un document PDF & < 5 secondes & \cellcolor{orangeWarning!30}Moyenne \\
+    \hline
+    BNF-04 & Anonymisation par document & < 3 secondes & \cellcolor{orangeWarning!30}Moyenne \\
+    \hline
+  \end{tabular}
+
+\end{tcolorbox}
+
+%------------------------------------------------------------------------------
+% 2.3.2 Sécurité
+%------------------------------------------------------------------------------
+
+\subsection{Sécurité}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=rougeAlert,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=8pt, right=8pt, top=8pt, bottom=8pt,
+    title={\textcolor{white}{\faShieldAlt~Exigences de Sécurité}},
+    fonttitle=\bfseries\large,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=rougeAlert, arc=2mm}
+  ]
+
+  \renewcommand{\arraystretch}{1.4}
+  \begin{tabular}{|>{\columncolor{rougeAlert!10}\bfseries}c|p{4.5cm}|p{5.5cm}|c|}
+    \hline
+    \rowcolor{rougeAlert}
+    \textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Besoin}} & \textcolor{white}{\textbf{Description}} & \textcolor{white}{\textbf{Priorité}} \\
+    \hline
+    BNF-05 & Exécution locale du LLM & Aucune donnée envoyée vers cloud & \cellcolor{rougeAlert!20}Haute \\
+    \hline
+    BNF-06 & Anonymisation automatique & Conformité RGPD avant stockage & \cellcolor{rougeAlert!20}Haute \\
+    \hline
+    BNF-07 & Traçabilité complète & Audit de toutes les opérations & \cellcolor{rougeAlert!20}Haute \\
+    \hline
+    BNF-08 & Isolation des services & Chaque microservice isolé (Docker) & \cellcolor{orangeWarning!30}Moyenne \\
+    \hline
+  \end{tabular}
+
+\end{tcolorbox}
+
+%------------------------------------------------------------------------------
+% 2.3.3 Maintenabilité
+%------------------------------------------------------------------------------
+
+\subsection{Maintenabilité}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=orangeWarning,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=8pt, right=8pt, top=8pt, bottom=8pt,
+    title={\textcolor{white}{\faWrench~Exigences de Maintenabilité}},
+    fonttitle=\bfseries\large,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=orangeWarning, arc=2mm}
+  ]
+
+  \renewcommand{\arraystretch}{1.4}
+  \begin{tabular}{|>{\columncolor{orangeWarning!10}\bfseries}c|p{4.5cm}|p{5.5cm}|c|}
+    \hline
+    \rowcolor{orangeWarning}
+    \textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Besoin}} & \textcolor{white}{\textbf{Description}} & \textcolor{white}{\textbf{Priorité}} \\
+    \hline
+    BNF-09 & Architecture microservices & Services indépendants et découplés & \cellcolor{rougeAlert!20}Haute \\
+    \hline
+    BNF-10 & Conteneurisation Docker & Déploiement reproductible & \cellcolor{rougeAlert!20}Haute \\
+    \hline
+    BNF-11 & CI/CD GitHub Actions & Intégration et déploiement continus & \cellcolor{orangeWarning!30}Moyenne \\
+    \hline
+    BNF-12 & Documentation API & Swagger/OpenAPI pour chaque service & \cellcolor{orangeWarning!30}Moyenne \\
+    \hline
+  \end{tabular}
+
+\end{tcolorbox}
+
+%==============================================================================
+% SECTION 2.4 : DIAGRAMMES DE CAS D'UTILISATION
+%==============================================================================
+
+\newpage
+
+\section{Diagrammes de Cas d'Utilisation}
+
+Les diagrammes de cas d'utilisation UML permettent de visualiser les interactions entre les acteurs et le système.
+
+%------------------------------------------------------------------------------
+% 2.4.1 Diagramme Global
+%------------------------------------------------------------------------------
+
+\subsection{Diagramme de Cas d'Utilisation Global}
+
+Le diagramme global présente une vue d'ensemble de toutes les fonctionnalités du système DocQA-MS.
+
+\vspace{0.4cm}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/usecase-diagram-api-gateway.png}
+  \caption{Diagramme de Cas d'Utilisation Global de DocQA-MS}
+  \label{fig:usecase_global}
+\end{figure}
+
+%==============================================================================
+% SECTION 2.5 : BACKLOG PRODUIT
+%==============================================================================
+
+\section{Backlog Produit}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuPrincipal,
+    boxrule=2pt,
+    arc=4mm,
+    left=8pt, right=8pt, top=8pt, bottom=8pt,
+    title={\textcolor{white}{\faList~Product Backlog -- DocQA-MS}},
+    fonttitle=\bfseries\large,
+    coltitle=white,
+    attach boxed title to top center={yshift=-3mm},
+    boxed title style={colback=bleuPrincipal, arc=3mm}
+  ]
+
+  \renewcommand{\arraystretch}{1.3}
+  \begin{longtable}{|>{\columncolor{bleuTresClair}\bfseries\small}c|p{7.5cm}|c|c|}
+    \hline
+    \rowcolor{bleuPrincipal}
+    \textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{User Story}} & \textcolor{white}{\textbf{Points}} & \textcolor{white}{\textbf{Sprint}} \\
+    \hline
+    \endfirsthead
+
+    \multicolumn{4}{|c|}{\cellcolor{bleuTurquoise!20}\bfseries\textcolor{bleuTurquoise}{Sprint 1 -- Infrastructure \& Ingestion}} \\
+    \hline
+    US-01 & En tant que clinicien, je veux \textbf{uploader un document} pour l'analyser & 5 & 1 \\
+    \hline
+    US-02 & En tant que système, je veux \textbf{extraire le texte} d'un PDF & 3 & 1 \\
+    \hline
+    US-03 & En tant que système, je veux \textbf{journaliser les accès} pour l'audit & 5 & 1 \\
+    \hline
+
+    \multicolumn{4}{|c|}{\cellcolor{bleuMarine!20}\bfseries\textcolor{bleuMarine}{Sprint 2 -- Anonymisation}} \\
+    \hline
+    US-04 & En tant que clinicien, je veux \textbf{anonymiser un document} avant analyse & 8 & 2 \\
+    \hline
+    US-05 & En tant que système, je veux \textbf{détecter les entités médicales} (NER) & 8 & 2 \\
+    \hline
+
+    \multicolumn{4}{|c|}{\cellcolor{bleuPrincipal!20}\bfseries\textcolor{bleuPrincipal}{Sprint 3 -- Indexation}} \\
+    \hline
+    US-06 & En tant que système, je veux \textbf{générer des embeddings} pour chaque chunk & 8 & 3 \\
+    \hline
+    US-07 & En tant que clinicien, je veux \textbf{rechercher sémantiquement} dans mes documents & 8 & 3 \\
+    \hline
+
+    \multicolumn{4}{|c|}{\cellcolor{bleuFonce!20}\bfseries\textcolor{bleuFonce}{Sprint 4 -- Q\&A LLM}} \\
+    \hline
+    US-08 & En tant que clinicien, je veux \textbf{poser une question} en langage naturel & 13 & 4 \\
+    \hline
+    US-09 & En tant que clinicien, je veux \textbf{voir les sources} citées dans la réponse & 5 & 4 \\
+    \hline
+
+    \multicolumn{4}{|c|}{\cellcolor{vertSucces!20}\bfseries\textcolor{vertSucces}{Sprint 5 -- Synthèse \& Finitions}} \\
+    \hline
+    US-10 & En tant que clinicien, je veux \textbf{générer une synthèse} de plusieurs documents & 8 & 5 \\
+    \hline
+    US-11 & En tant qu'admin, je veux \textbf{consulter les statistiques} d'utilisation & 5 & 5 \\
+    \hline
+
+  \end{longtable}
+
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+%--- Synthèse du Backlog ---
+\begin{tcolorbox}[
+    enhanced,
+    colback=bleuTresClair,
+    colframe=bleuClair,
+    boxrule=1pt,
+    arc=3mm,
+    left=10pt, right=10pt, top=8pt, bottom=8pt
+  ]
+  \begin{center}
+    {\large\bfseries\textcolor{bleuFonce}{Synthèse du Product Backlog}}
+  \end{center}
+
+  \vspace{0.3cm}
+
+  \begin{minipage}[t]{0.48\textwidth}
+    \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuPrincipal}{\faCheck}]
+      \item \textbf{Total User Stories :} 11
+      \item \textbf{Total Points :} 76 points
+      \item \textbf{Nombre de Sprints :} 5
+    \end{itemize}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuPrincipal}{\faCheck}]
+      \item \textbf{Vélocité moyenne :} 15,2 pts/sprint
+      \item \textbf{Durée d'un sprint :} 1 semaine
+      \item \textbf{Durée totale :} 5 semaines
+    \end{itemize}
+  \end{minipage}
+
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+%--- Conclusion du chapitre ---
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuPrincipal,
+    boxrule=0pt,
+    borderline south={3pt}{0pt}{bleuPrincipal},
+    arc=0mm,
+    left=10pt, right=10pt, top=10pt, bottom=10pt
+  ]
+  \textbf{\textcolor{bleuFonce}{Conclusion du Chapitre}}
+
+  \vspace{0.2cm}
+
+  Ce chapitre a permis de définir précisément les besoins du projet DocQA-MS. Nous avons identifié les acteurs du système, spécifié les besoins fonctionnels et non fonctionnels pour chaque microservice, et modélisé ces besoins à travers des diagrammes de cas d'utilisation. Le backlog produit ainsi constitué servira de feuille de route pour les phases de conception et de réalisation présentées dans les chapitres suivants.
+\end{tcolorbox}

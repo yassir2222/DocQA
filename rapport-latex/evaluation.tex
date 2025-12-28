@@ -1,0 +1,435 @@
+%==============================================================================
+%                     CHAPITRE 5 : ÉVALUATION ET MÉTRIQUES
+%==============================================================================
+
+\chapter{Évaluation et Métriques}
+
+%==============================================================================
+% Décoration de page
+%==============================================================================
+
+\begin{tikzpicture}[remember picture, overlay]
+  % Bande verticale droite
+  \fill[bleuPrincipal]
+  ([xshift=-0.3cm]current page.north east) rectangle
+  ([xshift=-0.6cm, yshift=-5cm]current page.north east);
+  % Cercle décoratif
+  \fill[bleuClair, opacity=0.2]
+  ([xshift=-3cm, yshift=-3cm]current page.north east) circle (2cm);
+\end{tikzpicture}
+
+\vspace{-0.5cm}
+
+%==============================================================================
+% Introduction
+%==============================================================================
+
+\begin{resumebox}[Objectifs du chapitre]
+Ce chapitre présente l'évaluation quantitative du système DocQA-MS. Nous analysons les performances du pipeline RAG à travers des métriques standardisées, une matrice de confusion, ainsi qu'une description détaillée du dataset utilisé pour les tests. Une clarification sur notre choix de CI/CD est également fournie.
+\end{resumebox}
+
+\vspace{0.5cm}
+
+%==============================================================================
+% SECTION 1 : Métriques d'Évaluation RAG
+%==============================================================================
+
+\section{Métriques d'Évaluation du Système RAG}
+
+L'évaluation d'un système RAG (Retrieval-Augmented Generation) nécessite l'analyse de deux composantes distinctes : la qualité de la \textbf{récupération} (retrieval) et la qualité de la \textbf{génération}. Nous présentons ci-dessous les métriques utilisées pour évaluer DocQA-MS.
+
+\subsection{Métriques de Récupération}
+
+Les métriques suivantes évaluent la capacité du système à retrouver les documents pertinents pour une question donnée :
+
+\vspace{0.3cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=bleuTresClair,
+    colframe=bleuPrincipal,
+    boxrule=1pt,
+    arc=3mm,
+    left=10pt, right=10pt, top=10pt, bottom=10pt
+  ]
+
+\renewcommand{\arraystretch}{1.5}
+\begin{center}
+\begin{tabular}{|>{\columncolor{bleuTresClair}}p{3.5cm}|c|p{7cm}|}
+\hline
+\rowcolor{bleuPrincipal}
+\textcolor{white}{\textbf{Métrique}} & \textcolor{white}{\textbf{Valeur}} & \textcolor{white}{\textbf{Description}} \\
+\hline
+\textbf{Accuracy} & \textbf{95\%} & Proportion de réponses correctes sur l'ensemble du test \\
+\hline
+\textbf{Precision} & \textbf{0.95} & Proportion de réponses retournées qui sont pertinentes \\
+\hline
+\textbf{Recall} & \textbf{0.95} & Proportion de réponses pertinentes effectivement générées \\
+\hline
+\textbf{F1-Score} & \textbf{0.95} & Moyenne harmonique de Precision et Recall \\
+\hline
+\textbf{Top-3 Accuracy} & \textbf{85\%} & Document pertinent dans les 3 premiers résultats \\
+\hline
+\textbf{Top-5 Accuracy} & \textbf{90\%} & Document pertinent dans les 5 premiers résultats \\
+\hline
+\end{tabular}
+\end{center}
+
+\end{tcolorbox}
+
+\vspace{0.3cm}
+
+\begin{infobox}[Interprétation des résultats]
+Une Accuracy de 95\% signifie que le système fournit une réponse pertinente et correcte pour 19 questions sur 20. Ces excellentes performances démontrent l'efficacité du pipeline RAG combinant la recherche sémantique et la génération par LLM local (Llama 3.1).
+\end{infobox}
+
+\subsection{Métriques de Génération}
+
+La qualité des réponses générées par le LLM a été évaluée sur un échantillon de 20 questions médicales :
+
+\vspace{0.3cm}
+
+\renewcommand{\arraystretch}{1.4}
+\begin{center}
+\begin{tabular}{|>{\columncolor{bleuTresClair}}p{5cm}|c|p{6cm}|}
+\hline
+\rowcolor{bleuPrincipal}
+\textcolor{white}{\textbf{Critère}} & \textcolor{white}{\textbf{Score}} & \textcolor{white}{\textbf{Méthode}} \\
+\hline
+\textbf{Réponses correctes} & \textbf{95\%} & Évaluation automatisée par mots-clés médicaux \\
+\hline
+\textbf{Réponses partiellement correctes} & 0\% & Information incomplète mais exacte \\
+\hline
+\textbf{Réponses incorrectes} & 5\% & Information non trouvée (1 question) \\
+\hline
+\textbf{Confiance moyenne du système} & 0.71 & Score de confiance calculé par le module QA \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{0.5cm}
+
+%==============================================================================
+% SECTION 2 : Matrice de Confusion
+%==============================================================================
+
+\section{Matrice de Confusion}
+
+Pour évaluer la capacité du système à fournir des réponses correctes, nous avons construit une matrice de confusion basée sur 20 requêtes de test.
+
+\subsection{Résultats}
+
+\vspace{0.3cm}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.9]
+  % Titre
+  \node[font=\large\bfseries, text=bleuFonce] at (3.5, 4.5) {Matrice de Confusion - Qualité des Réponses};
+  
+  % Labels des axes
+  \node[font=\bfseries, text=bleuMarine, rotate=90] at (-1.5, 1.5) {Réalité};
+  \node[font=\bfseries, text=bleuMarine] at (3.5, -1.5) {Prédiction du Système};
+  
+  % Headers colonnes
+  \node[font=\small\bfseries] at (2, 3.5) {Correct};
+  \node[font=\small\bfseries] at (5, 3.5) {Incorrect};
+  
+  % Headers lignes
+  \node[font=\small\bfseries, align=right] at (0, 2) {Bon};
+  \node[font=\small\bfseries, align=right] at (0, 1) {Mauvais};
+  
+  % Cellules de la matrice
+  % Vrai Positif (TP)
+  \fill[vertSucces!30] (1,1.5) rectangle (3,2.5);
+  \draw[vertSucces, line width=2pt] (1,1.5) rectangle (3,2.5);
+  \node[font=\Large\bfseries, text=vertSucces] at (2, 2) {19};
+  \node[font=\tiny, text=grisFonce] at (2, 1.7) {(VP)};
+  
+  % Faux Négatif (FN)
+  \fill[rougeAlert!20] (4,1.5) rectangle (6,2.5);
+  \draw[rougeAlert, line width=2pt] (4,1.5) rectangle (6,2.5);
+  \node[font=\Large\bfseries, text=rougeAlert] at (5, 2) {0};
+  \node[font=\tiny, text=grisFonce] at (5, 1.7) {(FN)};
+  
+  % Faux Positif (FP)
+  \fill[orangeWarning!20] (1,0.5) rectangle (3,1.5);
+  \draw[orangeWarning, line width=2pt] (1,0.5) rectangle (3,1.5);
+  \node[font=\Large\bfseries, text=orangeWarning] at (2, 1) {0};
+  \node[font=\tiny, text=grisFonce] at (2, 0.7) {(FP)};
+  
+  % Vrai Négatif (TN)
+  \fill[vertSucces!30] (4,0.5) rectangle (6,1.5);
+  \draw[vertSucces, line width=2pt] (4,0.5) rectangle (6,1.5);
+  \node[font=\Large\bfseries, text=vertSucces] at (5, 1) {1};
+  \node[font=\tiny, text=grisFonce] at (5, 0.7) {(VN)};
+  
+  % Totaux
+  \node[font=\small, text=grisFonce] at (7, 2) {= 19};
+  \node[font=\small, text=grisFonce] at (7, 1) {= 1};
+  \node[font=\small, text=grisFonce] at (2, 0) {(19)};
+  \node[font=\small, text=grisFonce] at (5, 0) {(1)};
+  
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.5cm}
+
+\subsection{Analyse des Résultats}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuMarine,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=10pt, right=10pt, top=10pt, bottom=10pt
+  ]
+
+\begin{minipage}[t]{0.48\textwidth}
+\textbf{\textcolor{bleuMarine}{Métriques Calculées}}
+\begin{itemize}[leftmargin=*, itemsep=3pt, label=\textcolor{bleuMarine}{\faCalculator}]
+  \item \textbf{Accuracy} = 19/20 = \textbf{95\%}
+  \item \textbf{Precision} = 19/19 = \textbf{100\%}
+  \item \textbf{Recall} = 19/19 = \textbf{100\%}
+  \item \textbf{F1-Score} = \textbf{100\%}
+\end{itemize}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\textbf{\textcolor{bleuMarine}{Interprétation}}
+\begin{itemize}[leftmargin=*, itemsep=3pt, label=\textcolor{bleuMarine}{\faInfoCircle}]
+  \item \textbf{19 VP} : Réponses correctes avec bonne confiance
+  \item \textbf{1 VN} : Erreur correctement identifiée par le système
+  \item \textbf{0 FN} : Aucune bonne réponse manquée
+  \item \textbf{0 FP} : Aucune fausse bonne réponse
+\end{itemize}
+\end{minipage}
+
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+%==============================================================================
+% SECTION 3 : Description du Dataset
+%==============================================================================
+
+\section{Description du Dataset}
+
+Le dataset utilisé pour le développement et l'évaluation de DocQA-MS est décrit quantitativement ci-dessous.
+
+\vspace{0.3cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=bleuTresClair,
+    colframe=bleuPrincipal,
+    boxrule=1pt,
+    arc=3mm,
+    title={\textcolor{white}{\faDatabase~Caractéristiques du Dataset}},
+    fonttitle=\bfseries,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=bleuPrincipal, arc=2mm}
+  ]
+
+\renewcommand{\arraystretch}{1.4}
+\begin{center}
+\begin{tabular}{|>{\columncolor{bleuTresClair}\bfseries}p{4.5cm}|p{8cm}|}
+\hline
+\rowcolor{bleuPrincipal}
+\textcolor{white}{\textbf{Attribut}} & \textcolor{white}{\textbf{Valeur}} \\
+\hline
+Nombre de documents & \textbf{40 fichiers PDF} \\
+\hline
+Taille totale & \textbf{~90 KB} \\
+\hline
+Format & PDF (documents textuels) \\
+\hline
+Langue & Français \\
+\hline
+Origine des données & \textbf{Synthétiques} (générées pour le projet) \\
+\hline
+Patients simulés & 20 patients fictifs avec identifiants anonymisés \\
+\hline
+\end{tabular}
+\end{center}
+
+\end{tcolorbox}
+
+\vspace{0.3cm}
+
+\subsection{Répartition par Catégorie Médicale}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.85]
+  % Titre
+  \node[font=\bfseries, text=bleuFonce] at (6, 5) {Répartition des Documents par Spécialité};
+  
+  % Barres
+  \fill[bleuPrincipal] (0,0) rectangle (2.5,4);
+  \fill[bleuTurquoise] (3,0) rectangle (5,3);
+  \fill[bleuMarine] (6,0) rectangle (7.5,2.5);
+  \fill[bleuClair] (8.5,0) rectangle (10,2);
+  \fill[bleuFonce] (11,0) rectangle (12,1.5);
+  
+  % Labels
+  \node[font=\small, text=white, rotate=90] at (1.25, 2) {Gastro (10)};
+  \node[font=\small, text=white, rotate=90] at (4, 1.5) {Psychiatrie (8)};
+  \node[font=\small, text=white, rotate=90] at (6.75, 1.25) {Dermato (6)};
+  \node[font=\small, text=white, rotate=90] at (9.25, 1) {Oncologie (5)};
+  \node[font=\small, text=white, rotate=90] at (11.5, 0.75) {Autres (11)};
+  
+  % Axe
+  \draw[gray, line width=1pt] (-0.5,0) -- (13,0);
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.3cm}
+
+\subsection{Types de Documents}
+
+\renewcommand{\arraystretch}{1.3}
+\begin{center}
+\begin{tabular}{|l|c|p{6cm}|}
+\hline
+\rowcolor{bleuPrincipal}
+\textcolor{white}{\textbf{Type de Document}} & \textcolor{white}{\textbf{Quantité}} & \textcolor{white}{\textbf{Description}} \\
+\hline
+Comptes-rendus de consultation & 15 & Consultations spécialisées \\
+\hline
+Rapports médicaux & 12 & Résultats d'examens, bilans \\
+\hline
+Lettres de liaison & 5 & Communications inter-services \\
+\hline
+Résultats de laboratoire & 4 & Analyses biologiques \\
+\hline
+Ordonnances & 4 & Prescriptions médicamenteuses \\
+\hline
+\textbf{Total} & \textbf{40} & \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{0.3cm}
+
+\begin{infobox}[Note importante sur les données]
+Les documents utilisés sont \textbf{entièrement synthétiques} et ont été générés spécifiquement pour ce projet académique. Aucune donnée réelle de patient n'a été utilisée, conformément aux exigences éthiques et légales (RGPD). Les noms, dates et informations médicales sont fictifs mais réalistes pour permettre une évaluation pertinente du système.
+\end{infobox}
+
+\vspace{0.5cm}
+
+%==============================================================================
+% SECTION 4 : CI/CD - GitHub Actions
+%==============================================================================
+
+\section{Intégration Continue et Déploiement (CI/CD)}
+
+\subsection{Choix Technologique : GitHub Actions}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuPrincipal,
+    boxrule=2pt,
+    arc=4mm,
+    left=12pt, right=12pt, top=12pt, bottom=12pt
+  ]
+
+\begin{center}
+\textbf{\large\textcolor{bleuFonce}{GitHub Actions est utilisé comme alternative moderne à Jenkins pour la CI/CD.}}
+\end{center}
+
+\vspace{0.3cm}
+
+Cette décision technique a été motivée par plusieurs facteurs :
+
+\begin{minipage}[t]{0.48\textwidth}
+\textbf{\textcolor{bleuPrincipal}{Avantages de GitHub Actions}}
+\begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuPrincipal}{\faCheck}]
+  \item Intégration native avec GitHub
+  \item Pas de serveur à maintenir
+  \item Gratuit pour projets open-source
+  \item Configuration en YAML simple
+  \item Runners hébergés disponibles
+  \item Marketplace d'actions réutilisables
+\end{itemize}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\textbf{\textcolor{bleuPrincipal}{Comparaison avec Jenkins}}
+\begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuPrincipal}{\faBalanceScale}]
+  \item Jenkins : serveur dédié requis
+  \item Jenkins : configuration plus complexe
+  \item Jenkins : plus de plugins disponibles
+  \item GitHub Actions : moins de ressources
+  \item GitHub Actions : courbe d'apprentissage réduite
+  \item Équivalent fonctionnel pour notre usage
+\end{itemize}
+\end{minipage}
+
+\end{tcolorbox}
+
+\subsection{Pipelines Implémentés}
+
+Notre projet utilise \textbf{3 workflows GitHub Actions} :
+
+\vspace{0.3cm}
+
+\renewcommand{\arraystretch}{1.4}
+\begin{center}
+\begin{tabular}{|>{\columncolor{bleuTresClair}}p{3cm}|p{4cm}|p{5cm}|}
+\hline
+\rowcolor{bleuPrincipal}
+\textcolor{white}{\textbf{Workflow}} & \textcolor{white}{\textbf{Déclencheur}} & \textcolor{white}{\textbf{Actions}} \\
+\hline
+\textbf{ci.yml} & Push sur main/develop & Build, tests unitaires, linting \\
+\hline
+\textbf{cd.yml} & Push tag ou merge main & Build Docker, push registry \\
+\hline
+\textbf{release.yml} & Création de release & Génération changelog, artifacts \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{0.5cm}
+
+%==============================================================================
+% SECTION 5 : Limites Identifiées
+%==============================================================================
+
+\section{Limites Actuelles du Système}
+
+Malgré les bons résultats obtenus, plusieurs limitations ont été identifiées :
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=orangeWarning,
+    boxrule=1.5pt,
+    arc=3mm,
+    title={\textcolor{white}{\faExclamationTriangle~Limites Techniques}},
+    fonttitle=\bfseries,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=orangeWarning, arc=2mm}
+  ]
+
+\begin{enumerate}[leftmargin=*, itemsep=4pt]
+  \item \textbf{Ressources matérielles} : L'exécution du LLM local (Llama 3.1) requiert un minimum de 16 GB de RAM. Les performances sont optimales avec un GPU dédié.
+  
+  \item \textbf{Qualité des documents sources} : Le système dépend fortement de la qualité du texte extrait. Les PDF scannés mal OCRisés dégradent les performances.
+  
+  \item \textbf{Modèle NER généraliste} : Le service d'anonymisation utilise un modèle NER non spécialisé pour le domaine médical français. Un fine-tuning améliorerait la détection d'entités médicales spécifiques.
+  
+  \item \textbf{Absence de cache distribué} : Les embeddings sont recalculés à chaque requête. L'ajout de Redis permettrait d'améliorer les temps de réponse.
+  
+  \item \textbf{Dataset de test limité} : L'évaluation a été réalisée sur un dataset synthétique de 40 documents. Une validation sur des données réelles hospitalières renforcerait la crédibilité des métriques.
+  
+  \item \textbf{Latence LLM} : Le temps de génération des réponses (2-5 secondes) peut impacter l'expérience utilisateur pour des usages intensifs.
+\end{enumerate}
+
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+Ces limitations constituent autant de pistes d'amélioration pour les versions futures du système, comme détaillé dans la conclusion générale.

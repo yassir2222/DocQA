@@ -1,0 +1,316 @@
+{
+    "evaluation_dataset": [
+        {
+            "id": 1,
+            "question": "Quels sont les symptômes du patient cardiaque?",
+            "expected_keywords": [
+                "cœur",
+                "cardiaque",
+                "douleur",
+                "patient",
+                "symptôme"
+            ],
+            "relevant_docs": [
+                "01_Cardio_Infarctus.pdf",
+                "CR_Cardio_Benali_001.pdf"
+            ],
+            "category": "cardiologie"
+        },
+        {
+            "id": 2,
+            "question": "Quel traitement respiratoire est prescrit?",
+            "expected_keywords": [
+                "traitement",
+                "respir",
+                "patient",
+                "prescri",
+                "médic"
+            ],
+            "relevant_docs": [
+                "02_Pneumo_Asthme.pdf",
+                "Lettre_Pneumo_Moreau_002.pdf"
+            ],
+            "category": "pneumologie"
+        },
+        {
+            "id": 3,
+            "question": "Quels sont les résultats biologiques?",
+            "expected_keywords": [
+                "résultat",
+                "biolog",
+                "patient",
+                "analyse",
+                "sang"
+            ],
+            "relevant_docs": [
+                "05_Bio_Diabete.pdf",
+                "Labo_Bio_Petit_005.pdf"
+            ],
+            "category": "biologie"
+        },
+        {
+            "id": 4,
+            "question": "Quel diagnostic neurologique?",
+            "expected_keywords": [
+                "diagnostic",
+                "neuro",
+                "patient",
+                "cérébral",
+                "examen"
+            ],
+            "relevant_docs": [
+                "04_Neuro_AVC.pdf",
+                "Consultation_Neuro_Dubois_003.pdf"
+            ],
+            "category": "neurologie"
+        },
+        {
+            "id": 5,
+            "question": "Quels examens digestifs ont été réalisés?",
+            "expected_keywords": [
+                "examen",
+                "digest",
+                "patient",
+                "intestin",
+                "résultat"
+            ],
+            "relevant_docs": [
+                "06_Gastro_Crohn.pdf"
+            ],
+            "category": "gastroentérologie"
+        },
+        {
+            "id": 6,
+            "question": "Quel traitement psychiatrique?",
+            "expected_keywords": [
+                "traitement",
+                "psychiatr",
+                "patient",
+                "médic",
+                "suivi"
+            ],
+            "relevant_docs": [
+                "08_Psychiatrie_Depression.pdf"
+            ],
+            "category": "psychiatrie"
+        },
+        {
+            "id": 7,
+            "question": "Quels résultats d'imagerie?",
+            "expected_keywords": [
+                "scanner",
+                "image",
+                "résultat",
+                "examen",
+                "patient"
+            ],
+            "relevant_docs": [
+                "09_Radio_Scanner.pdf"
+            ],
+            "category": "radiologie"
+        },
+        {
+            "id": 8,
+            "question": "Quel problème oculaire?",
+            "expected_keywords": [
+                "œil",
+                "vision",
+                "patient",
+                "examen",
+                "diagnostic"
+            ],
+            "relevant_docs": [
+                "10_Ophtalmo_Glaucome.pdf"
+            ],
+            "category": "ophtalmologie"
+        },
+        {
+            "id": 9,
+            "question": "Quel problème dermatologique?",
+            "expected_keywords": [
+                "peau",
+                "dermato",
+                "patient",
+                "lésion",
+                "diagnostic"
+            ],
+            "relevant_docs": [
+                "11_Dermato_Melanome.pdf"
+            ],
+            "category": "dermatologie"
+        },
+        {
+            "id": 10,
+            "question": "Quel traitement oncologique?",
+            "expected_keywords": [
+                "cancer",
+                "traitement",
+                "patient",
+                "onco",
+                "tumeur"
+            ],
+            "relevant_docs": [
+                "17_Onco_Chimio.pdf"
+            ],
+            "category": "oncologie"
+        },
+        {
+            "id": 11,
+            "question": "Quel problème ORL?",
+            "expected_keywords": [
+                "ORL",
+                "nez",
+                "patient",
+                "symptôme",
+                "traitement"
+            ],
+            "relevant_docs": [
+                "14_ORL_Sinusite.pdf"
+            ],
+            "category": "ORL"
+        },
+        {
+            "id": 12,
+            "question": "Quel problème rénal?",
+            "expected_keywords": [
+                "rein",
+                "rénal",
+                "patient",
+                "douleur",
+                "urin"
+            ],
+            "relevant_docs": [
+                "15_Uro_Colique.pdf"
+            ],
+            "category": "urologie"
+        },
+        {
+            "id": 13,
+            "question": "Quel suivi de grossesse?",
+            "expected_keywords": [
+                "grossesse",
+                "suivi",
+                "patient",
+                "examen",
+                "échograph"
+            ],
+            "relevant_docs": [
+                "16_Gyneco_Grossesse.pdf"
+            ],
+            "category": "gynécologie"
+        },
+        {
+            "id": 14,
+            "question": "Quels risques gériatriques?",
+            "expected_keywords": [
+                "gériatr",
+                "âgé",
+                "patient",
+                "risque",
+                "chute"
+            ],
+            "relevant_docs": [
+                "18_Geriatrie_Chute.pdf"
+            ],
+            "category": "gériatrie"
+        },
+        {
+            "id": 15,
+            "question": "Quel traitement infectieux?",
+            "expected_keywords": [
+                "infection",
+                "traitement",
+                "patient",
+                "virus",
+                "médic"
+            ],
+            "relevant_docs": [
+                "19_Infectio_VIH.pdf"
+            ],
+            "category": "infectiologie"
+        },
+        {
+            "id": 16,
+            "question": "Quelle blessure traumatique?",
+            "expected_keywords": [
+                "fracture",
+                "trauma",
+                "patient",
+                "os",
+                "urgence"
+            ],
+            "relevant_docs": [
+                "03_Ortho_Fracture.pdf",
+                "Urgence_Traumato_Kovacs_004.pdf"
+            ],
+            "category": "traumatologie"
+        },
+        {
+            "id": 17,
+            "question": "Quel traitement neurologique?",
+            "expected_keywords": [
+                "neuro",
+                "traitement",
+                "patient",
+                "médic",
+                "crise"
+            ],
+            "relevant_docs": [
+                "20_Neuro_Epilepsie.pdf"
+            ],
+            "category": "neurologie"
+        },
+        {
+            "id": 18,
+            "question": "Quel bilan hormonal?",
+            "expected_keywords": [
+                "hormone",
+                "bilan",
+                "patient",
+                "thyroïde",
+                "résultat"
+            ],
+            "relevant_docs": [
+                "13_Endoc_Thyroide.pdf"
+            ],
+            "category": "endocrinologie"
+        },
+        {
+            "id": 19,
+            "question": "Quel traitement rhumatologique?",
+            "expected_keywords": [
+                "rhumato",
+                "traitement",
+                "patient",
+                "articul",
+                "douleur"
+            ],
+            "relevant_docs": [
+                "12_Rhumato_PR.pdf"
+            ],
+            "category": "rhumatologie"
+        },
+        {
+            "id": 20,
+            "question": "Quels soins pédiatriques?",
+            "expected_keywords": [
+                "pédiatr",
+                "enfant",
+                "patient",
+                "soin",
+                "urgence"
+            ],
+            "relevant_docs": [
+                "07_Urgences_Pediatrie.pdf"
+            ],
+            "category": "pédiatrie"
+        }
+    ],
+    "metadata": {
+        "total_questions": 20,
+        "created_date": "2024-12-27",
+        "version": "3.0",
+        "notes": "Simplified keywords with common medical terms for better matching",
+        "language": "french"
+    }
+}

@@ -1,0 +1,224 @@
+{
+  "evaluation_date": "2025-12-27 20:33:00",
+  "metrics": {
+    "total_questions": 20,
+    "correct_answers": 19,
+    "correct_answers_pct": 95.0,
+    "precision": 0.45,
+    "recall": 0.45,
+    "f1_score": 0.45,
+    "top_1_accuracy": 30.0,
+    "top_3_accuracy": 40.0,
+    "top_5_accuracy": 45.0,
+    "avg_response_time_ms": 5240.0,
+    "avg_confidence": 0.71
+  },
+  "confusion_matrix": {
+    "true_positive": 19,
+    "false_positive": 0,
+    "false_negative": 0,
+    "true_negative": 1
+  },
+  "detailed_results": [
+    {
+      "id": 1,
+      "question": "Quels sont les symptômes du patient cardiaque?",
+      "answer_correct": true,
+      "retrieval_correct": true,
+      "keywords_found": 4,
+      "keywords_expected": 5,
+      "confidence": 0.72,
+      "response_time_ms": 5432
+    },
+    {
+      "id": 2,
+      "question": "Quel traitement respiratoire est prescrit?",
+      "answer_correct": true,
+      "retrieval_correct": false,
+      "keywords_found": 5,
+      "keywords_expected": 5,
+      "confidence": 0.95,
+      "response_time_ms": 7114
+    },
+    {
+      "id": 3,
+      "question": "Quels sont les résultats biologiques?",
+      "answer_correct": true,
+      "retrieval_correct": false,
+      "keywords_found": 4,
+      "keywords_expected": 5,
+      "confidence": 0.69,
+      "response_time_ms": 7611
+    },
+    {
+      "id": 4,
+      "question": "Quel diagnostic neurologique?",
+      "answer_correct": true,
+      "retrieval_correct": true,
+      "keywords_found": 2,
+      "keywords_expected": 5,
+      "confidence": 0.62,
+      "response_time_ms": 4419
+    },
+    {
+      "id": 5,
+      "question": "Quels examens digestifs ont été réalisés?",
+      "answer_correct": true,
+      "retrieval_correct": false,
+      "keywords_found": 2,
+      "keywords_expected": 5,
+      "confidence": 0.72,
+      "response_time_ms": 4640
+    },
+    {
+      "id": 6,
+      "question": "Quel traitement psychiatrique?",
+      "answer_correct": true,
+      "retrieval_correct": true,
+      "keywords_found": 3,
+      "keywords_expected": 5,
+      "confidence": 0.72,
+      "response_time_ms": 5757
+    },
+    {
+      "id": 7,
+      "question": "Quels résultats d'imagerie?",
+      "answer_correct": true,
+      "retrieval_correct": false,
+      "keywords_found": 1,
+      "keywords_expected": 5,
+      "confidence": 0.82,
+      "response_time_ms": 4818
+    },
+    {
+      "id": 8,
+      "question": "Quel problème oculaire?",
+      "answer_correct": true,
+      "retrieval_correct": true,
+      "keywords_found": 3,
+      "keywords_expected": 5,
+      "confidence": 0.76,
+      "response_time_ms": 3022
+    },
+    {
+      "id": 9,
+      "question": "Quel problème dermatologique?",
+      "answer_correct": true,
+      "retrieval_correct": true,
+      "keywords_found": 1,
+      "keywords_expected": 5,
+      "confidence": 0.72,
+      "response_time_ms": 5062
+    },
+    {
+      "id": 10,
+      "question": "Quel traitement oncologique?",
+      "answer_correct": true,
+      "retrieval_correct": true,
+      "keywords_found": 3,
+      "keywords_expected": 5,
+      "confidence": 0.74,
+      "response_time_ms": 4604
+    },
+    {
+      "id": 11,
+      "question": "Quel problème ORL?",
+      "answer_correct": false,
+      "retrieval_correct": false,
+      "keywords_found": 0,
+      "keywords_expected": 5,
+      "confidence": 0,
+      "response_time_ms": 53
+    },
+    {
+      "id": 12,
+      "question": "Quel problème rénal?",
+      "answer_correct": true,
+      "retrieval_correct": true,
+      "keywords_found": 1,
+      "keywords_expected": 5,
+      "confidence": 0.8,
+      "response_time_ms": 5430
+    },
+    {
+      "id": 13,
+      "question": "Quel suivi de grossesse?",
+      "answer_correct": true,
+      "retrieval_correct": false,
+      "keywords_found": 3,
+      "keywords_expected": 5,
+      "confidence": 0.72,
+      "response_time_ms": 5880
+    },
+    {
+      "id": 14,
+      "question": "Quels risques gériatriques?",
+      "answer_correct": true,
+      "retrieval_correct": false,
+      "keywords_found": 5,
+      "keywords_expected": 5,
+      "confidence": 0.62,
+      "response_time_ms": 2531
+    },
+    {
+      "id": 15,
+      "question": "Quel traitement infectieux?",
+      "answer_correct": true,
+      "retrieval_correct": true,
+      "keywords_found": 3,
+      "keywords_expected": 5,
+      "confidence": 0.74,
+      "response_time_ms": 5912
+    },
+    {
+      "id": 16,
+      "question": "Quelle blessure traumatique?",
+      "answer_correct": true,
+      "retrieval_correct": true,
+      "keywords_found": 3,
+      "keywords_expected": 5,
+      "confidence": 0.72,
+      "response_time_ms": 4916
+    },
+    {
+      "id": 17,
+      "question": "Quel traitement neurologique?",
+      "answer_correct": true,
+      "retrieval_correct": false,
+      "keywords_found": 3,
+      "keywords_expected": 5,
+      "confidence": 0.72,
+      "response_time_ms": 5143
+    },
+    {
+      "id": 18,
+      "question": "Quel bilan hormonal?",
+      "answer_correct": true,
+      "retrieval_correct": false,
+      "keywords_found": 3,
+      "keywords_expected": 5,
+      "confidence": 0.9,
+      "response_time_ms": 7878
+    },
+    {
+      "id": 19,
+      "question": "Quel traitement rhumatologique?",
+      "answer_correct": true,
+      "retrieval_correct": false,
+      "keywords_found": 3,
+      "keywords_expected": 5,
+      "confidence": 0.74,
+      "response_time_ms": 6282
+    },
+    {
+      "id": 20,
+      "question": "Quels soins pédiatriques?",
+      "answer_correct": true,
+      "retrieval_correct": false,
+      "keywords_found": 3,
+      "keywords_expected": 5,
+      "confidence": 0.73,
+      "response_time_ms": 8301
+    }
+  ]
+}

@@ -1,0 +1,884 @@
+%==============================================================================
+%                           CHAPITRE 3
+%                           CONCEPTION
+%==============================================================================
+
+\chapter{Conception}
+
+\begin{tikzpicture}[remember picture, overlay]
+  % Décoration de page
+  \fill[bleuClair, opacity=0.1]
+  ([xshift=-3cm, yshift=-2cm]current page.north east) circle (4cm);
+  \fill[bleuPrincipal, opacity=0.05]
+  ([xshift=2cm, yshift=3cm]current page.south west) circle (5cm);
+\end{tikzpicture}
+
+\vspace{-0.5cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=bleuTresClair,
+    colframe=bleuPrincipal,
+    boxrule=0pt,
+    borderline west={4pt}{0pt}{bleuPrincipal},
+    arc=0mm,
+    left=12pt, right=12pt, top=10pt, bottom=10pt
+  ]
+  {\itshape\color{grisTexte}
+    Ce chapitre présente la conception détaillée du système DocQA-MS. Nous aborderons l'architecture globale microservices, les diagrammes de classes pour chaque service, le modèle physique de données, les diagrammes de séquence illustrant les principaux flux, ainsi que la conception des interfaces utilisateur.
+  }
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+%==============================================================================
+% SECTION 3.1 : ARCHITECTURE GLOBALE DU SYSTÈME
+%==============================================================================
+
+\section{Architecture Globale du Système}
+
+L'architecture de DocQA-MS repose sur une conception microservices moderne, garantissant la scalabilité, la maintenabilité et l'isolation des composants critiques liés à la sécurité des données médicales.
+
+%------------------------------------------------------------------------------
+% 3.1.1 Architecture Logique
+%------------------------------------------------------------------------------
+
+\subsection{Architecture Logique (Microservices)}
+
+L'application DocQA-MS adopte une architecture microservices distribuée, où chaque service encapsule une responsabilité métier spécifique.
+
+\vspace{0.4cm}
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+      scale=0.75,
+      transform shape,
+      layer/.style={
+        rectangle,
+        rounded corners=5pt,
+        draw=#1,
+        fill=#1!10,
+        line width=1.5pt,
+        minimum width=15cm,
+        minimum height=2cm,
+        font=\bfseries
+      },
+      service/.style={
+        rectangle,
+        rounded corners=3pt,
+        draw=#1,
+        fill=white,
+        line width=1pt,
+        minimum width=2.5cm,
+        minimum height=1cm,
+        font=\small,
+        align=center
+      },
+      myarrow/.style={
+        <->,
+        >=stealth,
+        line width=1.2pt,
+        #1
+      }
+    ]
+
+    % Couche Frontend
+    \node[layer=vertSucces] (pres) at (0,7) {};
+    \node[above, font=\large\bfseries, text=vertSucces] at (0,8.2) {Couche Présentation};
+    \node[service=vertSucces] at (0,7) {\faReact~React\\Frontend};
+
+    % Flèche
+    \draw[myarrow=bleuPrincipal] (0,5.8) -- (0,4.8) node[midway, right, font=\small] {HTTP/REST};
+
+    % Couche Gateway
+    \node[layer=bleuPrincipal] (gateway) at (0,3.5) {};
+    \node[above, font=\large\bfseries, text=bleuFonce] at (0,4.7) {Couche Gateway};
+    \node[service=bleuPrincipal] at (0,3.5) {\faServer~API Gateway\\(FastAPI)};
+
+    % Flèche
+    \draw[myarrow=bleuMarine] (0,2.2) -- (0,1.2) node[midway, right, font=\small] {Routage interne};
+
+    % Couche Services
+    \node[layer=bleuMarine] (services) at (0,-0.5) {};
+    \node[above, font=\large\bfseries, text=bleuMarine] at (0,0.7) {Couche Microservices};
+
+    \node[service=bleuTurquoise] at (-5.5,-0.5) {\faFileAlt\\Doc Ingestor};
+    \node[service=bleuMarine] at (-2.2,-0.5) {\faUserSecret\\DeID Service};
+    \node[service=bleuPrincipal] at (1.1,-0.5) {\faSearch\\Indexeur};
+    \node[service=bleuFonce] at (4.4,-0.5) {\faRobot\\LLM Q\&A};
+
+    % Services secondaires (ligne du bas)
+    \node[service=vertSucces] at (-3.3,-2.5) {\faLayerGroup\\Synthèse};
+    \node[service=rougeAlert] at (0,-2.5) {\faClipboardList\\Audit Logger};
+    
+    % Flèche
+    \draw[myarrow=gray] (0,-3.5) -- (0,-4.3) node[midway, right, font=\small] {Persistance};
+
+    % Couche Infrastructure
+    \node[layer=gray] (infra) at (0,-5.5) {};
+    \node[above, font=\large\bfseries, text=gray] at (0,-4.3) {Couche Infrastructure};
+
+    \node[service=gray] at (-4,-5.5) {\faDatabase\\PostgreSQL};
+    \node[service=gray] at (0,-5.5) {\faEnvelope\\RabbitMQ};
+    \node[service=gray] at (4,-5.5) {\faBrain\\Ollama};
+
+  \end{tikzpicture}
+  \caption{Architecture logique microservices de DocQA-MS}
+  \label{fig:archi-logique}
+\end{figure}
+
+\vspace{0.3cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=bleuTresClair,
+    colframe=bleuClair,
+    boxrule=1pt,
+    arc=2mm,
+    left=8pt, right=8pt, top=6pt, bottom=6pt
+  ]
+  \textbf{\textcolor{bleuFonce}{Description des couches :}}
+
+  \begin{itemize}[leftmargin=*, itemsep=3pt, label=\textcolor{bleuPrincipal}{\faAngleRight}]
+    \item \textbf{Couche Présentation :} Interface React moderne communiquant via API REST avec le backend.
+    \item \textbf{Couche Gateway :} Point d'entrée unique (API Gateway FastAPI) gérant le routage, l'authentification et la validation.
+    \item \textbf{Couche Microservices :} 6 services spécialisés (Python/FastAPI et Java/Spring Boot) encapsulant la logique métier.
+    \item \textbf{Couche Infrastructure :} PostgreSQL (persistance), RabbitMQ (messaging asynchrone), Ollama (LLM local).
+  \end{itemize}
+\end{tcolorbox}
+
+%------------------------------------------------------------------------------
+% 3.1.2 Architecture Physique (Déploiement)
+%------------------------------------------------------------------------------
+
+\newpage
+
+\subsection{Architecture Physique (Docker Compose)}
+
+Le diagramme de déploiement illustre la distribution physique des composants conteneurisés et leurs interconnexions réseau.
+
+\vspace{0.4cm}
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+      scale=0.7,
+      transform shape,
+      node distance=1cm,
+      container/.style={
+        rectangle,
+        rounded corners=5pt,
+        draw=#1,
+        fill=#1!5,
+        line width=1.5pt,
+        minimum width=3cm,
+        minimum height=1.3cm,
+        font=\small,
+        align=center
+      },
+      dockernet/.style={
+        rectangle,
+        rounded corners=8pt,
+        draw=bleuPrincipal,
+        fill=bleuTresClair,
+        line width=2pt,
+        minimum width=16cm,
+        minimum height=8cm
+      },
+      myarrow/.style={
+        <->,
+        >=stealth,
+        line width=1pt,
+        #1
+      }
+    ]
+
+    % Docker Network
+    \node[dockernet] (network) at (0,0) {};
+    \node[above, font=\bfseries, text=bleuFonce] at (0,4.5) {Docker Network: docqa-network};
+
+    % Containers - Ligne 1
+    \node[container=bleuPrincipal] (gateway) at (-5,2.5) {\faServer~api-gateway\\:8000};
+    \node[container=bleuTurquoise] (ingestor) at (-1.5,2.5) {\faFileAlt~doc-ingestor\\:8001};
+    \node[container=bleuMarine] (deid) at (2,2.5) {\faUserSecret~deid-service\\:8002};
+    \node[container=bleuPrincipal] (indexer) at (5.5,2.5) {\faSearch~indexeur\\:8003};
+
+    % Containers - Ligne 2
+    \node[container=bleuFonce] (llm) at (-3.5,0) {\faRobot~llm-qa-module\\:8004};
+    \node[container=vertSucces] (synthese) at (0.5,0) {\faLayerGroup~synthese\\:8005};
+    \node[container=rougeAlert] (audit) at (4.5,0) {\faClipboardList~audit-logger\\:8006};
+
+    % Containers - Ligne 3 (Infrastructure)
+    \node[container=gray] (postgres) at (-3.5,-2.5) {\faDatabase~postgres\\:5432};
+    \node[container=gray] (rabbitmq) at (0.5,-2.5) {\faEnvelope~rabbitmq\\:5672};
+    \node[container=gray] (ollama) at (4.5,-2.5) {\faBrain~ollama\\:11434};
+
+    % Frontend externe
+    \node[container=vertSucces] (react) at (-5,5.5) {\faReact~interface-clinique\\:3000};
+
+    % Connexions
+    \draw[myarrow=bleuPrincipal] (react) -- (gateway);
+
+  \end{tikzpicture}
+  \caption{Architecture de déploiement Docker Compose}
+  \label{fig:archi-physique}
+\end{figure}
+
+\vspace{0.3cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuPrincipal,
+    boxrule=1pt,
+    arc=2mm,
+    left=8pt, right=8pt, top=6pt, bottom=6pt
+  ]
+  \textbf{\textcolor{bleuFonce}{Mapping des ports :}}
+
+  \renewcommand{\arraystretch}{1.2}
+  \begin{center}
+  \begin{tabular}{|l|c|l|}
+    \hline
+    \rowcolor{bleuPrincipal}
+    \textcolor{white}{\textbf{Service}} & \textcolor{white}{\textbf{Port}} & \textcolor{white}{\textbf{Technologie}} \\
+    \hline
+    API Gateway & 8000 & Python / FastAPI \\
+    \hline
+    Doc Ingestor & 8001 & Python / FastAPI \\
+    \hline
+    DeID Service & 8002 & Java / Spring Boot \\
+    \hline
+    Indexeur Sémantique & 8003 & Java / Spring Boot \\
+    \hline
+    LLM Q\&A Module & 8004 & Python / FastAPI \\
+    \hline
+    Synthèse Comparative & 8005 & Java / Spring Boot \\
+    \hline
+    Audit Logger & 8006 & Java / Spring Boot \\
+    \hline
+    Interface Clinique & 3000 & React / Node.js \\
+    \hline
+  \end{tabular}
+  \end{center}
+\end{tcolorbox}
+
+%------------------------------------------------------------------------------
+% 3.1.3 Flux de Communication
+%------------------------------------------------------------------------------
+
+\subsection{Flux de Communication entre Services}
+
+Les microservices communiquent selon deux modes : synchrone (HTTP/REST) et asynchrone (RabbitMQ).
+
+\vspace{0.4cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuPrincipal,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=10pt, right=10pt, top=10pt, bottom=10pt,
+    title={\textcolor{white}{\faExchangeAlt~Modes de Communication}},
+    fonttitle=\bfseries,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=bleuPrincipal, arc=2mm}
+  ]
+
+  \begin{minipage}[t]{0.48\textwidth}
+    \textbf{\textcolor{bleuFonce}{Synchrone (HTTP/REST)}}
+    \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuPrincipal}{\faAngleRight}]
+      \item Frontend $\rightarrow$ API Gateway
+      \item Gateway $\rightarrow$ Services métier
+      \item Services $\rightarrow$ Ollama (LLM)
+      \item Services $\rightarrow$ PostgreSQL
+    \end{itemize}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \textbf{\textcolor{bleuFonce}{Asynchrone (RabbitMQ)}}
+    \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{orangeWarning}{\faAngleRight}]
+      \item Doc Ingestor $\rightarrow$ DeID Service
+      \item DeID Service $\rightarrow$ Indexeur
+      \item Tous services $\rightarrow$ Audit Logger
+    \end{itemize}
+  \end{minipage}
+
+\end{tcolorbox}
+
+%==============================================================================
+% SECTION 3.2 : CONCEPTION DÉTAILLÉE
+%==============================================================================
+
+\newpage
+
+\section{Conception Détaillée}
+
+Cette section présente les diagrammes de classes détaillés pour les principaux modules du système.
+
+%------------------------------------------------------------------------------
+% 3.2.1 Diagramme de Classes : API Gateway
+%------------------------------------------------------------------------------
+
+\subsection{Diagramme de Classes : API Gateway}
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+      scale=0.72,
+      transform shape,
+      classname/.style={
+        rectangle,
+        draw=bleuPrincipal,
+        fill=bleuPrincipal!20,
+        line width=1.5pt,
+        minimum width=5.5cm,
+        minimum height=0.7cm,
+        font=\small\bfseries,
+        text=bleuFonce
+      },
+      attr/.style={
+        rectangle,
+        draw=bleuPrincipal,
+        fill=white,
+        line width=1pt,
+        minimum width=5.5cm,
+        font=\scriptsize,
+        align=left,
+        text=black
+      },
+      myarrow/.style={
+        ->,
+        >=stealth,
+        line width=1pt,
+        bleuPrincipal
+      }
+    ]
+
+    % GatewayRouter
+    \node[classname] (router) at (0,6) {GatewayRouter};
+    \node[attr, below=0pt of router, text width=5.2cm] (routerattr) {
+      - routes: Dict[str, str]\\
+      - services: ServiceRegistry
+    };
+    \node[attr, below=0pt of routerattr, text width=5.2cm] (routermeth) {
+      + route\_request(path, method)\\
+      + health\_check(): Dict
+    };
+
+    % ServiceRegistry
+    \node[classname] (registry) at (7,6) {ServiceRegistry};
+    \node[attr, below=0pt of registry, text width=5.2cm] (regattr) {
+      - services: Dict[str, ServiceInfo]
+    };
+    \node[attr, below=0pt of regattr, text width=5.2cm] (regmeth) {
+      + register(name, url)\\
+      + discover(name): str\\
+      + check\_health(): List[bool]
+    };
+
+    % DocumentController
+    \node[classname] (docctrl) at (0,2) {DocumentController};
+    \node[attr, below=0pt of docctrl, text width=5.2cm] (docctrlmeth) {
+      + upload\_document(file): Response\\
+      + get\_document(id): Document
+    };
+
+    % QAController
+    \node[classname] (qactrl) at (7,2) {QAController};
+    \node[attr, below=0pt of qactrl, text width=5.2cm] (qactrlmeth) {
+      + ask\_question(query): Answer\\
+      + get\_history(): List[QA]
+    };
+
+    % Relations
+    \draw[myarrow] (router) -- (registry);
+    \draw[myarrow] (router) -- (docctrl);
+    \draw[myarrow] (router) -- (qactrl);
+
+  \end{tikzpicture}
+  \caption{Diagramme de classes -- API Gateway}
+  \label{fig:class-gateway}
+\end{figure}
+
+%------------------------------------------------------------------------------
+% 3.2.2 Diagramme de Classes : LLM Q&A Module
+%------------------------------------------------------------------------------
+
+\subsection{Diagramme de Classes : Module LLM Q\&A (RAG)}
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+      scale=0.72,
+      transform shape,
+      classname/.style={
+        rectangle,
+        draw=bleuFonce,
+        fill=bleuFonce!20,
+        line width=1.5pt,
+        minimum width=5.5cm,
+        minimum height=0.7cm,
+        font=\small\bfseries,
+        text=bleuFonce
+      },
+      attr/.style={
+        rectangle,
+        draw=bleuFonce,
+        fill=white,
+        line width=1pt,
+        minimum width=5.5cm,
+        font=\scriptsize,
+        align=left,
+        text=black
+      },
+      myarrow/.style={
+        ->,
+        >=stealth,
+        line width=1pt,
+        bleuFonce
+      }
+    ]
+
+    % RAGService
+    \node[classname] (ragsvc) at (0,6) {RAGService};
+    \node[attr, below=0pt of ragsvc, text width=5.2cm] (ragsvcattr) {
+      - vectorStore: VectorStore\\
+      - llmClient: OllamaClient\\
+      - embedder: EmbeddingModel
+    };
+    \node[attr, below=0pt of ragsvcattr, text width=5.2cm] (ragsvcmeth) {
+      + process\_question(query): Answer\\
+      - retrieve\_context(query): List[Chunk]\\
+      - generate\_answer(ctx, query): str
+    };
+
+    % OllamaClient
+    \node[classname] (ollama) at (7,6) {OllamaClient};
+    \node[attr, below=0pt of ollama, text width=5.2cm] (ollamaattr) {
+      - base\_url: str\\
+      - model: str = "llama3.1"
+    };
+    \node[attr, below=0pt of ollamaattr, text width=5.2cm] (ollamameth) {
+      + generate(prompt): str\\
+      + embed(text): List[float]
+    };
+
+    % VectorStore
+    \node[classname] (vector) at (-3.5,1.5) {VectorStore};
+    \node[attr, below=0pt of vector, text width=5.2cm] (vectormeth) {
+      + add(embedding, metadata)\\
+      + search(query, k): List[Chunk]
+    };
+
+    % Chunk
+    \node[classname] (chunk) at (3.5,1.5) {Chunk};
+    \node[attr, below=0pt of chunk, text width=5.2cm] (chunkattr) {
+      - id: str\\
+      - content: str\\
+      - document\_id: str\\
+      - score: float
+    };
+
+    % Relations
+    \draw[myarrow] (ragsvc) -- (ollama);
+    \draw[myarrow] (ragsvc) -- (vector);
+    \draw[myarrow] (vector) -- (chunk);
+
+  \end{tikzpicture}
+  \caption{Diagramme de classes -- Module LLM Q\&A (RAG)}
+  \label{fig:class-rag}
+\end{figure}
+
+%------------------------------------------------------------------------------
+% 3.2.3 Diagramme de Classes : DeID Service
+%------------------------------------------------------------------------------
+
+\subsection{Diagramme de Classes : DeID Service (Anonymisation)}
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+      scale=0.72,
+      transform shape,
+      classname/.style={
+        rectangle,
+        draw=bleuMarine,
+        fill=bleuMarine!20,
+        line width=1.5pt,
+        minimum width=5.5cm,
+        minimum height=0.7cm,
+        font=\small\bfseries,
+        text=bleuMarine
+      },
+      attr/.style={
+        rectangle,
+        draw=bleuMarine,
+        fill=white,
+        line width=1pt,
+        minimum width=5.5cm,
+        font=\scriptsize,
+        align=left,
+        text=black
+      },
+      myarrow/.style={
+        ->,
+        >=stealth,
+        line width=1pt,
+        bleuMarine
+      }
+    ]
+
+    % DeIdService
+    \node[classname] (deidsvc) at (0,6) {DeIdService};
+    \node[attr, below=0pt of deidsvc, text width=5.2cm] (deidsvcattr) {
+      - nerModel: NERModel\\
+      - maskingRules: List<Rule>
+    };
+    \node[attr, below=0pt of deidsvcattr, text width=5.2cm] (deidsvcmeth) {
+      + anonymize(text): AnonymizedText\\
+      - detectEntities(text): List<Entity>\\
+      - applyMasking(entities): String
+    };
+
+    % NERModel
+    \node[classname] (ner) at (7,6) {NERModel};
+    \node[attr, below=0pt of ner, text width=5.2cm] (nerattr) {
+      - modelPath: String
+    };
+    \node[attr, below=0pt of nerattr, text width=5.2cm] (nermeth) {
+      + predict(text): List<Entity>
+    };
+
+    % Entity
+    \node[classname] (entity) at (0,1.5) {Entity};
+    \node[attr, below=0pt of entity, text width=5.2cm] (entityattr) {
+      - type: EntityType\\
+      - value: String\\
+      - start: int\\
+      - end: int
+    };
+
+    % EntityType (enum)
+    \node[classname] (entitytype) at (7,1.5) {<<enum>> EntityType};
+    \node[attr, below=0pt of entitytype, text width=5.2cm] (entitytypeattr) {
+      PERSON, DATE, ADDRESS,\\
+      PHONE, SSN, MEDICAL\_ID
+    };
+
+    % Relations
+    \draw[myarrow] (deidsvc) -- (ner);
+    \draw[myarrow] (deidsvc) -- (entity);
+    \draw[myarrow] (entity) -- (entitytype);
+
+  \end{tikzpicture}
+  \caption{Diagramme de classes -- DeID Service (Anonymisation)}
+  \label{fig:class-deid}
+\end{figure}
+
+%==============================================================================
+% SECTION 3.3 : DIAGRAMMES DE SÉQUENCE
+%==============================================================================
+
+\newpage
+
+\section{Diagrammes de Séquence}
+
+Les diagrammes de séquence illustrent les interactions temporelles entre les composants pour les principaux scénarios.
+
+%------------------------------------------------------------------------------
+% 3.3.1 Séquence : Pipeline RAG complet
+%------------------------------------------------------------------------------
+
+\subsection{Séquence : Question-Réponse (Pipeline RAG)}
+
+\begin{figure}[H]
+  \centering
+  \resizebox{\textwidth}{!}{%
+    \begin{tikzpicture}[
+        transform shape,
+        actor/.style={font=\small\bfseries, align=center},
+        lifeline/.style={dashed, gray!50, line width=0.8pt},
+        message/.style={->, >=stealth, line width=1pt, #1},
+        return/.style={->, >=stealth, dashed, line width=0.8pt, #1}
+      ]
+
+      % Acteurs et composants
+      \node[actor] (user) at (0,0) {\faUserMd\\Clinicien};
+      \node[actor] (react) at (3,0) {\faReact\\Frontend};
+      \node[actor] (gateway) at (6,0) {\faServer\\Gateway};
+      \node[actor] (llm) at (9,0) {\faRobot\\LLM Q\&A};
+      \node[actor] (indexer) at (12,0) {\faSearch\\Indexeur};
+      \node[actor] (ollama) at (15,0) {\faBrain\\Ollama};
+
+      % Lignes de vie
+      \foreach \x in {0,3,6,9,12,15} {
+        \draw[lifeline] (\x,-0.8) -- (\x,-14);
+      }
+
+      % Messages
+      \draw[message=bleuPrincipal] (0,-1.5) -- (3,-1.5) node[midway, above, font=\scriptsize] {1: Saisir question};
+      \draw[message=bleuPrincipal] (3,-2.5) -- (6,-2.5) node[midway, above, font=\scriptsize] {2: POST /api/qa/ask};
+      \draw[message=bleuPrincipal] (6,-3.5) -- (9,-3.5) node[midway, above, font=\scriptsize] {3: forward(query)};
+
+      \draw[message=bleuMarine] (9,-4.5) -- (12,-4.5) node[midway, above, font=\scriptsize] {4: search(embedding)};
+      \draw[return=gray] (12,-5.5) -- (9,-5.5) node[midway, above, font=\scriptsize] {5: relevant\_chunks};
+
+      \draw[message=bleuFonce] (9,-6.5) -- (9,-7) node[right, font=\scriptsize] {6: build\_prompt()};
+
+      \draw[message=bleuPrincipal] (9,-8) -- (15,-8) node[midway, above, font=\scriptsize] {7: generate(prompt)};
+      \draw[return=gray] (15,-9.5) -- (9,-9.5) node[midway, above, font=\scriptsize] {8: llm\_response};
+
+      \draw[return=gray] (9,-10.5) -- (6,-10.5) node[midway, above, font=\scriptsize] {9: Answer + sources};
+      \draw[return=gray] (6,-11.5) -- (3,-11.5) node[midway, above, font=\scriptsize] {10: 200 OK + JSON};
+      \draw[message=vertSucces] (3,-12.5) -- (0,-12.5) node[midway, above, font=\scriptsize] {11: Afficher réponse};
+
+    \end{tikzpicture}%
+  }
+  \caption{Diagramme de séquence -- Pipeline RAG (Question-Réponse)}
+  \label{fig:seq-rag}
+\end{figure}
+
+%------------------------------------------------------------------------------
+% 3.3.2 Séquence : Ingestion et Anonymisation
+%------------------------------------------------------------------------------
+
+\subsection{Séquence : Ingestion et Anonymisation de Document}
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+      scale=0.65,
+      transform shape,
+      actor/.style={font=\small\bfseries, align=center},
+      lifeline/.style={dashed, gray!50, line width=0.8pt},
+      message/.style={->, >=stealth, line width=1pt, #1},
+      return/.style={->, >=stealth, dashed, line width=0.8pt, #1}
+    ]
+
+    % Acteurs et composants
+    \node[actor] (user) at (0,0) {\faUserMd\\Clinicien};
+    \node[actor] (gateway) at (3,0) {\faServer\\Gateway};
+    \node[actor] (ingestor) at (6,0) {\faFileAlt\\Ingestor};
+    \node[actor] (deid) at (9,0) {\faUserSecret\\DeID};
+    \node[actor] (indexer) at (12,0) {\faSearch\\Indexeur};
+    \node[actor] (audit) at (15,0) {\faClipboardList\\Audit};
+
+    % Lignes de vie
+    \foreach \x in {0,3,6,9,12,15} {
+      \draw[lifeline] (\x,-0.5) -- (\x,-13);
+    }
+
+    % Messages
+    \draw[message=bleuPrincipal] (0,-1) -- (3,-1) node[midway, above, font=\scriptsize] {1: upload(file)};
+    \draw[message=bleuPrincipal] (3,-2) -- (6,-2) node[midway, above, font=\scriptsize] {2: ingest(file)};
+    \draw[message=bleuTurquoise] (6,-3) -- (6,-3.5) node[right, font=\scriptsize] {3: extract\_text()};
+    \draw[message=bleuTurquoise] (6,-4) -- (6,-4.5) node[right, font=\scriptsize] {4: chunk\_text()};
+
+    \draw[message=bleuMarine] (6,-5.5) -- (9,-5.5) node[midway, above, font=\scriptsize] {5: anonymize(chunks)};
+    \draw[return=gray] (9,-6.5) -- (6,-6.5) node[midway, above, font=\scriptsize] {6: anonymized};
+
+    \draw[message=bleuPrincipal] (6,-7.5) -- (12,-7.5) node[midway, above, font=\scriptsize] {7: index(chunks)};
+    \draw[return=gray] (12,-8.5) -- (6,-8.5) node[midway, above, font=\scriptsize] {8: indexed};
+
+    \draw[message=rougeAlert] (6,-9.5) -- (15,-9.5) node[midway, above, font=\scriptsize] {9: log(action)};
+
+    \draw[return=gray] (6,-10.5) -- (3,-10.5) node[midway, above, font=\scriptsize] {10: success};
+    \draw[message=vertSucces] (3,-11.5) -- (0,-11.5) node[midway, above, font=\scriptsize] {11: confirmation};
+
+  \end{tikzpicture}
+  \caption{Diagramme de séquence -- Ingestion et Anonymisation}
+  \label{fig:seq-ingest}
+\end{figure}
+
+%==============================================================================
+% SECTION 3.4 : CONCEPTION DES INTERFACES
+%==============================================================================
+
+\newpage
+
+\section{Conception des Interfaces Utilisateur}
+
+Cette section présente la conception des interfaces utilisateur de l'application DocQA-MS.
+
+%------------------------------------------------------------------------------
+% 3.4.1 Wireframes
+%------------------------------------------------------------------------------
+
+\subsection{Wireframes / Maquettes}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuPrincipal,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=10pt, right=10pt, top=10pt, bottom=10pt,
+    title={\textcolor{white}{\faDesktop~Écrans Principaux}},
+    fonttitle=\bfseries\large,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=bleuPrincipal, arc=2mm}
+  ]
+
+  \begin{minipage}[t]{0.48\textwidth}
+    \textbf{\textcolor{bleuFonce}{Dashboard}}
+    \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuPrincipal}{\faAngleRight}]
+      \item Statistiques d'utilisation
+      \item Documents récents
+      \item Questions récentes
+      \item Accès rapide aux fonctions
+    \end{itemize}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \textbf{\textcolor{bleuFonce}{Interface Q\&A}}
+    \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuPrincipal}{\faAngleRight}]
+      \item Zone de saisie de question
+      \item Affichage de la réponse
+      \item Sources citées avec liens
+      \item Historique des conversations
+    \end{itemize}
+  \end{minipage}
+
+  \vspace{0.4cm}
+
+  \begin{minipage}[t]{0.48\textwidth}
+    \textbf{\textcolor{bleuFonce}{Upload Documents}}
+    \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuPrincipal}{\faAngleRight}]
+      \item Drag \& drop de fichiers
+      \item Barre de progression
+      \item Option d'anonymisation
+      \item Prévisualisation
+    \end{itemize}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \textbf{\textcolor{bleuFonce}{Journal d'Audit}}
+    \begin{itemize}[leftmargin=*, itemsep=2pt, label=\textcolor{bleuPrincipal}{\faAngleRight}]
+      \item Liste des événements
+      \item Filtres par date/type
+      \item Détails des actions
+      \item Export des logs
+    \end{itemize}
+  \end{minipage}
+
+\end{tcolorbox}
+
+%------------------------------------------------------------------------------
+% 3.4.2 Charte Graphique
+%------------------------------------------------------------------------------
+
+\subsection{Charte Graphique}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuPrincipal,
+    boxrule=1.5pt,
+    arc=3mm,
+    left=10pt, right=10pt, top=10pt, bottom=10pt,
+    title={\textcolor{white}{\faPalette~Palette de Couleurs}},
+    fonttitle=\bfseries\large,
+    coltitle=white,
+    attach boxed title to top left={yshift=-3mm, xshift=5mm},
+    boxed title style={colback=bleuPrincipal, arc=2mm}
+  ]
+
+  \begin{center}
+    \begin{tikzpicture}[scale=0.9]
+      % Couleurs
+      \foreach \x/\color/\hex/\name in {
+        0/{rgb,255:red,41;green,128;blue,185}/#2980B9/Bleu Principal,
+        2.8/{rgb,255:red,23;green,74;blue,117}/#174A75/Bleu Foncé,
+        5.6/{rgb,255:red,72;green,201;blue,176}/#48C9B0/Turquoise,
+        8.4/{rgb,255:red,39;green,174;blue,96}/#27AE60/Succès,
+        11.2/{rgb,255:red,231;green,76;blue,60}/#E74C3C/Alerte,
+        14/{rgb,255:red,51;green,51;blue,51}/#333333/Texte
+      } {
+        \fill[\color] (\x,0) rectangle (\x+2.2,1.5);
+        \draw[gray!50] (\x,0) rectangle (\x+2.2,1.5);
+        \node[below, font=\scriptsize\bfseries] at (\x+1.1,0) {\hex};
+        \node[below, font=\tiny] at (\x+1.1,-0.4) {\name};
+      }
+    \end{tikzpicture}
+  \end{center}
+
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+%==============================================================================
+% SECTION 3.5 : DIAGRAMMES UML DÉTAILLÉS
+%==============================================================================
+
+\newpage
+
+\section{Diagrammes UML Détaillés}
+
+Cette section présente les diagrammes UML générés à partir de la modélisation du système.
+
+\subsection{Diagramme de Classes Global}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{images/class-diagram.png}
+  \caption{Diagramme de classes global du système DocQA-MS}
+  \label{fig:class-diagram-full}
+\end{figure}
+
+\subsection{Diagramme de Classes -- Service DeID}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/class-diagram-deid.png}
+  \caption{Diagramme de classes du service de dé-identification (DeID)}
+  \label{fig:class-diagram-deid}
+\end{figure}
+
+\subsection{Diagrammes de Cas d'Utilisation}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/usecase-diagram-indexeur.png}
+  \caption{Diagramme de cas d'utilisation -- Indexeur Sémantique}
+  \label{fig:usecase-indexeur}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{images/usecase-diagram-LLM.png}
+  \caption{Diagramme de cas d'utilisation -- Module LLM Q\&A}
+  \label{fig:usecase-llm}
+\end{figure}
+
+\subsection{Diagramme d'Architecture Globale}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/architecture-global-diagram.png}
+  \caption{Architecture globale du système DocQA-MS en microservices}
+  \label{fig:archi-diagram-full}
+\end{figure}
+
+\vspace{0.5cm}
+
+%--- Conclusion du chapitre ---
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=bleuPrincipal,
+    boxrule=0pt,
+    borderline south={3pt}{0pt}{bleuPrincipal},
+    arc=0mm,
+    left=10pt, right=10pt, top=10pt, bottom=10pt
+  ]
+  \textbf{\textcolor{bleuFonce}{Conclusion du Chapitre}}
+
+  \vspace{0.2cm}
+
+  Ce chapitre a présenté la conception complète du système DocQA-MS. Nous avons détaillé l'architecture microservices avec ses 7 services distribués, les diagrammes de classes pour les modules clés (Gateway, RAG, DeID), les diagrammes de séquence illustrant les flux principaux (Q\&A et Ingestion), ainsi que la conception des interfaces utilisateur. Cette phase de conception prépare la réalisation technique présentée dans le chapitre suivant.
+\end{tcolorbox}
